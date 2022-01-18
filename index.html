@@ -11,18 +11,21 @@
     </head>
 
     <body>
-        <div id="root"></div>
+        <div id="root">
+            <h1>Invoices</h1>
 
-        <h1>Invoices</h1>
+            <form>
+                <input id="name" placeholder="Name"></input>
+                <button type="submit">Submit</button>
+            </form>
 
-        <form>
-            <input id="name" placeholder="Name"></input>
-            <button type="submit">Submit</button>
-        </form>
+            <div class="invoices">
 
-        <ul class="invoice-list"></ul>
+            </div>
+        </div>
 
-        <script src="invoice.js"></script>
+        <script src="model.js"></script>
         <script src="view.js"></script>
+        <script src="controller.js"></script>
     </body>
 </html>
