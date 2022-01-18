@@ -1,4 +1,4 @@
-const invoice = (function () {
+const model = (function () {
     let invoices = [];
     let counter = 0;
 
@@ -33,6 +33,6 @@ const invoice = (function () {
         add: addInvoice,
         delete: deleteInvoice,
         edit: editInvoice,
-        list: invoices,
+        getInvoices: invoices,
     };
 })();
