@@ -1,0 +1,8 @@
+.hide {
+    display: none;
+}
+
+.highlighted {
+    background: blue;
+    color: white;
+}
