@@ -5,6 +5,7 @@ class Model {
     }
 
     addInvoice(data) {
+        console.log(data);
         this.invoices.push({
             id: this.generateId(),
             name: data.name,
@@ -59,10 +60,6 @@ class View {
             this.viewForm();
         });
 
-        // Invoice Form
-        this.invoiceFormElem = this.generateElement("form", "new-invoice-form");
-        this.invoiceFormElem.classList.add("hide");
-
         // Invoice Form: Name
         this.nameInput = this.generateElement("input");
         this.nameInput.id = "name";
@@ -92,6 +89,8 @@ class View {
     }
 
     viewForm(existingData) {
+        // Invoice Form
+        this.invoiceFormElem = this.generateElement("form", "new-invoice-form");
         this.ui.append(this.invoiceFormElem);
         this.invoiceFormElem.append(this.nameInput);
         this.invoiceFormElem.append(this.invoiceFormButtonElem);
@@ -110,12 +109,11 @@ class View {
                     (element.value = "");
             });
         }
-        this.invoiceFormElem.classList.remove("hide");
 
         this.invoiceFormElem.addEventListener("submit", (event) => {
             event.preventDefault();
             this.handleInvoiceFormSubmit();
-            this.invoiceFormElem.classList.add("hide");
+            this.ui.removeChild(this.invoiceFormElem);
         });
     }
 
@@ -127,6 +125,7 @@ class View {
         const invoiceId = parseInt(
             this.invoiceFormElem.getAttribute("data-invoice-id")
         );
+
         this.invoiceFormSubmitHandler(invoiceFormData, invoiceId);
         this.invoiceFormElem.removeAttribute("data-invoice-id");
     }
