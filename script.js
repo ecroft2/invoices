@@ -54,7 +54,7 @@ class View {
             "get-invoice-form",
             "New Invoice"
         );
-        this.ui.append(this.getFormButtonElem);
+        this.ui.appendChild(this.getFormButtonElem);
         this.getFormButtonElem.addEventListener("click", () => {
             this.viewForm();
         });
@@ -85,9 +85,9 @@ class View {
 
         // Invoice Form
         this.invoiceFormElem = this.generateElement("form", "new-invoice-form");
-        this.ui.append(this.invoiceFormElem);
-        this.invoiceFormElem.append(this.nameInput);
-        this.invoiceFormElem.append(this.invoiceFormButtonElem);
+        this.ui.appendChild(this.invoiceFormElem);
+        this.invoiceFormElem.appendChild(this.nameInput);
+        this.invoiceFormElem.appendChild(this.invoiceFormButtonElem);
 
         // Invoice Form: Inputs
         this.invoiceFormInputs = {
@@ -122,11 +122,11 @@ class View {
         }
 
         this.invoiceListElem = this.generateElement("div", "list-invoices");
-        this.ui.append(this.invoiceListElem);
+        this.ui.appendChild(this.invoiceListElem);
 
         if (invoices.length > 0) {
             const invoiceList = this.generateElement("ul");
-            this.invoiceListElem.append(invoiceList);
+            this.invoiceListElem.appendChild(invoiceList);
 
             invoices.forEach((invoice) => {
                 let listItem = this.generateElement("li", "list-item");
@@ -137,8 +137,8 @@ class View {
                 );
                 listItemLink.setAttribute("data-invoice-id", invoice.id);
 
-                listItem.append(listItemLink);
-                invoiceList.append(listItem);
+                listItem.appendChild(listItemLink);
+                invoiceList.appendChild(listItem);
             });
 
             this.invoiceListElem.addEventListener("click", (event) => {
@@ -172,19 +172,19 @@ class View {
         );
         let editButton = this.generateElement("button", "edit-invoice", "Edit");
 
-        let goBackButton = this.generateElement(
+        let backButton = this.generateElement(
             "button",
             "back-to-invoices",
             "Go Back"
         );
 
-        this.ui.append(this.invoiceElem);
-        this.invoiceElem.append(deleteButton);
-        this.invoiceElem.append(editButton);
-        this.invoiceElem.append(goBackButton);
+        this.ui.appendChild(this.invoiceElem);
+        this.invoiceElem.appendChild(deleteButton);
+        this.invoiceElem.appendChild(editButton);
+        this.invoiceElem.appendChild(backButton);
 
         for (const property in data) {
-            this.invoiceElem.append(
+            this.invoiceElem.appendChild(
                 this.generateElement("p", "", data[property])
             );
         }
@@ -203,10 +203,6 @@ class View {
             }
         });
     }
-
-    getInvoiceData(callback) {
-        this.getInvoice = callback;
-    }
 }
 
 class Controller {
@@ -215,10 +211,10 @@ class Controller {
         this.view = view;
         this.view.deleteInvoice = this.handleDeleteInvoice;
         this.view.editInvoice = this.handleEditInvoice;
+        this.view.getInvoice = this.model.getInvoice;
 
         this.model.onInvoiceChange(this.handleInvoiceListChange);
         this.handleInvoiceListChange(this.model.invoices);
-        this.view.getInvoiceData(this.model.getInvoice);
         this.view.invoiceFormSubmitHandler = this.handleFormInput;
     }
 
