@@ -106,14 +106,10 @@ class View {
                 name: this.invoiceFormInputs.name.value,
             };
 
-            this.handleInvoiceFormSubmit(invoiceFormData, invoiceId);
+            this.submitInvoiceForm(invoiceFormData, invoiceId);
 
             this.ui.removeChild(this.invoiceFormElem);
         });
-    }
-
-    handleInvoiceFormSubmit(invoiceFormData, invoiceId) {
-        this.invoiceFormSubmitHandler(invoiceFormData, invoiceId);
     }
 
     updateInvoices(invoices) {
@@ -212,10 +208,10 @@ class Controller {
         this.view.deleteInvoice = this.handleDeleteInvoice;
         this.view.editInvoice = this.handleEditInvoice;
         this.view.getInvoice = this.model.getInvoice;
+        this.view.submitInvoiceForm = this.handleFormInput;
 
         this.model.onInvoiceChange(this.handleInvoiceListChange);
         this.handleInvoiceListChange(this.model.invoices);
-        this.view.invoiceFormSubmitHandler = this.handleFormInput;
     }
 
     handleFormInput = (data, id) => {
