@@ -208,22 +208,22 @@ class Controller {
         this.view.deleteInvoice = this.handleDeleteInvoice;
         this.view.editInvoice = this.handleEditInvoice;
         this.view.getInvoice = this.model.getInvoice;
-        this.view.submitInvoiceForm = this.handleFormInput;
+        this.view.submitInvoiceForm = this.handleFormSubmit;
 
         this.model.onInvoiceChange(this.handleInvoiceListChange);
         this.handleInvoiceListChange(this.model.invoices);
     }
 
-    handleFormInput = (data, id) => {
-        if (id) {
-            this.model.editInvoice(id, data);
+    handleFormSubmit = (data, invoiceId) => {
+        if (invoiceId) {
+            this.model.editInvoice(invoiceId, data);
         } else {
             this.model.addInvoice(data);
         }
     };
 
-    handleDeleteInvoice = (id) => this.model.deleteInvoice(id);
-    handleEditInvoice = (id) => this.model.getInvoice(id);
+    handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
+    handleEditInvoice = (invoiceId) => this.model.getInvoice(invoiceId);
     handleInvoiceListChange = (invoices) => this.view.updateInvoices(invoices);
 }
 
