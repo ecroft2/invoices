@@ -5,7 +5,6 @@ class Model {
     }
 
     addInvoice(data) {
-        console.log(data);
         this.invoices.push({
             id: this.generateId(),
             name: data.name,
@@ -71,13 +70,6 @@ class View {
             "submit-form",
             "Submit"
         );
-
-        // Invoice List
-        this.invoiceListElem = this.generateElement("div", "list-invoices");
-        this.ui.append(this.invoiceListElem);
-
-        // Invoice
-        this.invoiceElem = this.generateElement("div", "view-invoice");
     }
 
     generateElement(tag, role, text) {
@@ -89,6 +81,8 @@ class View {
     }
 
     viewForm(existingData) {
+        let invoiceId;
+
         // Invoice Form
         this.invoiceFormElem = this.generateElement("form", "new-invoice-form");
         this.ui.append(this.invoiceFormElem);
@@ -101,37 +95,34 @@ class View {
         };
 
         if (existingData) {
-            this.invoiceFormElem.setAttribute("data-invoice-id", data.id);
-            this.invoiceFormElem.elements["name"].value = data.name;
-        } else {
-            [...this.invoiceFormElem.elements].forEach((element) => {
-                element.getAttribute("data-invoice-role") !== "submit-form" &&
-                    (element.value = "");
-            });
+            invoiceId = existingData.id;
+            this.invoiceFormElem.elements["name"].value = existingData.name;
         }
 
         this.invoiceFormElem.addEventListener("submit", (event) => {
             event.preventDefault();
-            this.handleInvoiceFormSubmit();
+
+            const invoiceFormData = {
+                name: this.invoiceFormInputs.name.value,
+            };
+
+            this.handleInvoiceFormSubmit(invoiceFormData, invoiceId);
+
             this.ui.removeChild(this.invoiceFormElem);
         });
     }
 
-    handleInvoiceFormSubmit() {
-        const invoiceFormData = {
-            name: this.invoiceFormInputs.name.value,
-        };
-
-        const invoiceId = parseInt(
-            this.invoiceFormElem.getAttribute("data-invoice-id")
-        );
-
+    handleInvoiceFormSubmit(invoiceFormData, invoiceId) {
         this.invoiceFormSubmitHandler(invoiceFormData, invoiceId);
-        this.invoiceFormElem.removeAttribute("data-invoice-id");
     }
 
     updateInvoices(invoices) {
-        this.invoiceListElem.innerHTML = "";
+        if (this.ui.querySelector("[data-invoice-role='list-invoices']")) {
+            this.ui.removeChild(this.invoiceListElem);
+        }
+
+        this.invoiceListElem = this.generateElement("div", "list-invoices");
+        this.ui.append(this.invoiceListElem);
 
         if (invoices.length > 0) {
             const invoiceList = this.generateElement("ul");
@@ -144,76 +135,77 @@ class View {
                     "list-item-link",
                     `${invoice.name}`
                 );
-                listItemLink.id = invoice.id;
+                listItemLink.setAttribute("data-invoice-id", invoice.id);
 
                 listItem.append(listItemLink);
                 invoiceList.append(listItem);
             });
 
             this.invoiceListElem.addEventListener("click", (event) => {
-                this.onTest(parseInt(event.target.id));
+                let invoiceId = parseInt(
+                    event.target.getAttribute("data-invoice-id")
+                );
+
+                if (
+                    this.ui.querySelector(
+                        "[data-invoice-role='view-invoice']"
+                    ) === null
+                ) {
+                    this.onLoadInvoice(invoiceId);
+                }
             });
         } else {
             this.invoiceListElem.innerHTML = "No invoices!";
         }
     }
 
-    onDeleteInvoice(handler) {
-        this.invoiceElem.addEventListener("click", (event) => {
-            if (event.target.className === "deleteInvoice") {
-                const id = parseInt(event.target.parentElement.id);
-                handler(id);
-            }
-        });
-    }
+    onLoadInvoice(invoiceId) {
+        let data = this.getInvoice(invoiceId);
 
-    onEditInvoice(handler) {
-        this.invoiceElem.addEventListener("click", (event) => {
-            if (event.target.className === "editInvoice") {
-                const id = parseInt(event.target.parentElement.id);
-                const data = handler(id);
+        // Invoice
+        this.invoiceElem = this.generateElement("div", "view-invoice");
 
-                this.viewForm(data);
-            }
-        });
-    }
+        let deleteButton = this.generateElement(
+            "button",
+            "delete-invoice",
+            "Delete"
+        );
+        let editButton = this.generateElement("button", "edit-invoice", "Edit");
 
-    onTest(id) {
-        console.log(id);
-        let data = this.getMe(id);
-        this.invoiceElemData.id = data.id;
+        let goBackButton = this.generateElement(
+            "button",
+            "back-to-invoices",
+            "Go Back"
+        );
+
+        this.ui.append(this.invoiceElem);
+        this.invoiceElem.append(deleteButton);
+        this.invoiceElem.append(editButton);
+        this.invoiceElem.append(goBackButton);
 
         for (const property in data) {
-            this.invoiceElemData.append(
+            this.invoiceElem.append(
                 this.generateElement("p", "", data[property])
             );
         }
 
-        let deleteButton = this.generateElement(
-            "button",
-            "deleteInvoice",
-            "Delete"
-        );
-        let editButton = this.generateElement("button", "editInvoice", "Edit");
-
-        this.invoiceElemData.append(deleteButton);
-        this.invoiceElemData.append(editButton);
-        this.invoiceElem.classList.remove("hide");
-
         this.invoiceElem.addEventListener("click", (event) => {
-            if (
-                event.target.id === "go_back" ||
-                event.target.className === "editInvoice"
-            ) {
-                this.invoiceElem.classList.add("hide");
-                this.invoiceElemData.innerHTML = "";
-                this.invoiceElemData.removeAttribute("id");
+            const targetAttr = event.target.getAttribute("data-invoice-role");
+
+            if (targetAttr === "edit-invoice") {
+                this.editInvoice(invoiceId);
+                this.ui.removeChild(this.invoiceElem);
+            } else if (targetAttr === "delete-invoice") {
+                this.deleteInvoice(invoiceId);
+                this.ui.removeChild(this.invoiceElem);
+            } else if (targetAttr === "back-to-invoices") {
+                this.ui.removeChild(this.invoiceElem);
             }
         });
     }
 
     getInvoiceData(callback) {
-        this.getMe = callback;
+        this.getInvoice = callback;
     }
 }
 
@@ -221,9 +213,10 @@ class Controller {
     constructor(model, view) {
         this.model = model;
         this.view = view;
-        this.view.onDeleteInvoice(this.handleDeleteInvoice);
+        this.view.deleteInvoice = this.handleDeleteInvoice;
+        this.view.editInvoice = this.handleEditInvoice;
+
         this.model.onInvoiceChange(this.handleInvoiceListChange);
-        this.view.onEditInvoice(this.handleEditInvoice);
         this.handleInvoiceListChange(this.model.invoices);
         this.view.getInvoiceData(this.model.getInvoice);
         this.view.invoiceFormSubmitHandler = this.handleFormInput;
@@ -238,8 +231,8 @@ class Controller {
     };
 
     handleDeleteInvoice = (id) => this.model.deleteInvoice(id);
-    handleInvoiceListChange = (invoices) => this.view.updateInvoices(invoices);
     handleEditInvoice = (id) => this.model.getInvoice(id);
+    handleInvoiceListChange = (invoices) => this.view.updateInvoices(invoices);
 }
 
 const App = new Controller(new Model(), new View());
