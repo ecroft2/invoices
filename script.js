@@ -74,6 +74,29 @@ class View {
             "submit-form",
             "Submit"
         );
+
+        // Filter Invoices: Select and options
+        this.filterSelect = this.generateElement(
+            "select",
+            "filter-invoices",
+            ""
+        );
+        const paidSelectOption = this.generateElement("option", "", "Paid");
+        paidSelectOption.value = "paid";
+        const pendingSelectOption = this.generateElement(
+            "option",
+            "",
+            "Pending"
+        );
+        pendingSelectOption.value = "pending";
+        const allSelectOption = this.generateElement("option", "", "All");
+        allSelectOption.value = "all";
+
+        this.filterSelect.add(allSelectOption);
+        this.filterSelect.add(paidSelectOption);
+        this.filterSelect.add(pendingSelectOption);
+
+        this.sortOrder;
     }
 
     generateElement(tag, role, text) {
@@ -127,29 +150,22 @@ class View {
         });
     }
 
-    listInvoices(invoices) {
+    viewInvoices(invoices) {
         if (this.ui.querySelector("[data-invoice-role='list-invoices']")) {
             this.ui.removeChild(this.invoiceListElem);
         }
 
         this.invoiceListElem = this.generateElement("div", "list-invoices");
         this.ui.appendChild(this.invoiceListElem);
+        this.invoiceListElem.appendChild(this.filterSelect);
 
         if (invoices.length > 0) {
-            const invoiceList = this.generateElement("ul");
-            this.invoiceListElem.appendChild(invoiceList);
+            this.invoiceList = this.generateElement("ul", "invoice-list", "");
+            this.sortInvoices(invoices, this.sortOrder);
 
-            invoices.forEach((invoice) => {
-                let listItem = this.generateElement("li", "list-item");
-                let listItemLink = this.generateElement(
-                    "button",
-                    "list-item-link",
-                    `${invoice.data.name}`
-                );
-                listItemLink.setAttribute("data-invoice-id", invoice.id);
-
-                listItem.appendChild(listItemLink);
-                invoiceList.appendChild(listItem);
+            this.filterSelect.addEventListener("change", (event) => {
+                this.sortOrder = event.target.value;
+                this.sortInvoices(invoices, this.sortOrder);
             });
 
             this.invoiceListElem.addEventListener("click", (event) => {
@@ -173,6 +189,41 @@ class View {
         } else {
             this.invoiceListElem.innerHTML = "No invoices!";
         }
+    }
+
+    sortInvoices(invoices, sortOrder) {
+        let filteredInvoices;
+
+        if (document.querySelector("[data-invoice-role='invoice-list']")) {
+            this.invoiceListElem.removeChild(this.invoiceList);
+        }
+
+        this.invoiceList = this.generateElement("ul", "invoice-list", "");
+
+        if (sortOrder === "paid") {
+            filteredInvoices = invoices.filter((invoice) => invoice.isComplete);
+        } else if (sortOrder === "pending") {
+            filteredInvoices = invoices.filter(
+                (invoice) => !invoice.isComplete
+            );
+        } else {
+            filteredInvoices = invoices;
+        }
+
+        this.invoiceListElem.appendChild(this.invoiceList);
+
+        filteredInvoices.forEach((invoice) => {
+            let listItem = this.generateElement("li", "list-item");
+            let listItemLink = this.generateElement(
+                "button",
+                "list-item-link",
+                `${invoice.data.name}`
+            );
+            listItemLink.setAttribute("data-invoice-id", invoice.id);
+
+            listItem.appendChild(listItemLink);
+            this.invoiceList.appendChild(listItem);
+        });
     }
 
     viewInvoice(invoiceId) {
@@ -251,7 +302,6 @@ class Controller {
         this.view.deleteInvoice = this.handleDeleteInvoice;
         this.view.getInvoice = this.model.getInvoice;
         this.view.submitInvoice = this.handleFormSubmit;
-
         this.model.onInvoiceChange(this.handleInvoiceListChange);
         this.handleInvoiceListChange(this.model.invoices);
     }
@@ -265,7 +315,7 @@ class Controller {
     };
 
     handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
-    handleInvoiceListChange = (invoices) => this.view.listInvoices(invoices);
+    handleInvoiceListChange = (invoices) => this.view.viewInvoices(invoices);
 }
 
 const App = new Controller(new Model(), new View());
