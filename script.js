@@ -7,7 +7,10 @@ class Model {
     addInvoice(data) {
         this.invoices.push({
             id: this.generateId(),
-            name: data.name,
+            isComplete: false,
+            data: {
+                name: data.name,
+            },
         });
 
         this.invoiceChangeHandler(this.invoices);
@@ -18,13 +21,13 @@ class Model {
         this.invoiceChangeHandler(this.invoices);
     }
 
-    editInvoice(id, data) {
-        console.log(id, data);
+    editInvoice(invoiceId, invoiceData) {
         this.invoices = this.invoices.map((invoice) =>
-            invoice.id === id
+            invoice.id === invoiceId
                 ? {
-                      id,
-                      name: data.name,
+                      id: invoiceData.id,
+                      isComplete: invoiceData.isComplete,
+                      data: invoiceData.data,
                   }
                 : invoice
         );
@@ -40,9 +43,7 @@ class Model {
         this.invoiceChangeHandler = callback;
     }
 
-    getInvoice = (id) => {
-        return this.invoices.find((invoice) => invoice.id === id);
-    };
+    getInvoice = (id) => this.invoices.find((invoice) => invoice.id === id);
 }
 
 class View {
@@ -56,14 +57,16 @@ class View {
             "New Invoice"
         );
         this.ui.appendChild(this.getFormButtonElem);
-        this.getFormButtonElem.addEventListener("click", () => {
-            this.viewForm();
-        });
 
-        // Invoice Form: Name
-        this.nameInput = this.generateElement("input");
-        this.nameInput.id = "name";
-        this.nameInput.placeholder = "Name";
+        this.getFormButtonElem.addEventListener("click", () => {
+            if (
+                this.ui.querySelector(
+                    "[data-invoice-role='new-invoice-form']"
+                ) === null
+            ) {
+                this.viewForm();
+            }
+        });
 
         // Invoice Form: Submit
         this.invoiceFormButtonElem = this.generateElement(
@@ -81,23 +84,28 @@ class View {
         return element;
     }
 
-    viewForm(existingData) {
-        let invoiceId;
+    viewForm(invoiceId) {
+        let invoiceData = this.getInvoice(invoiceId);
 
         // Invoice Form
         this.invoiceFormElem = this.generateElement("form", "new-invoice-form");
         this.ui.appendChild(this.invoiceFormElem);
+
+        // Invoice Form: Name
+        this.nameInput = this.generateElement("input");
+        this.nameInput.id = "name";
+        this.nameInput.placeholder = "Name";
+
         this.invoiceFormElem.appendChild(this.nameInput);
         this.invoiceFormElem.appendChild(this.invoiceFormButtonElem);
 
-        // Invoice Form: Inputs
+        // Invoice Form: Inputs - Pre-populate with data
         this.invoiceFormInputs = {
             name: this.invoiceFormElem.querySelector("#name"),
         };
 
-        if (existingData) {
-            invoiceId = existingData.id;
-            this.invoiceFormElem.elements["name"].value = existingData.name;
+        if (invoiceId) {
+            this.invoiceFormElem.elements["name"].value = invoiceData.data.name;
         }
 
         this.invoiceFormElem.addEventListener("submit", (event) => {
@@ -107,13 +115,19 @@ class View {
                 name: this.invoiceFormInputs.name.value,
             };
 
-            this.submitInvoiceForm(invoiceFormData, invoiceId);
+            if (invoiceId) {
+                invoiceData.data = invoiceFormData;
+            } else {
+                invoiceData = invoiceFormData;
+            }
+
+            this.submitInvoice(invoiceData, invoiceId);
 
             this.ui.removeChild(this.invoiceFormElem);
         });
     }
 
-    updateInvoices(invoices) {
+    listInvoices(invoices) {
         if (this.ui.querySelector("[data-invoice-role='list-invoices']")) {
             this.ui.removeChild(this.invoiceListElem);
         }
@@ -130,7 +144,7 @@ class View {
                 let listItemLink = this.generateElement(
                     "button",
                     "list-item-link",
-                    `${invoice.name}`
+                    `${invoice.data.name}`
                 );
                 listItemLink.setAttribute("data-invoice-id", invoice.id);
 
@@ -152,7 +166,7 @@ class View {
                             "[data-invoice-role='view-invoice']"
                         ) === null
                     ) {
-                        this.onLoadInvoice(invoiceId);
+                        this.viewInvoice(invoiceId);
                     }
                 }
             });
@@ -161,8 +175,8 @@ class View {
         }
     }
 
-    onLoadInvoice(invoiceId) {
-        let data = this.getInvoice(invoiceId);
+    viewInvoice(invoiceId) {
+        let invoice = this.getInvoice(invoiceId);
 
         // Invoice
         this.invoiceElem = this.generateElement("div", "view-invoice");
@@ -180,14 +194,31 @@ class View {
             "Go Back"
         );
 
+        let paidButton = this.generateElement(
+            "button",
+            "change-inv-status",
+            invoice.isComplete ? "Mark as Pending" : "Mark as Paid"
+        );
+
         this.ui.appendChild(this.invoiceElem);
         this.invoiceElem.appendChild(deleteButton);
         this.invoiceElem.appendChild(editButton);
         this.invoiceElem.appendChild(backButton);
+        this.invoiceElem.appendChild(paidButton);
 
-        for (const property in data) {
+        this.invoiceElem.appendChild(this.generateElement("p", "", invoice.id));
+
+        this.invoiceElem.appendChild(
+            this.generateElement(
+                "p",
+                "",
+                invoice.isComplete ? "Paid" : "Pending"
+            )
+        );
+
+        for (const property in invoice.data) {
             this.invoiceElem.appendChild(
-                this.generateElement("p", "", data[property])
+                this.generateElement("p", "", invoice.data[property])
             );
         }
 
@@ -195,12 +226,18 @@ class View {
             const targetAttr = event.target.getAttribute("data-invoice-role");
 
             if (targetAttr === "edit-invoice") {
-                this.editInvoice(invoiceId);
+                this.viewForm(invoiceId);
                 this.ui.removeChild(this.invoiceElem);
             } else if (targetAttr === "delete-invoice") {
                 this.deleteInvoice(invoiceId);
                 this.ui.removeChild(this.invoiceElem);
             } else if (targetAttr === "back-to-invoices") {
+                this.ui.removeChild(this.invoiceElem);
+            } else if (targetAttr === "change-inv-status") {
+                invoice.isComplete
+                    ? (invoice.isComplete = false)
+                    : (invoice.isComplete = true);
+                this.submitInvoice(invoice, invoiceId);
                 this.ui.removeChild(this.invoiceElem);
             }
         });
@@ -212,25 +249,23 @@ class Controller {
         this.model = model;
         this.view = view;
         this.view.deleteInvoice = this.handleDeleteInvoice;
-        this.view.editInvoice = this.handleEditInvoice;
         this.view.getInvoice = this.model.getInvoice;
-        this.view.submitInvoiceForm = this.handleFormSubmit;
+        this.view.submitInvoice = this.handleFormSubmit;
 
         this.model.onInvoiceChange(this.handleInvoiceListChange);
         this.handleInvoiceListChange(this.model.invoices);
     }
 
-    handleFormSubmit = (data, invoiceId) => {
+    handleFormSubmit = (invoiceData, invoiceId) => {
         if (invoiceId) {
-            this.model.editInvoice(invoiceId, data);
+            this.model.editInvoice(invoiceId, invoiceData);
         } else {
-            this.model.addInvoice(data);
+            this.model.addInvoice(invoiceData);
         }
     };
 
     handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
-    handleEditInvoice = (invoiceId) => this.model.getInvoice(invoiceId);
-    handleInvoiceListChange = (invoices) => this.view.updateInvoices(invoices);
+    handleInvoiceListChange = (invoices) => this.view.listInvoices(invoices);
 }
 
 const App = new Controller(new Model(), new View());
