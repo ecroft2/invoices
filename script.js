@@ -19,6 +19,7 @@ class Model {
     }
 
     editInvoice(id, data) {
+        console.log(id, data);
         this.invoices = this.invoices.map((invoice) =>
             invoice.id === id
                 ? {
@@ -138,16 +139,21 @@ class View {
             });
 
             this.invoiceListElem.addEventListener("click", (event) => {
-                let invoiceId = parseInt(
-                    event.target.getAttribute("data-invoice-id")
-                );
-
                 if (
-                    this.ui.querySelector(
-                        "[data-invoice-role='view-invoice']"
-                    ) === null
+                    event.target.getAttribute("data-invoice-role") ===
+                    "list-item-link"
                 ) {
-                    this.onLoadInvoice(invoiceId);
+                    let invoiceId = parseInt(
+                        event.target.getAttribute("data-invoice-id")
+                    );
+
+                    if (
+                        this.ui.querySelector(
+                            "[data-invoice-role='view-invoice']"
+                        ) === null
+                    ) {
+                        this.onLoadInvoice(invoiceId);
+                    }
                 }
             });
         } else {
