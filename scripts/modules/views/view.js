@@ -1,3 +1,9 @@
+import {
+    createElement,
+    createInputElement,
+    createButtonElement,
+} from "./elements.js";
+
 class View {
     constructor() {
         this.ui = document.querySelector("#main");
@@ -59,35 +65,66 @@ class View {
         return element;
     }
 
+    createFormItemList() {
+        let itemListRow = this.generateElement("div", "form-item-list-row");
+
+        let itemName = this.generateElement("input");
+        itemName.id = "itemName";
+        itemName.placeholder = "Item Name";
+
+        let itemQuantity = this.generateElement("input");
+        itemQuantity.id = "itemQuantity";
+        itemQuantity.placeholder = "Item Quantity";
+
+        let itemPrice = this.generateElement("input");
+        itemPrice.id = "itemPrice";
+        itemPrice.placeholder = "Item Price";
+
+        itemListRow.appendChild(itemName);
+        itemListRow.appendChild(itemQuantity);
+        itemListRow.appendChild(itemPrice);
+
+        this.formItemList.appendChild(itemListRow);
+    }
+
     viewForm(invoiceId) {
+        let invoiceRowCounter = 1;
         let invoiceData = this.getInvoice(invoiceId);
 
         // Invoice Form
         this.invoiceFormElem = this.generateElement("form", "new-invoice-form");
         this.ui.appendChild(this.invoiceFormElem);
 
-        // Invoice Form: Name
-        this.nameInput = this.generateElement("input");
-        this.nameInput.id = "name";
-        this.nameInput.placeholder = "Name";
+        // Invoice Form: Sender From
+        this.senderFromInput = this.generateElement("input");
+        this.senderFromInput.id = "senderFrom";
+        this.senderFromInput.placeholder = "Sender From";
 
-        this.invoiceFormElem.appendChild(this.nameInput);
+        // Invoice Form: Items
+        this.formItemList = this.generateElement("div", "form-item-list");
+        this.createFormItemList();
+
+        // Append Inputs
+        this.invoiceFormElem.appendChild(this.senderFromInput);
+        this.invoiceFormElem.appendChild(this.formItemList);
+
         this.invoiceFormElem.appendChild(this.invoiceFormButtonElem);
 
         // Invoice Form: Inputs - Pre-populate with data
         this.invoiceFormInputs = {
-            name: this.invoiceFormElem.querySelector("#name"),
+            senderFrom: this.invoiceFormElem.querySelector("#senderFrom"),
         };
 
         if (invoiceId) {
-            this.invoiceFormElem.elements["name"].value = invoiceData.data.name;
+            this.invoiceFormElem.elements["senderFrom"].value =
+                invoiceData.data.senderFrom;
         }
 
         this.invoiceFormElem.addEventListener("submit", (event) => {
             event.preventDefault();
 
             const invoiceFormData = {
-                name: this.invoiceFormInputs.name.value,
+                senderFrom: this.invoiceFormInputs.senderFrom.value,
             };
 
             if (invoiceId) {
@@ -169,7 +206,7 @@ class View {
             let listItemLink = this.generateElement(
                 "button",
                 "list-item-link",
-                `${invoice.data.name}`
+                `${invoice.data.senderFrom}`
             );
             listItemLink.setAttribute("data-invoice-id", invoice.id);
 

@@ -9,7 +9,7 @@ class Model {
             id: this.generateId(),
             isComplete: false,
             data: {
-                name: data.name,
+                senderFrom: data.senderFrom,
             },
         });
 
