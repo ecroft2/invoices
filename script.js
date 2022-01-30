@@ -237,6 +237,23 @@ class View {
             "delete-invoice",
             "Delete"
         );
+
+        let deletePromptWrap = this.generateElement(
+            "div",
+            "prompt-delete-invoice-wrap",
+            "Are you sure you want to delete your invoice?"
+        );
+        let deletePromptWrapConfirmButton = this.generateElement(
+            "button",
+            "prompt-delete-invoice-confirm",
+            "Delete"
+        );
+        let deletePromptWrapCancelButton = this.generateElement(
+            "button",
+            "prompt-delete-invoice-cancel",
+            "Cancel"
+        );
+
         let editButton = this.generateElement("button", "edit-invoice", "Edit");
 
         let backButton = this.generateElement(
@@ -280,8 +297,24 @@ class View {
                 this.viewForm(invoiceId);
                 this.ui.removeChild(this.invoiceElem);
             } else if (targetAttr === "delete-invoice") {
-                this.deleteInvoice(invoiceId);
-                this.ui.removeChild(this.invoiceElem);
+                this.invoiceElem.appendChild(deletePromptWrap);
+                deletePromptWrap.appendChild(deletePromptWrapCancelButton);
+                deletePromptWrap.appendChild(deletePromptWrapConfirmButton);
+
+                deletePromptWrap.addEventListener("click", (event) => {
+                    if (
+                        event.target.getAttribute("data-invoice-role") ===
+                        "prompt-delete-invoice-cancel"
+                    ) {
+                        this.invoiceElem.removeChild(deletePromptWrap);
+                    } else if (
+                        event.target.getAttribute("data-invoice-role") ===
+                        "prompt-delete-invoice-confirm"
+                    ) {
+                        this.deleteInvoice(invoiceId);
+                        this.ui.removeChild(this.invoiceElem);
+                    }
+                });
             } else if (targetAttr === "back-to-invoices") {
                 this.ui.removeChild(this.invoiceElem);
             } else if (targetAttr === "change-inv-status") {
