@@ -1,51 +1,3 @@
-class Model {
-    constructor() {
-        this.invoices = [];
-        this.counter = 0;
-    }
-
-    addInvoice(data) {
-        this.invoices.push({
-            id: this.generateId(),
-            isComplete: false,
-            data: {
-                name: data.name,
-            },
-        });
-
-        this.invoiceChangeHandler(this.invoices);
-    }
-
-    deleteInvoice(id) {
-        this.invoices = this.invoices.filter((invoice) => invoice.id !== id);
-        this.invoiceChangeHandler(this.invoices);
-    }
-
-    editInvoice(invoiceId, invoiceData) {
-        this.invoices = this.invoices.map((invoice) =>
-            invoice.id === invoiceId
-                ? {
-                      id: invoiceData.id,
-                      isComplete: invoiceData.isComplete,
-                      data: invoiceData.data,
-                  }
-                : invoice
-        );
-        this.invoiceChangeHandler(this.invoices);
-    }
-
-    generateId() {
-        this.counter++;
-        return this.counter;
-    }
-
-    onInvoiceChange(callback) {
-        this.invoiceChangeHandler = callback;
-    }
-
-    getInvoice = (id) => this.invoices.find((invoice) => invoice.id === id);
-}
-
 class View {
     constructor() {
         this.ui = document.querySelector("#main");
@@ -328,27 +280,4 @@ class View {
     }
 }
 
-class Controller {
-    constructor(model, view) {
-        this.model = model;
-        this.view = view;
-        this.view.deleteInvoice = this.handleDeleteInvoice;
-        this.view.getInvoice = this.model.getInvoice;
-        this.view.submitInvoice = this.handleFormSubmit;
-        this.model.onInvoiceChange(this.handleInvoiceListChange);
-        this.handleInvoiceListChange(this.model.invoices);
-    }
-
-    handleFormSubmit = (invoiceData, invoiceId) => {
-        if (invoiceId) {
-            this.model.editInvoice(invoiceId, invoiceData);
-        } else {
-            this.model.addInvoice(invoiceData);
-        }
-    };
-
-    handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
-    handleInvoiceListChange = (invoices) => this.view.viewInvoices(invoices);
-}
-
-const App = new Controller(new Model(), new View());
+export default View;
