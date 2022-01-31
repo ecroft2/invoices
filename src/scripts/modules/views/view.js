@@ -6,24 +6,22 @@ import {
 
 class View {
     constructor() {
-        this.ui = document.querySelector("#main");
+        this.header = document.querySelector(".header");
+        this.content = document.querySelector(".content");
 
-        // New Invoice Elem
-        this.getFormButtonElem = this.generateElement(
-            "button",
-            "get-invoice-form",
-            "New Invoice"
+        this.totalInvoices = document.querySelector(
+            "[data-invoice-role='count']"
         );
-        this.ui.appendChild(this.getFormButtonElem);
+        this.newFormElem = document.querySelector(
+            "[data-invoice-role='new-form']"
+        );
 
-        this.getFormButtonElem.addEventListener("click", () => {
-            if (
-                this.ui.querySelector(
-                    "[data-invoice-role='new-invoice-form']"
-                ) === null
-            ) {
-                this.viewForm();
-            }
+        this.header.appendChild(this.newFormElem);
+
+        this.newFormElem.addEventListener("click", () => {
+            this.content.querySelector(
+                "[data-invoice-role='new-invoice-form']"
+            ) === null && this.viewForm();
         });
 
         // Invoice Form: Submit
@@ -34,26 +32,9 @@ class View {
         );
 
         // Filter Invoices: Select and options
-        this.filterSelect = this.generateElement(
-            "select",
-            "filter-invoices",
-            ""
+        this.filterSelect = document.querySelector(
+            "[data-invoice-role='filter']"
         );
-        const paidSelectOption = this.generateElement("option", "", "Paid");
-        paidSelectOption.value = "paid";
-        const pendingSelectOption = this.generateElement(
-            "option",
-            "",
-            "Pending"
-        );
-        pendingSelectOption.value = "pending";
-        const allSelectOption = this.generateElement("option", "", "All");
-        allSelectOption.value = "all";
-
-        this.filterSelect.add(allSelectOption);
-        this.filterSelect.add(paidSelectOption);
-        this.filterSelect.add(pendingSelectOption);
-
         this.sortOrder;
     }
 
@@ -93,7 +74,7 @@ class View {
 
         // Invoice Form
         this.invoiceFormElem = this.generateElement("form", "new-invoice-form");
-        this.ui.appendChild(this.invoiceFormElem);
+        this.content.appendChild(this.invoiceFormElem);
 
         // Invoice Form: Sender From
         this.senderFromInput = this.generateElement("input");
@@ -135,20 +116,25 @@ class View {
 
             this.submitInvoice(invoiceData, invoiceId);
 
-            this.ui.removeChild(this.invoiceFormElem);
+            this.content.removeChild(this.invoiceFormElem);
         });
     }
 
     viewInvoices(invoices) {
-        if (this.ui.querySelector("[data-invoice-role='list-invoices']")) {
-            this.ui.removeChild(this.invoiceListElem);
+        if (this.content.querySelector("[data-invoice-role='list-invoices']")) {
+            this.content.removeChild(this.invoiceListElem);
         }
 
         this.invoiceListElem = this.generateElement("div", "list-invoices");
-        this.ui.appendChild(this.invoiceListElem);
-        this.invoiceListElem.appendChild(this.filterSelect);
+        this.content.appendChild(this.invoiceListElem);
 
         if (invoices.length > 0) {
+            this.totalInvoices.innerHTML = `${
+                invoices.length === 1
+                    ? `There is 1 invoice.`
+                    : `There are ${invoices.length} total invoices.`
+            }`;
+
             this.invoiceList = this.generateElement("ul", "invoice-list", "");
             this.sortInvoices(invoices, this.sortOrder);
 
@@ -167,7 +153,7 @@ class View {
                     );
 
                     if (
-                        this.ui.querySelector(
+                        this.content.querySelector(
                             "[data-invoice-role='view-invoice']"
                         ) === null
                     ) {
@@ -257,7 +243,7 @@ class View {
             invoice.isComplete ? "Mark as Pending" : "Mark as Paid"
         );
 
-        this.ui.appendChild(this.invoiceElem);
+        this.content.appendChild(this.invoiceElem);
         this.invoiceElem.appendChild(deleteButton);
         this.invoiceElem.appendChild(editButton);
         this.invoiceElem.appendChild(backButton);
@@ -284,7 +270,7 @@ class View {
 
             if (targetAttr === "edit-invoice") {
                 this.viewForm(invoiceId);
-                this.ui.removeChild(this.invoiceElem);
+                this.content.removeChild(this.invoiceElem);
             } else if (targetAttr === "delete-invoice") {
                 this.invoiceElem.appendChild(deletePromptWrap);
                 deletePromptWrap.appendChild(deletePromptWrapCancelButton);
@@ -301,17 +287,17 @@ class View {
                         "prompt-delete-invoice-confirm"
                     ) {
                         this.deleteInvoice(invoiceId);
-                        this.ui.removeChild(this.invoiceElem);
+                        this.content.removeChild(this.invoiceElem);
                     }
                 });
             } else if (targetAttr === "back-to-invoices") {
-                this.ui.removeChild(this.invoiceElem);
+                this.content.removeChild(this.invoiceElem);
             } else if (targetAttr === "change-inv-status") {
                 invoice.isComplete
                     ? (invoice.isComplete = false)
                     : (invoice.isComplete = true);
                 this.submitInvoice(invoice, invoiceId);
-                this.ui.removeChild(this.invoiceElem);
+                this.content.removeChild(this.invoiceElem);
             }
         });
     }

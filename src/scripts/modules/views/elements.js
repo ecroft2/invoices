@@ -34,7 +34,8 @@ const createInputElement = (props) => {
 };
 
 const createButtonElement = (props) => {
-    let additionalClasses = "button";
+    let additionalClasses =
+        "group text-xs h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold text-white items-center flex";
     props.tag = "button";
 
     props.className
