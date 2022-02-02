@@ -1,7 +1,8 @@
 import {
     createElement,
-    createInputElement,
-    createButtonElement,
+    // createInputElement,
+    // createButtonElement,
+    // createInvoiceListElement,
 } from "./elements.js";
 
 class View {
@@ -121,12 +122,7 @@ class View {
     }
 
     viewInvoices(invoices) {
-        if (this.content.querySelector("[data-invoice-role='list-invoices']")) {
-            this.content.removeChild(this.invoiceListElem);
-        }
-
-        this.invoiceListElem = this.generateElement("div", "list-invoices");
-        this.content.appendChild(this.invoiceListElem);
+        this.content.innerHTML = "";
 
         if (invoices.length > 0) {
             this.totalInvoices.innerHTML = `${
@@ -135,12 +131,6 @@ class View {
                     : `There are ${invoices.length} total invoices.`
             }`;
 
-            this.invoicesList = createElement({
-                attrs: {
-                    invoiceRole: "invoices-list",
-                },
-            });
-
             this.sortInvoices(invoices, this.sortOrder);
 
             this.filterSelect.addEventListener("change", (event) => {
@@ -148,26 +138,25 @@ class View {
                 this.sortInvoices(invoices, this.sortOrder);
             });
 
-            this.invoiceListElem.addEventListener("click", (event) => {
+            this.invoicesList.addEventListener("click", (event) => {
                 if (
-                    event.target.getAttribute("data-invoice-role") ===
-                    "list-item-link"
+                    event.target
+                        .closest("[data-invoice-role='view-invoice']")
+                        .getAttribute("data-invoice-role") === "view-invoice"
                 ) {
                     let invoiceId = parseInt(
-                        event.target.getAttribute("data-invoice-id")
+                        event.target
+                            .closest("[data-invoice-role='view-invoice']")
+                            .getAttribute("data-invoice-id")
                     );
 
-                    if (
-                        this.content.querySelector(
-                            "[data-invoice-role='view-invoice']"
-                        ) === null
-                    ) {
-                        this.viewInvoice(invoiceId);
-                    }
+                    this.content.querySelector(
+                        "[data-invoice-role='invoice-data']"
+                    ) === null && this.viewInvoice(invoiceId);
                 }
             });
         } else {
-            this.invoiceListElem.innerHTML = "No invoices!";
+            this.content.innerHTML = "No invoices!";
         }
     }
 
@@ -175,37 +164,60 @@ class View {
         let filteredInvoices;
 
         this.content.querySelector("[data-invoice-role='invoices-list']") &&
-            this.invoiceListElem.removeChild(this.invoicesList);
+            (this.content.innerHTML = "");
 
         this.invoicesList = createElement({
             tag: "ul",
             attrs: {
                 invoiceRole: "invoices-list",
             },
-        });
+        }); // Should I be moved somewhere else?
 
-        if (invoiceSortOrder === "paid") {
-            filteredInvoices = invoices.filter((invoice) => invoice.isComplete);
-        } else if (invoiceSortOrder === "pending") {
-            filteredInvoices = invoices.filter(
-                (invoice) => !invoice.isComplete
-            );
-        } else {
-            filteredInvoices = invoices;
+        switch (invoiceSortOrder) {
+            case "paid":
+                filteredInvoices = invoices.filter(
+                    (invoice) => invoice.isComplete
+                );
+                break;
+            case "pending":
+                filteredInvoices = invoices.filter(
+                    (invoice) => !invoice.isComplete
+                );
+                break;
+            default:
+                filteredInvoices = invoices;
+                break;
         }
 
-        this.invoiceListElem.appendChild(this.invoicesList);
+        this.content.appendChild(this.invoicesList);
 
         filteredInvoices.forEach((invoice) => {
-            let listItem = this.generateElement("li", "list-item");
-            let listItemLink = this.generateElement(
-                "button",
-                "list-item-link",
-                `${invoice.data.senderFrom}`
-            );
-            listItemLink.setAttribute("data-invoice-id", invoice.id);
+            let listItem = createElement({
+                tag: "li",
+                attrs: {
+                    invoiceRole: "list-item",
+                },
+            });
 
-            listItem.appendChild(listItemLink);
+            listItem.innerHTML = `
+                <button data-invoice-role="view-invoice" data-invoice-id="${
+                    invoice.id
+                }" class="flex items-center text-xs justify-evenly mb-4 bg-white p-4 w-full">
+                    <span class="font-bold text-base">#${invoice.id}</span>
+                    <span class="text-slate-500">${
+                        invoice.data.senderFrom
+                    }</span>
+                    <span class="text-slate-500 font-semibold py-3 px-6 rounded ${
+                        invoice.isComplete
+                            ? "bg-green-100 text-green-500"
+                            : "bg-orange-100 text-orange-500"
+                    }">
+                        <i class="fas fa-circle fa-xs mr-1"></i>
+                        ${invoice.isComplete ? "Paid" : "Pending"}
+                    </span>
+                </button>
+            `;
+
             this.invoicesList.appendChild(listItem);
         });
     }
@@ -214,7 +226,7 @@ class View {
         let invoice = this.getInvoice(invoiceId);
 
         // Invoice
-        this.invoiceElem = this.generateElement("div", "view-invoice");
+        this.invoiceElem = this.generateElement("div", "invoice-data");
 
         let deleteButton = this.generateElement(
             "button",
