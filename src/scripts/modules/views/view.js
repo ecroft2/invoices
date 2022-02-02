@@ -135,7 +135,12 @@ class View {
                     : `There are ${invoices.length} total invoices.`
             }`;
 
-            this.invoiceList = this.generateElement("ul", "invoice-list", "");
+            this.invoicesList = createElement({
+                attrs: {
+                    invoiceRole: "invoices-list",
+                },
+            });
+
             this.sortInvoices(invoices, this.sortOrder);
 
             this.filterSelect.addEventListener("change", (event) => {
@@ -166,18 +171,22 @@ class View {
         }
     }
 
-    sortInvoices(invoices, sortOrder) {
+    sortInvoices(invoices, invoiceSortOrder) {
         let filteredInvoices;
 
-        if (document.querySelector("[data-invoice-role='invoice-list']")) {
-            this.invoiceListElem.removeChild(this.invoiceList);
-        }
+        this.content.querySelector("[data-invoice-role='invoices-list']") &&
+            this.invoiceListElem.removeChild(this.invoicesList);
 
-        this.invoiceList = this.generateElement("ul", "invoice-list", "");
+        this.invoicesList = createElement({
+            tag: "ul",
+            attrs: {
+                invoiceRole: "invoices-list",
+            },
+        });
 
-        if (sortOrder === "paid") {
+        if (invoiceSortOrder === "paid") {
             filteredInvoices = invoices.filter((invoice) => invoice.isComplete);
-        } else if (sortOrder === "pending") {
+        } else if (invoiceSortOrder === "pending") {
             filteredInvoices = invoices.filter(
                 (invoice) => !invoice.isComplete
             );
@@ -185,7 +194,7 @@ class View {
             filteredInvoices = invoices;
         }
 
-        this.invoiceListElem.appendChild(this.invoiceList);
+        this.invoiceListElem.appendChild(this.invoicesList);
 
         filteredInvoices.forEach((invoice) => {
             let listItem = this.generateElement("li", "list-item");
@@ -197,7 +206,7 @@ class View {
             listItemLink.setAttribute("data-invoice-id", invoice.id);
 
             listItem.appendChild(listItemLink);
-            this.invoiceList.appendChild(listItem);
+            this.invoicesList.appendChild(listItem);
         });
     }
 
