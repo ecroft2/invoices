@@ -131,36 +131,18 @@ class View {
                     : `There are ${invoices.length} total invoices.`
             }`;
 
-            this.sortInvoices(invoices, this.sortOrder);
+            this.createInvoiceList(invoices, this.sortOrder);
 
             this.filterSelect.addEventListener("change", (event) => {
                 this.sortOrder = event.target.value;
-                this.sortInvoices(invoices, this.sortOrder);
-            });
-
-            this.invoicesList.addEventListener("click", (event) => {
-                if (
-                    event.target
-                        .closest("[data-invoice-role='view-invoice']")
-                        .getAttribute("data-invoice-role") === "view-invoice"
-                ) {
-                    let invoiceId = parseInt(
-                        event.target
-                            .closest("[data-invoice-role='view-invoice']")
-                            .getAttribute("data-invoice-id")
-                    );
-
-                    this.content.querySelector(
-                        "[data-invoice-role='invoice-data']"
-                    ) === null && this.viewInvoice(invoiceId);
-                }
+                this.createInvoiceList(invoices, this.sortOrder);
             });
         } else {
             this.content.innerHTML = "No invoices!";
         }
     }
 
-    sortInvoices(invoices, invoiceSortOrder) {
+    createInvoiceList(invoices, invoiceSortOrder) {
         let filteredInvoices;
 
         this.content.querySelector("[data-invoice-role='invoices-list']") &&
@@ -219,6 +201,24 @@ class View {
             `;
 
             this.invoicesList.appendChild(listItem);
+
+            this.invoicesList.addEventListener("click", (event) => {
+                if (
+                    event.target
+                        .closest("[data-invoice-role='view-invoice']")
+                        .getAttribute("data-invoice-role") === "view-invoice"
+                ) {
+                    let invoiceId = parseInt(
+                        event.target
+                            .closest("[data-invoice-role='view-invoice']")
+                            .getAttribute("data-invoice-id")
+                    );
+
+                    this.content.querySelector(
+                        "[data-invoice-role='invoice-data']"
+                    ) === null && this.viewInvoice(invoiceId);
+                }
+            });
         });
     }
 
