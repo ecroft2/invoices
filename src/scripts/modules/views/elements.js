@@ -22,29 +22,19 @@ const createElement = (props) => {
     return fragment.appendChild(element);
 };
 
-// Additional classes on top of additional classes?
-// const createInputElement = (props) => {
-//     let additionalClasses = "input";
-//     props.tag = "input";
+const createButtonElement = (props) => {
+    let latestProps = props;
 
-//     props.className
-//         ? (props.className += " " + additionalClasses)
-//         : (props.className = additionalClasses);
+    let additionalClasses =
+        "group text-xs h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold text-white items-center flex";
+    latestProps.tag = "button";
 
-//     return createElement({ ...props });
-// };
+    latestProps.className
+        ? (latestProps.className += " " + additionalClasses)
+        : (latestProps.className = additionalClasses);
 
-// const createButtonElement = (props) => {
-//     let additionalClasses =
-//         "group text-xs h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold text-white items-center flex";
-//     props.tag = "button";
-
-//     props.className
-//         ? (props.className += " " + additionalClasses)
-//         : (props.className = additionalClasses);
-
-//     return createElement({ ...props });
-// };
+    return createElement({ ...latestProps });
+};
 
 // const createInvoiceListElement = (props) => {
 //     let additionalClasses = "mb-16 bg-white p-16 w-full";
@@ -61,9 +51,27 @@ const createElement = (props) => {
 //     return createElement({ ...props });
 // };
 
+const createInputElement = (field, labelText, type) => {
+    const fragment = document.createDocumentFragment();
+    const input = document.createElement("input");
+    const label = document.createElement("label");
+    const fieldName = field.toLowerCase();
+
+    input.name = fieldName;
+    input.type = type;
+
+    label.for = fieldName;
+    label.innerHTML = labelText;
+
+    fragment.appendChild(label);
+    fragment.appendChild(input);
+
+    return fragment;
+};
+
 export {
     createElement,
-    // createInputElement,
-    // createButtonElement,
+    createInputElement,
+    createButtonElement,
     // createInvoiceListElement,
 };
