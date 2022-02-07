@@ -1,41 +1,27 @@
 import {
     createElement,
-    // createInputElement,
-    // createButtonElement,
+    createInputElement,
+    createButtonElement,
     // createInvoiceListElement,
 } from "./elements.js";
 
 class View {
     constructor() {
+        this.root = document.querySelector(".root");
         this.header = document.querySelector(".header");
         this.content = document.querySelector(".content");
 
-        this.totalInvoices = document.querySelector(
-            "[data-invoice-role='count']"
-        );
-        this.newFormElem = document.querySelector(
-            "[data-invoice-role='new-form']"
-        );
+        this.totalInvoices = document.querySelector("[data-invoice-role='count-invoices']");
+        this.newFormButton = document.querySelector("[data-invoice-role='get-new-form']");
 
-        this.header.appendChild(this.newFormElem);
+        this.header.appendChild(this.newFormButton);
 
-        this.newFormElem.addEventListener("click", () => {
-            this.content.querySelector(
-                "[data-invoice-role='new-invoice-form']"
-            ) === null && this.viewForm();
+        this.newFormButton.addEventListener("click", () => {
+            this.root.querySelector("[data-invoice-role='form-wrap']") === null && this.viewForm();
         });
 
-        // Invoice Form: Submit
-        this.invoiceFormButtonElem = this.generateElement(
-            "button",
-            "submit-form",
-            "Submit"
-        );
-
         // Filter Invoices: Select and options
-        this.filterSelect = document.querySelector(
-            "[data-invoice-role='filter']"
-        );
+        this.filterSelect = document.querySelector("[data-invoice-role='filter']");
         this.sortOrder;
     }
 
@@ -47,67 +33,105 @@ class View {
         return element;
     }
 
-    createFormItemList() {
-        let itemListRow = this.generateElement("div", "form-item-list-row");
+    generateFormItems() {
+        const formFragment = document.createDocumentFragment();
+        const form = createElement({
+            tag: "form",
+            className: "form-overlay",
+            attrs: {
+                invoiceRole: "form",
+            },
+        });
 
-        let itemName = this.generateElement("input");
-        itemName.id = "itemName";
-        itemName.placeholder = "Item Name";
+        // Bill From
+        const fromInputsFieldset = createElement({ tag: "fieldset" });
+        const fromInputsLegend = createElement({ tag: "legend", html: "Bill From" });
+        const fromAddress = createInputElement("from_address", "Address", "text");
+        const fromCity = createInputElement("from_city", "City", "text");
+        const fromPostcode = createInputElement("from_postcode", "Postcode", "text");
+        const fromCountry = createInputElement("from_country", "Country", "text");
 
-        let itemQuantity = this.generateElement("input");
-        itemQuantity.id = "itemQuantity";
-        itemQuantity.placeholder = "Item Quantity";
+        fromInputsFieldset.appendChild(fromInputsLegend);
+        fromInputsFieldset.appendChild(fromAddress);
+        fromInputsFieldset.appendChild(fromCity);
+        fromInputsFieldset.appendChild(fromPostcode);
+        fromInputsFieldset.appendChild(fromCountry);
 
-        let itemPrice = this.generateElement("input");
-        itemPrice.id = "itemPrice";
-        itemPrice.placeholder = "Item Price";
+        // Bill To
+        const toInputsFieldset = createElement({ tag: "fieldset" });
+        const toInputsLegend = createElement({ tag: "legend", html: "Bill To" });
+        const toName = createInputElement("to_name", "Name", "text");
+        const toEmail = createInputElement("to_email", "Email", "text");
+        const toAddress = createInputElement("to_address", "Street Address", "text");
+        const toCity = createInputElement("to_city", "City", "text");
+        const toPostcode = createInputElement("to_postcode", "Postcode", "text");
+        const toCountry = createInputElement("to_country", "Country", "text");
+        const toDate = createInputElement("to_date", "Invoice Date", "");
+        const toPaymentTerms = createInputElement("to_payment_terms", "Payment Terms", "");
+        const toPaymentDesc = createInputElement("to_payment_desc", "Payment Description", "text");
 
-        itemListRow.appendChild(itemName);
-        itemListRow.appendChild(itemQuantity);
-        itemListRow.appendChild(itemPrice);
+        toInputsFieldset.appendChild(toInputsLegend);
+        toInputsFieldset.appendChild(toName);
+        toInputsFieldset.appendChild(toEmail);
+        toInputsFieldset.appendChild(toAddress);
+        toInputsFieldset.appendChild(toCity);
+        toInputsFieldset.appendChild(toPostcode);
+        toInputsFieldset.appendChild(toCountry);
+        toInputsFieldset.appendChild(toDate);
+        toInputsFieldset.appendChild(toPaymentTerms);
+        toInputsFieldset.appendChild(toPaymentDesc);
 
-        this.formItemList.appendChild(itemListRow);
+        // Button
+        const submitButton = createButtonElement({
+            type: "submit",
+            html: "Save & Send",
+            attrs: {
+                invoiceRole: "submit-form",
+            },
+        });
+
+        form.appendChild(fromInputsFieldset);
+        form.appendChild(toInputsFieldset);
+        form.appendChild(submitButton);
+        formFragment.appendChild(form);
+
+        return formFragment;
     }
 
     viewForm(invoiceId) {
-        let invoiceRowCounter = 1;
-        let invoiceData = this.getInvoice(invoiceId);
-
-        // Invoice Form
-        this.invoiceFormElem = this.generateElement("form", "new-invoice-form");
-        this.content.appendChild(this.invoiceFormElem);
-
-        // Invoice Form: Sender From
-        this.senderFromInput = this.generateElement("input");
-        this.senderFromInput.id = "senderFrom";
-        this.senderFromInput.placeholder = "Sender From";
-
-        // Invoice Form: Items
-        this.formItemList = this.generateElement("div", "form-item-list");
-        this.createFormItemList();
-
-        // Append Inputs
-        this.invoiceFormElem.appendChild(this.senderFromInput);
-        this.invoiceFormElem.appendChild(this.formItemList);
-
-        this.invoiceFormElem.appendChild(this.invoiceFormButtonElem);
+        this.root.appendChild(this.generateFormItems());
+        let invoiceForm = document.querySelector("[data-invoice-role='form']");
+        let invoiceData;
 
         // Invoice Form: Inputs - Pre-populate with data
-        this.invoiceFormInputs = {
-            senderFrom: this.invoiceFormElem.querySelector("#senderFrom"),
-        };
+        // this.invoiceFormInputs = {
+        //     senderFrom: this.invoiceFormElem.querySelector("#senderFrom"),
+        // };
 
         if (invoiceId) {
-            this.invoiceFormElem.elements["senderFrom"].value =
-                invoiceData.data.senderFrom;
+            invoiceData = this.getInvoice(invoiceId);
+
+            for (const [key, value] of Object.entries(invoiceData.data)) {
+                let inputName = key.replace(/[A-Z]/g, (l) => "_" + l.toLowerCase());
+
+                invoiceForm.elements[inputName].value = value;
+            }
         }
 
-        this.invoiceFormElem.addEventListener("submit", (event) => {
+        invoiceForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
-            const invoiceFormData = {
-                senderFrom: this.invoiceFormInputs.senderFrom.value,
-            };
+            const invoiceFormData = {};
+
+            const inputs = invoiceForm.querySelectorAll("input");
+
+            [...inputs].forEach((input) => {
+                const inputName = input.name.replace(/_([a-z])/gi, (all, letter) =>
+                    letter.toUpperCase()
+                );
+
+                invoiceFormData[inputName] = input.value;
+            });
 
             if (invoiceId) {
                 invoiceData.data = invoiceFormData;
@@ -117,7 +141,7 @@ class View {
 
             this.submitInvoice(invoiceData, invoiceId);
 
-            this.content.removeChild(this.invoiceFormElem);
+            this.root.removeChild(invoiceForm);
         });
     }
 
@@ -148,30 +172,26 @@ class View {
         this.content.querySelector("[data-invoice-role='invoices-list']") &&
             (this.content.innerHTML = "");
 
-        this.invoicesList = createElement({
+        const invoicesList = createElement({
             tag: "ul",
             attrs: {
                 invoiceRole: "invoices-list",
             },
-        }); // Should I be moved somewhere else?
+        });
 
         switch (invoiceSortOrder) {
             case "paid":
-                filteredInvoices = invoices.filter(
-                    (invoice) => invoice.isComplete
-                );
+                filteredInvoices = invoices.filter((invoice) => invoice.isComplete);
                 break;
             case "pending":
-                filteredInvoices = invoices.filter(
-                    (invoice) => !invoice.isComplete
-                );
+                filteredInvoices = invoices.filter((invoice) => !invoice.isComplete);
                 break;
             default:
                 filteredInvoices = invoices;
                 break;
         }
 
-        this.content.appendChild(this.invoicesList);
+        this.content.appendChild(invoicesList);
 
         filteredInvoices.forEach((invoice) => {
             let listItem = createElement({
@@ -186,9 +206,7 @@ class View {
                     invoice.id
                 }" class="flex items-center text-xs justify-evenly mb-4 bg-white p-4 w-full">
                     <span class="font-bold text-base">#${invoice.id}</span>
-                    <span class="text-slate-500">${
-                        invoice.data.senderFrom
-                    }</span>
+                    <span class="text-slate-500">${invoice.data.toName}</span>
                     <span class="text-slate-500 font-semibold py-3 px-6 rounded ${
                         invoice.isComplete
                             ? "bg-green-100 text-green-500"
@@ -200,9 +218,9 @@ class View {
                 </button>
             `;
 
-            this.invoicesList.appendChild(listItem);
+            invoicesList.appendChild(listItem);
 
-            this.invoicesList.addEventListener("click", (event) => {
+            invoicesList.addEventListener("click", (event) => {
                 if (
                     event.target
                         .closest("[data-invoice-role='view-invoice']")
@@ -214,9 +232,8 @@ class View {
                             .getAttribute("data-invoice-id")
                     );
 
-                    this.content.querySelector(
-                        "[data-invoice-role='invoice-data']"
-                    ) === null && this.viewInvoice(invoiceId);
+                    this.content.querySelector("[data-invoice-role='invoice-data']") === null &&
+                        this.viewInvoice(invoiceId);
                 }
             });
         });
@@ -228,11 +245,7 @@ class View {
         // Invoice
         this.invoiceElem = this.generateElement("div", "invoice-data");
 
-        let deleteButton = this.generateElement(
-            "button",
-            "delete-invoice",
-            "Delete"
-        );
+        let deleteButton = this.generateElement("button", "delete-invoice", "Delete");
 
         let deletePromptWrap = this.generateElement(
             "div",
@@ -252,11 +265,7 @@ class View {
 
         let editButton = this.generateElement("button", "edit-invoice", "Edit");
 
-        let backButton = this.generateElement(
-            "button",
-            "back-to-invoices",
-            "Go Back"
-        );
+        let backButton = this.generateElement("button", "back-to-invoices", "Go Back");
 
         let paidButton = this.generateElement(
             "button",
@@ -273,17 +282,11 @@ class View {
         this.invoiceElem.appendChild(this.generateElement("p", "", invoice.id));
 
         this.invoiceElem.appendChild(
-            this.generateElement(
-                "p",
-                "",
-                invoice.isComplete ? "Paid" : "Pending"
-            )
+            this.generateElement("p", "", invoice.isComplete ? "Paid" : "Pending")
         );
 
         for (const property in invoice.data) {
-            this.invoiceElem.appendChild(
-                this.generateElement("p", "", invoice.data[property])
-            );
+            this.invoiceElem.appendChild(this.generateElement("p", "", invoice.data[property]));
         }
 
         this.invoiceElem.addEventListener("click", (event) => {
@@ -314,9 +317,7 @@ class View {
             } else if (targetAttr === "back-to-invoices") {
                 this.content.removeChild(this.invoiceElem);
             } else if (targetAttr === "change-inv-status") {
-                invoice.isComplete
-                    ? (invoice.isComplete = false)
-                    : (invoice.isComplete = true);
+                invoice.isComplete ? (invoice.isComplete = false) : (invoice.isComplete = true);
                 this.submitInvoice(invoice, invoiceId);
                 this.content.removeChild(this.invoiceElem);
             }

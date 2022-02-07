@@ -9,7 +9,19 @@ class Model {
             id: this.generateId(),
             isComplete: false,
             data: {
-                senderFrom: data.senderFrom,
+                fromAddress: data.fromAddress,
+                fromCity: data.fromCity,
+                fromPostcode: data.fromPostcode,
+                fromCountry: data.fromCountry,
+                toName: data.toName,
+                toEmail: data.toEmail,
+                toAddress: data.toAddress,
+                toCity: data.toCity,
+                toPostcode: data.toPostcode,
+                toCountry: data.toCountry,
+                toDate: data.toDate,
+                toPaymentTerms: data.toPaymentTerms,
+                toPaymentDesc: data.toPaymentDesc,
             },
         });
 
