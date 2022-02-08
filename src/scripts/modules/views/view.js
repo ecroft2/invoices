@@ -34,15 +34,6 @@ class View {
     }
 
     generateFormItems() {
-        const formFragment = document.createDocumentFragment();
-        const form = createElement({
-            tag: "form",
-            className: "form-overlay",
-            attrs: {
-                invoiceRole: "form",
-            },
-        });
-
         // Bill From
         const fromInputsFieldset = createElement({ tag: "fieldset" });
         const fromInputsLegend = createElement({
@@ -102,33 +93,54 @@ class View {
         toInputsFieldset.appendChild(toTwoColumns);
         toInputsFieldset.appendChild(toPaymentDesc);
 
+        this.form.appendChild(fromInputsFieldset);
+        this.form.appendChild(toInputsFieldset);
+    }
+
+    viewForm(invoiceId) {
+        const rootOverlay = createElement({
+            tag: "div",
+            className: "overlay",
+        });
+        this.root.appendChild(rootOverlay);
+
+        this.form = createElement({
+            tag: "form",
+            className: "form-overlay",
+            attrs: {
+                invoiceRole: "form",
+            },
+        });
+
+        const formHeading = createElement({ tag: "p", className: "font-bold text-2xl mb-8" });
+
+        invoiceId
+            ? (formHeading.innerHTML = `Edit #${invoiceId}`)
+            : (formHeading.innerHTML = "New Invoice");
+
+        this.form.appendChild(formHeading);
+
+        this.generateFormItems();
+
         // Button
         const submitButton = createButtonElement({
             type: "submit",
-            html: "Save Invoice",
             attrs: {
                 invoiceRole: "submit-form",
             },
             additionalClasses: "ml-auto",
         });
 
-        form.appendChild(fromInputsFieldset);
-        form.appendChild(toInputsFieldset);
-        form.appendChild(submitButton);
-        formFragment.appendChild(form);
+        invoiceId
+            ? (submitButton.innerHTML = "Save Changes")
+            : (submitButton.innerHTML = "Submit & Send");
 
-        return formFragment;
-    }
+        this.form.appendChild(submitButton);
 
-    viewForm(invoiceId) {
-        this.root.appendChild(this.generateFormItems());
+        this.root.appendChild(this.form);
+
         let invoiceForm = document.querySelector("[data-invoice-role='form']");
         let invoiceData;
-
-        // Invoice Form: Inputs - Pre-populate with data
-        // this.invoiceFormInputs = {
-        //     senderFrom: this.invoiceFormElem.querySelector("#senderFrom"),
-        // };
 
         if (invoiceId) {
             invoiceData = this.getInvoice(invoiceId);
@@ -164,6 +176,7 @@ class View {
             this.submitInvoice(invoiceData, invoiceId);
 
             this.root.removeChild(invoiceForm);
+            this.root.removeChild(rootOverlay);
         });
     }
 
