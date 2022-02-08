@@ -15,7 +15,9 @@
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     height: 100%;
+    padding: 4rem;
     z-index: 2;
+    overflow-y: scroll;
 }
 
 .overlay::after {

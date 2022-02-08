@@ -45,21 +45,32 @@ class View {
 
         // Bill From
         const fromInputsFieldset = createElement({ tag: "fieldset" });
-        const fromInputsLegend = createElement({ tag: "legend", html: "Bill From" });
+        const fromInputsLegend = createElement({
+            tag: "legend",
+            html: "Bill From",
+            className: "font-bold text-purple-600 text-xs mb-6",
+        });
         const fromAddress = createInputElement("from_address", "Address", "text");
         const fromCity = createInputElement("from_city", "City", "text");
         const fromPostcode = createInputElement("from_postcode", "Postcode", "text");
         const fromCountry = createInputElement("from_country", "Country", "text");
 
+        const fromThreeColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+        fromThreeColumns.appendChild(fromCity);
+        fromThreeColumns.appendChild(fromPostcode);
+        fromThreeColumns.appendChild(fromCountry);
+
         fromInputsFieldset.appendChild(fromInputsLegend);
         fromInputsFieldset.appendChild(fromAddress);
-        fromInputsFieldset.appendChild(fromCity);
-        fromInputsFieldset.appendChild(fromPostcode);
-        fromInputsFieldset.appendChild(fromCountry);
+        fromInputsFieldset.appendChild(fromThreeColumns);
 
         // Bill To
         const toInputsFieldset = createElement({ tag: "fieldset" });
-        const toInputsLegend = createElement({ tag: "legend", html: "Bill To" });
+        const toInputsLegend = createElement({
+            tag: "legend",
+            html: "Bill To",
+            className: "font-bold text-purple-600 text-xs mb-6",
+        });
         const toName = createInputElement("to_name", "Name", "text");
         const toEmail = createInputElement("to_email", "Email", "text");
         const toAddress = createInputElement("to_address", "Street Address", "text");
@@ -74,20 +85,31 @@ class View {
         toInputsFieldset.appendChild(toName);
         toInputsFieldset.appendChild(toEmail);
         toInputsFieldset.appendChild(toAddress);
-        toInputsFieldset.appendChild(toCity);
-        toInputsFieldset.appendChild(toPostcode);
-        toInputsFieldset.appendChild(toCountry);
-        toInputsFieldset.appendChild(toDate);
-        toInputsFieldset.appendChild(toPaymentTerms);
+
+        const toThreeColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+
+        toThreeColumns.appendChild(toCity);
+        toThreeColumns.appendChild(toPostcode);
+        toThreeColumns.appendChild(toCountry);
+
+        toInputsFieldset.appendChild(toThreeColumns);
+
+        const toTwoColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+
+        toTwoColumns.appendChild(toDate);
+        toTwoColumns.appendChild(toPaymentTerms);
+
+        toInputsFieldset.appendChild(toTwoColumns);
         toInputsFieldset.appendChild(toPaymentDesc);
 
         // Button
         const submitButton = createButtonElement({
             type: "submit",
-            html: "Save & Send",
+            html: "Save Invoice",
             attrs: {
                 invoiceRole: "submit-form",
             },
+            additionalClasses: "ml-auto",
         });
 
         form.appendChild(fromInputsFieldset);
