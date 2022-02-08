@@ -122,20 +122,32 @@ class View {
 
         this.generateFormItems();
 
-        // Button
+        const buttonWrap = createElement({ className: "flex items-end" });
+
         const submitButton = createButtonElement({
             type: "submit",
             attrs: {
                 invoiceRole: "submit-form",
             },
-            additionalClasses: "ml-auto",
+            additionalClasses: "inline ml-2",
         });
 
         invoiceId
             ? (submitButton.innerHTML = "Save Changes")
             : (submitButton.innerHTML = "Submit & Send");
 
-        this.form.appendChild(submitButton);
+        const cancelButton = createButtonElement({
+            attrs: {
+                invoiceRole: "cancel-form",
+            },
+            additionalClasses: "inline ml-auto bg-red-500 hover:bg-red-400",
+            html: "Cancel",
+            type: "button",
+        });
+
+        buttonWrap.appendChild(cancelButton);
+        buttonWrap.appendChild(submitButton);
+        this.form.appendChild(buttonWrap);
 
         this.root.appendChild(this.form);
 
