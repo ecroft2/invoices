@@ -2,7 +2,7 @@ import {
     createElement,
     createInputElement,
     createButtonElement,
-    // createInvoiceListElement,
+    createStatusElement,
 } from "./elements.js";
 
 class View {
@@ -11,14 +11,19 @@ class View {
         this.header = document.querySelector(".header");
         this.content = document.querySelector(".content");
 
+        this.headerControls = document.querySelector("[data-invoice-role='header-controls']");
         this.totalInvoices = document.querySelector("[data-invoice-role='count-invoices']");
         this.newFormButton = document.querySelector("[data-invoice-role='get-new-form']");
-
-        this.header.appendChild(this.newFormButton);
 
         this.newFormButton.addEventListener("click", () => {
             this.root.querySelector("[data-invoice-role='form-wrap']") === null && this.viewForm();
         });
+
+        this.rootOverlay = createElement({
+            tag: "div",
+            className: "overlay hidden",
+        });
+        this.root.appendChild(this.rootOverlay);
 
         // Filter Invoices: Select and options
         this.filterSelect = document.querySelector("[data-invoice-role='filter']");
@@ -98,11 +103,7 @@ class View {
     }
 
     viewForm(invoiceId) {
-        const rootOverlay = createElement({
-            tag: "div",
-            className: "overlay",
-        });
-        this.root.appendChild(rootOverlay);
+        this.rootOverlay.classList.toggle("hidden");
 
         this.form = createElement({
             tag: "form",
@@ -188,7 +189,7 @@ class View {
             this.submitInvoice(invoiceData, invoiceId);
 
             this.root.removeChild(invoiceForm);
-            this.root.removeChild(rootOverlay);
+            this.rootOverlay.classList.toggle("hidden");
         });
     }
 
@@ -254,14 +255,7 @@ class View {
                 }" class="flex items-center text-xs justify-evenly mb-4 bg-white p-4 w-full">
                     <span class="font-bold text-base">#${invoice.id}</span>
                     <span class="text-slate-500">${invoice.data.toName}</span>
-                    <span class="text-slate-500 font-semibold py-3 px-6 rounded ${
-                        invoice.isComplete
-                            ? "bg-green-100 text-green-500"
-                            : "bg-orange-100 text-orange-500"
-                    }">
-                        <i class="fas fa-circle fa-xs mr-1"></i>
-                        ${invoice.isComplete ? "Paid" : "Pending"}
-                    </span>
+                    ${createStatusElement(invoice.isComplete, { tag: "span" })}
                 </button>
             `;
 
@@ -287,12 +281,62 @@ class View {
     }
 
     viewInvoice(invoiceId) {
-        let invoice = this.getInvoice(invoiceId);
+        const invoice = this.getInvoice(invoiceId);
+        this.content.innerHTML = ``;
+        this.headerControls.classList.add("hidden");
 
-        // Invoice
-        this.invoiceElem = this.generateElement("div", "invoice-data");
+        const invoiceControls = createElement({
+            className: "rounded bg-white p-6 flex items-center drop-shadow-sm",
+            attrs: {
+                invoiceRole: "invoice-controls",
+            },
+        });
 
-        let deleteButton = this.generateElement("button", "delete-invoice", "Delete");
+        const statusElement = createStatusElement(invoice.isComplete, {
+            tag: "div",
+            additionalClasses: "text-xs",
+        });
+
+        const editButton = createButtonElement({
+            attrs: {
+                invoiceRole: "edit-invoice",
+            },
+            html: "Edit",
+            additionalClasses: "inline mr-2 ml-auto bg-blue-500 hover:bg-blue-400",
+        });
+
+        const deleteButton = createButtonElement({
+            attrs: {
+                invoiceRole: "delete-invoice",
+            },
+            additionalClasses: "inline mr-2 bg-red-500 hover:bg-red-400",
+            html: "Delete",
+            type: "button",
+        });
+
+        const changeStatusButton = createButtonElement({
+            attrs: {
+                invoiceRole: "change-invoice-status",
+            },
+            html: invoice.isComplete ? "Mark as Pending" : "Mark as Paid",
+            type: "button",
+        });
+
+        invoiceControls.appendChild(
+            createElement({
+                tag: "p",
+                html: "Status",
+                className: "text-xs text-slate-500 mr-4",
+            })
+        );
+        invoiceControls.appendChild(statusElement);
+        invoiceControls.appendChild(editButton);
+        invoiceControls.appendChild(deleteButton);
+        invoiceControls.appendChild(changeStatusButton);
+
+        this.content.appendChild(invoiceControls);
+
+        let invoiceElem = this.generateElement("div", "invoice-data");
 
         let deletePromptWrap = this.generateElement(
             "div",
@@ -310,40 +354,29 @@ class View {
             "Cancel"
         );
 
-        let editButton = this.generateElement("button", "edit-invoice", "Edit");
-
         let backButton = this.generateElement("button", "back-to-invoices", "Go Back");
 
-        let paidButton = this.generateElement(
-            "button",
-            "change-inv-status",
-            invoice.isComplete ? "Mark as Pending" : "Mark as Paid"
-        );
+        this.content.appendChild(invoiceElem);
+        invoiceElem.appendChild(backButton);
 
-        this.content.appendChild(this.invoiceElem);
-        this.invoiceElem.appendChild(deleteButton);
-        this.invoiceElem.appendChild(editButton);
-        this.invoiceElem.appendChild(backButton);
-        this.invoiceElem.appendChild(paidButton);
+        invoiceElem.appendChild(this.generateElement("p", "", invoice.id));
 
-        this.invoiceElem.appendChild(this.generateElement("p", "", invoice.id));
-
-        this.invoiceElem.appendChild(
+        invoiceElem.appendChild(
             this.generateElement("p", "", invoice.isComplete ? "Paid" : "Pending")
         );
 
         for (const property in invoice.data) {
-            this.invoiceElem.appendChild(this.generateElement("p", "", invoice.data[property]));
+            invoiceElem.appendChild(this.generateElement("p", "", invoice.data[property]));
         }
 
-        this.invoiceElem.addEventListener("click", (event) => {
+        invoiceControls.addEventListener("click", (event) => {
             const targetAttr = event.target.getAttribute("data-invoice-role");
 
             if (targetAttr === "edit-invoice") {
                 this.viewForm(invoiceId);
-                this.content.removeChild(this.invoiceElem);
+                this.content.removeChild(invoiceElem);
             } else if (targetAttr === "delete-invoice") {
-                this.invoiceElem.appendChild(deletePromptWrap);
+                invoiceElem.appendChild(deletePromptWrap);
                 deletePromptWrap.appendChild(deletePromptWrapCancelButton);
                 deletePromptWrap.appendChild(deletePromptWrapConfirmButton);
 
@@ -352,21 +385,21 @@ class View {
                         event.target.getAttribute("data-invoice-role") ===
                         "prompt-delete-invoice-cancel"
                     ) {
-                        this.invoiceElem.removeChild(deletePromptWrap);
+                        invoiceElem.removeChild(deletePromptWrap);
                     } else if (
                         event.target.getAttribute("data-invoice-role") ===
                         "prompt-delete-invoice-confirm"
                     ) {
                         this.deleteInvoice(invoiceId);
-                        this.content.removeChild(this.invoiceElem);
+                        this.content.removeChild(invoiceElem);
                     }
                 });
             } else if (targetAttr === "back-to-invoices") {
-                this.content.removeChild(this.invoiceElem);
-            } else if (targetAttr === "change-inv-status") {
+                this.content.removeChild(invoiceElem);
+            } else if (targetAttr === "change-invoice-status") {
                 invoice.isComplete ? (invoice.isComplete = false) : (invoice.isComplete = true);
                 this.submitInvoice(invoice, invoiceId);
-                this.content.removeChild(this.invoiceElem);
+                this.content.removeChild(invoiceElem);
             }
         });
     }

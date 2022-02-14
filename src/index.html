@@ -1,53 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Invoices App</title>
 
-    <title>Invoices App</title>
+        <link rel="stylesheet" href="/dist/styles/base.css" />
+        <script src="https://kit.fontawesome.com/db1f672dc3.js" crossorigin="anonymous"></script>
+    </head>
 
-    <link rel="stylesheet" href="/dist/styles/base.css" />
-    <script src="https://kit.fontawesome.com/db1f672dc3.js" crossorigin="anonymous"></script>
-</head>
+    <body class="font-sans bg-slate-50">
+        <div class="root">
+            <div class="body max-w-screen-sm mx-auto mt-16">
+                <div class="header flex items-center mb-8">
+                    <div class="mr-auto">
+                        <h1 class="text-3xl font-bold pb-2">Invoices</h1>
+                        <p data-invoice-role="count-invoices" class="text-slate-500 text-xs">There are no invoices.</p>
+                    </div>
 
-<body class="font-sans bg-slate-50">
-    <div class="root">
-        <div class="body max-w-screen-sm mx-auto mt-16">
-            <div class="header flex items-center mb-8">
-                <div class="mr-auto">
-                    <h1 class="text-3xl font-bold pb-2">Invoices</h1>
-                    <p data-invoice-role="count-invoices" class="text-slate-500 text-xs">
-                        There are no invoices.
-                    </p>
+                    <div data-invoice-role="header-controls" class="flex items-center">
+                        <label class="select flex items-center relative pointer after:content-['\f107'] after:absolute after:h-4 after:pointer after:pointer-events-none after:text-purple-600 hover:after:text-purple-500 after:right-1 after:bottom-1 after:font-['FontAwesome']">
+                            <select data-invoice-role="filter" class="text-right text-black font-bold appearance-none text-xs bg-transparent pr-4">
+                                <option class="p-0" selected disabled>Filter by status</option>
+                                <option value="all" class="p-0">All</option>
+                                <option value="paid" class="p-0">Paid</option>
+                                <option value="pending" class="p-0">Pending</option>
+                            </select>
+                        </label>
+
+                        <button data-invoice-role="get-new-form" class="group ml-10 text-xs h-12 py-2 pl-2 pr-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold text-white items-center flex">
+                            <i class="fas fa-plus bg-white w-8 text-purple-600 group-hover:text-purple-500 py-[10px] rounded-full mr-4"></i>
+                            New Invoice
+                        </button>
+                    </div>
                 </div>
 
-                <label
-                    class="select flex items-center relative pointer after:content-['\f107'] after:absolute after:h-4 after:pointer after:pointer-events-none after:text-purple-600 hover:after:text-purple-500 after:right-1 after:bottom-1 after:font-['FontAwesome']">
-                    <select data-invoice-role="filter"
-                        class="text-right text-black font-bold appearance-none text-xs bg-transparent pr-4">
-                        <option class="p-0" selected disabled>Filter by status</option>
-                        <option value="all" class="p-0">All</option>
-                        <option value="paid" class="p-0">Paid</option>
-                        <option value="pending" class="p-0">Pending</option>
-                    </select>
-                </label>
-
-                <button data-invoice-role="get-new-form"
-                    class="group ml-10 text-xs h-12 py-2 pl-2 pr-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold text-white items-center flex"><i
-                        class="fas fa-plus bg-white w-8 text-purple-600 group-hover:text-purple-500 py-[10px] rounded-full mr-4"></i>
-                    New Invoice
-                </button>
+                <div class="content"></div>
             </div>
-
-            <div class="content"></div>
         </div>
 
-        <div class="overlay hidden"></div>
-    </div>
-
-    <script type="module" src="/src/scripts/index.js"></script>
-</body>
-
+        <script type="module" src="/src/scripts/index.js"></script>
+    </body>
 </html>

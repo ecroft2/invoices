@@ -38,21 +38,6 @@ const createButtonElement = (props) => {
     return createElement({ ...latestProps });
 };
 
-// const createInvoiceListElement = (props) => {
-//     let additionalClasses = "mb-16 bg-white p-16 w-full";
-
-//     props.tag = "li";
-//     props.attrs = {
-//         invoiceRole: "list-item",
-//     };
-
-//     props.className
-//         ? (props.className += " " + additionalClasses)
-//         : (props.className = additionalClasses);
-
-//     return createElement({ ...props });
-// };
-
 const createInputElement = (field, labelText, type) => {
     const fragment = document.createDocumentFragment();
     const inputWrap = document.createElement("div");
@@ -78,9 +63,25 @@ const createInputElement = (field, labelText, type) => {
     return fragment;
 };
 
-export {
-    createElement,
-    createInputElement,
-    createButtonElement,
-    // createInvoiceListElement,
+const createStatusElement = (isComplete, props) => {
+    const { tag, additionalClasses } = props;
+
+    const fragment = document.createDocumentFragment();
+    const element = document.createElement(tag);
+
+    element.className = `text-slate-500 font-semibold py-3 px-6 rounded ${
+        isComplete ? "bg-green-100 text-green-500" : "bg-orange-100 text-orange-500"
+    }`;
+    element.innerHTML = `
+        <i class="fas fa-circle fa-xs mr-1"></i>
+        ${isComplete ? "Paid" : "Pending"}
+    `;
+
+    additionalClasses && (element.className += " " + additionalClasses);
+
+    fragment.appendChild(element);
+
+    return fragment;
 };
+
+export { createElement, createInputElement, createButtonElement, createStatusElement };
