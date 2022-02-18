@@ -1,5 +1,5 @@
 const createElement = (props) => {
-    const { tag = "div", id, className, attrs, html } = props;
+    const { tag = "div", id, className, attrs, html, type } = props;
 
     const fragment = document.createDocumentFragment();
     const element = document.createElement(tag);
@@ -7,6 +7,7 @@ const createElement = (props) => {
     id && (element.id = id);
     className && (element.className = className);
     html && (element.innerHTML = html);
+    type && (element.type = type);
 
     if (attrs) {
         for (let key of Object.keys(attrs)) {
