@@ -18,7 +18,7 @@ class Controller {
     };
 
     handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
-    handleInvoiceListChange = (invoices) => this.view.viewInvoices(invoices);
+    handleInvoiceListChange = (invoices) => this.view.updateInvoices(invoices);
 }
 
 export default Controller;
