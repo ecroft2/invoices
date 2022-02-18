@@ -283,7 +283,7 @@ class View {
     viewInvoice(invoiceId) {
         const invoice = this.getInvoice(invoiceId);
         this.content.innerHTML = ``;
-        this.headerControls.classList.add("hidden");
+        this.headerControls.classList.toggle("hidden");
 
         const invoiceControls = createElement({
             className: "rounded bg-white p-6 flex items-center drop-shadow-sm",
@@ -336,34 +336,15 @@ class View {
 
         this.content.appendChild(invoiceControls);
 
-        let invoiceElem = this.generateElement("div", "invoice-data");
-
-        let deletePromptWrap = this.generateElement(
-            "div",
-            "prompt-delete-invoice-wrap",
-            "Are you sure you want to delete your invoice?"
-        );
-        let deletePromptWrapConfirmButton = this.generateElement(
-            "button",
-            "prompt-delete-invoice-confirm",
-            "Delete"
-        );
-        let deletePromptWrapCancelButton = this.generateElement(
-            "button",
-            "prompt-delete-invoice-cancel",
-            "Cancel"
-        );
-
-        let backButton = this.generateElement("button", "back-to-invoices", "Go Back");
+        const invoiceElem = createElement({
+            attrs: {
+                invoiceRole: "invoice-data",
+            },
+        });
 
         this.content.appendChild(invoiceElem);
-        invoiceElem.appendChild(backButton);
 
         invoiceElem.appendChild(this.generateElement("p", "", invoice.id));
-
-        invoiceElem.appendChild(
-            this.generateElement("p", "", invoice.isComplete ? "Paid" : "Pending")
-        );
 
         for (const property in invoice.data) {
             invoiceElem.appendChild(this.generateElement("p", "", invoice.data[property]));
@@ -372,36 +353,103 @@ class View {
         invoiceControls.addEventListener("click", (event) => {
             const targetAttr = event.target.getAttribute("data-invoice-role");
 
-            if (targetAttr === "edit-invoice") {
-                this.viewForm(invoiceId);
-                this.content.removeChild(invoiceElem);
-            } else if (targetAttr === "delete-invoice") {
-                invoiceElem.appendChild(deletePromptWrap);
-                deletePromptWrap.appendChild(deletePromptWrapCancelButton);
-                deletePromptWrap.appendChild(deletePromptWrapConfirmButton);
+            switch (targetAttr) {
+                case "edit-invoice":
+                    this.viewForm(invoiceId);
+                    this.content.removeChild(invoiceElem);
+                    break;
+                case "delete-invoice":
+                    this.rootOverlay.classList.toggle("hidden");
+                    const deletePromptElem = this.createDeletePrompt(invoiceId);
+                    this.root.appendChild(deletePromptElem);
 
-                deletePromptWrap.addEventListener("click", (event) => {
-                    if (
-                        event.target.getAttribute("data-invoice-role") ===
-                        "prompt-delete-invoice-cancel"
-                    ) {
-                        invoiceElem.removeChild(deletePromptWrap);
-                    } else if (
-                        event.target.getAttribute("data-invoice-role") ===
-                        "prompt-delete-invoice-confirm"
-                    ) {
-                        this.deleteInvoice(invoiceId);
-                        this.content.removeChild(invoiceElem);
-                    }
-                });
-            } else if (targetAttr === "back-to-invoices") {
-                this.content.removeChild(invoiceElem);
-            } else if (targetAttr === "change-invoice-status") {
-                invoice.isComplete ? (invoice.isComplete = false) : (invoice.isComplete = true);
-                this.submitInvoice(invoice, invoiceId);
-                this.content.removeChild(invoiceElem);
+                    deletePromptElem.addEventListener("click", (event) => {
+                        const targetAttr = event.target.getAttribute("data-invoice-role");
+
+                        if (event.target.hasAttribute("data-invoice-role")) {
+                            if (targetAttr === "del-prompt-confirm") {
+                                this.deleteInvoice(invoiceId);
+                                this.headerControls.classList.toggle("hidden");
+                            }
+
+                            this.root.removeChild(deletePromptElem);
+                            this.rootOverlay.classList.toggle("hidden");
+                        }
+                    });
+                    break;
             }
+
+            // // if (targetAttr === "edit-invoice") {
+            // } else if (targetAttr === "delete-invoice") {
+            //     invoiceElem.appendChild(deletePromptWrap);
+            //     deletePromptWrap.appendChild(deletePromptWrapCancelButton);
+            //     deletePromptWrap.appendChild(deletePromptWrapConfirmButton);
+
+            //     deletePromptWrap.addEventListener("click", (event) => {
+            //         if (
+            //             event.target.getAttribute("data-invoice-role") ===
+            //             "prompt-delete-invoice-cancel"
+            //         ) {
+            //             invoiceElem.removeChild(deletePromptWrap);
+            //         } else if (
+            //             event.target.getAttribute("data-invoice-role") ===
+            //             "prompt-delete-invoice-confirm"
+            //         ) {
+            //             this.deleteInvoice(invoiceId);
+            //             this.content.removeChild(invoiceElem);
+            //         }
+            //     });
+            // } else if (targetAttr === "back-to-invoices") {
+            //     this.content.removeChild(invoiceElem);
+            // } else if (targetAttr === "change-invoice-status") {
+            //     invoice.isComplete ? (invoice.isComplete = false) : (invoice.isComplete = true);
+            //     this.submitInvoice(invoice, invoiceId);
+            //     this.content.removeChild(invoiceElem);
+            // }
         });
+    }
+
+    createDeletePrompt(invoiceId) {
+        const deletePromptElem = createElement({
+            className:
+                "absolute bg-white top-2/4 z-[1] rounded p-8 max-w-lg -translate-y-2/4 translate-x-2/4",
+        });
+        const deleteButtonWrapElem = createElement({
+            className: "flex justify-end",
+        });
+        const deletePromptCancelElem = createButtonElement({
+            attrs: {
+                invoiceRole: "del-prompt-cancel",
+            },
+            html: "Cancel",
+            additionalClasses: "inline mr-2 bg-blue-500 hover:bg-blue-400",
+        });
+        const deletePromptConfirmElem = createButtonElement({
+            attrs: {
+                invoiceRole: "del-prompt-confirm",
+            },
+            html: "Delete",
+            additionalClasses: "inline bg-red-500 hover:bg-red-400",
+        });
+        deleteButtonWrapElem.appendChild(deletePromptCancelElem);
+        deleteButtonWrapElem.appendChild(deletePromptConfirmElem);
+
+        deletePromptElem.appendChild(
+            createElement({
+                html: "Confirm Deletion",
+                className: "text-2xl font-bold pb-3",
+                tag: "p",
+            })
+        );
+        deletePromptElem.appendChild(
+            createElement({
+                html: `Are you sure you want to delete invoice #${invoiceId}? This action cannot be undone.`,
+                className: "text-xs text-slate-500 pb-4",
+            })
+        );
+        deletePromptElem.appendChild(deleteButtonWrapElem);
+
+        return deletePromptElem;
     }
 }
 
