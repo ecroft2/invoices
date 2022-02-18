@@ -30,14 +30,6 @@ class View {
         this.sortOrder;
     }
 
-    generateElement(tag, role, text) {
-        let element = document.createElement(tag);
-        role && element.setAttribute("data-invoice-role", role);
-        text && (element.textContent = text);
-
-        return element;
-    }
-
     generateFormItems() {
         // Bill From
         const fromInputsFieldset = createElement({ tag: "fieldset" });
@@ -165,6 +157,11 @@ class View {
             }
         }
 
+        cancelButton.addEventListener("click", () => {
+            this.root.removeChild(invoiceForm);
+            this.rootOverlay.classList.toggle("hidden");
+        });
+
         invoiceForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
@@ -193,8 +190,11 @@ class View {
         });
     }
 
-    viewInvoices(invoices) {
+    updateInvoices(invoices) {
         this.content.innerHTML = "";
+
+        this.headerControls.classList.contains("hidden") &&
+            this.headerControls.classList.remove("hidden");
 
         if (invoices.length > 0) {
             this.totalInvoices.innerHTML = `${
@@ -242,22 +242,22 @@ class View {
         this.content.appendChild(invoicesList);
 
         filteredInvoices.forEach((invoice) => {
-            let listItem = createElement({
+            const listItem = createElement({
                 tag: "li",
                 attrs: {
-                    invoiceRole: "list-item",
+                    invoiceRole: "view-invoice",
+                    invoiceId: invoice.id,
                 },
+                className:
+                    "flex items-center text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer",
             });
 
             listItem.innerHTML = `
-                <button data-invoice-role="view-invoice" data-invoice-id="${
-                    invoice.id
-                }" class="flex items-center text-xs justify-evenly mb-4 bg-white p-4 w-full">
-                    <span class="font-bold text-base">#${invoice.id}</span>
-                    <span class="text-slate-500">${invoice.data.toName}</span>
-                    ${createStatusElement(invoice.isComplete, { tag: "span" })}
-                </button>
+                <span class="font-bold text-base">#${invoice.id}</span>
+                <span class="text-slate-500">${invoice.data.toName}</span>
             `;
+
+            listItem.appendChild(createStatusElement(invoice.isComplete, { tag: "span" }));
 
             invoicesList.appendChild(listItem);
 
@@ -342,13 +342,13 @@ class View {
             },
         });
 
-        this.content.appendChild(invoiceElem);
-
-        invoiceElem.appendChild(this.generateElement("p", "", invoice.id));
+        invoiceElem.appendChild(createElement({ tag: "p", html: invoice.id }));
 
         for (const property in invoice.data) {
-            invoiceElem.appendChild(this.generateElement("p", "", invoice.data[property]));
+            invoiceElem.appendChild(createElement({ tag: "p", html: invoice.data[property] }));
         }
+
+        this.content.appendChild(invoiceElem);
 
         invoiceControls.addEventListener("click", (event) => {
             const targetAttr = event.target.getAttribute("data-invoice-role");
@@ -369,7 +369,6 @@ class View {
                         if (event.target.hasAttribute("data-invoice-role")) {
                             if (targetAttr === "del-prompt-confirm") {
                                 this.deleteInvoice(invoiceId);
-                                this.headerControls.classList.toggle("hidden");
                             }
 
                             this.root.removeChild(deletePromptElem);
@@ -377,35 +376,11 @@ class View {
                         }
                     });
                     break;
+                case "change-invoice-status":
+                    invoice.isComplete ? (invoice.isComplete = false) : (invoice.isComplete = true);
+                    this.submitInvoice(invoice, invoiceId);
+                    break;
             }
-
-            // // if (targetAttr === "edit-invoice") {
-            // } else if (targetAttr === "delete-invoice") {
-            //     invoiceElem.appendChild(deletePromptWrap);
-            //     deletePromptWrap.appendChild(deletePromptWrapCancelButton);
-            //     deletePromptWrap.appendChild(deletePromptWrapConfirmButton);
-
-            //     deletePromptWrap.addEventListener("click", (event) => {
-            //         if (
-            //             event.target.getAttribute("data-invoice-role") ===
-            //             "prompt-delete-invoice-cancel"
-            //         ) {
-            //             invoiceElem.removeChild(deletePromptWrap);
-            //         } else if (
-            //             event.target.getAttribute("data-invoice-role") ===
-            //             "prompt-delete-invoice-confirm"
-            //         ) {
-            //             this.deleteInvoice(invoiceId);
-            //             this.content.removeChild(invoiceElem);
-            //         }
-            //     });
-            // } else if (targetAttr === "back-to-invoices") {
-            //     this.content.removeChild(invoiceElem);
-            // } else if (targetAttr === "change-invoice-status") {
-            //     invoice.isComplete ? (invoice.isComplete = false) : (invoice.isComplete = true);
-            //     this.submitInvoice(invoice, invoiceId);
-            //     this.content.removeChild(invoiceElem);
-            // }
         });
     }
 
