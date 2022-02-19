@@ -772,6 +772,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   font-weight: 600;
 }
 
+.leading-\[14px\]{
+  line-height: 14px;
+}
+
 .text-slate-500{
   --tw-text-opacity: 1;
   color: rgb(100 116 139 / var(--tw-text-opacity));
@@ -842,6 +846,47 @@ Ensure the default browser behavior of the `hidden` attribute.
   z-index: 1;
 }
 
+.before\:pointer-events-none::before{
+  content: var(--tw-content);
+  pointer-events: none;
+}
+
+.before\:absolute::before{
+  content: var(--tw-content);
+  position: absolute;
+}
+
+.before\:left-1::before{
+  content: var(--tw-content);
+  left: 0.25rem;
+}
+
+.before\:bottom-1::before{
+  content: var(--tw-content);
+  bottom: 0.25rem;
+}
+
+.before\:h-4::before{
+  content: var(--tw-content);
+  height: 1rem;
+}
+
+.before\:font-\[\'FontAwesome\'\]::before{
+  content: var(--tw-content);
+  font-family: 'FontAwesome';
+}
+
+.before\:text-purple-600::before{
+  content: var(--tw-content);
+  --tw-text-opacity: 1;
+  color: rgb(147 51 234 / var(--tw-text-opacity));
+}
+
+.before\:content-\[\'\\f107\'\]::before{
+  --tw-content: '\f107';
+  content: var(--tw-content);
+}
+
 .after\:pointer-events-none::after{
   content: var(--tw-content);
   pointer-events: none;
@@ -896,6 +941,12 @@ Ensure the default browser behavior of the `hidden` attribute.
 .hover\:bg-blue-400:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+}
+
+.hover\:before\:text-purple-500:hover::before{
+  content: var(--tw-content);
+  --tw-text-opacity: 1;
+  color: rgb(168 85 247 / var(--tw-text-opacity));
 }
 
 .hover\:after\:text-purple-500:hover::after{

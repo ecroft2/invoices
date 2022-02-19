@@ -198,6 +198,9 @@ class View {
         this.headerControls.classList.contains("hidden") &&
             this.headerControls.classList.remove("hidden");
 
+        this.totalInvoices.classList.contains("hidden") &&
+            this.totalInvoices.classList.remove("hidden");
+
         if (invoices.length > 0) {
             this.totalInvoices.innerHTML = `${
                 invoices.length === 1
@@ -212,6 +215,7 @@ class View {
                 this.createInvoiceList(invoices, this.sortOrder);
             });
         } else {
+            this.totalInvoices.innerHTML = "There are no invoices.";
             this.content.innerHTML = "No invoices!";
         }
     }
@@ -286,8 +290,25 @@ class View {
         const invoice = this.getInvoice(invoiceId);
         this.content.innerHTML = ``;
 
+        this.totalInvoices.innerHTML = "";
+
         this.headerControls.classList.contains("hidden") ||
             this.headerControls.classList.add("hidden");
+
+        const backToInvoicesElem = createElement({
+            attrs: {
+                invoiceRole: "back-to-invoices",
+            },
+            className: "group text-xs font-bold flex cursor-pointer",
+            html: `<i class="fas fa-angle-left text-purple-600 group-hover:text-purple-500 mr-2 text-base leading-[14px]"></i>`,
+        });
+        backToInvoicesElem.insertAdjacentHTML("beforeend", "Go back");
+
+        this.header.appendChild(backToInvoicesElem);
+
+        // backToInvoicesElem.addEventListener("click", event => {
+        //     this.updateInvoices()
+        // });
 
         const invoiceControls = createElement({
             className: "rounded bg-white p-6 flex items-center drop-shadow-sm",
