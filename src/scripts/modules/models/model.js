@@ -49,8 +49,7 @@ class Model {
             updateView: false,
         });
 
-        const updatedInvoiceData = this.getInvoice(invoiceId);
-        this.handleInvoiceEdit(updatedInvoiceData);
+        this.handleInvoiceEdit(invoiceId);
     }
 
     generateId() {

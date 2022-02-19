@@ -285,7 +285,9 @@ class View {
     viewInvoice(invoiceId) {
         const invoice = this.getInvoice(invoiceId);
         this.content.innerHTML = ``;
-        this.headerControls.classList.toggle("hidden");
+
+        this.headerControls.classList.contains("hidden") ||
+            this.headerControls.classList.add("hidden");
 
         const invoiceControls = createElement({
             className: "rounded bg-white p-6 flex items-center drop-shadow-sm",
@@ -338,7 +340,20 @@ class View {
 
         this.content.appendChild(invoiceControls);
 
-        this.generateInvoiceDataView(invoice);
+        const invoiceElem = createElement({
+            attrs: {
+                invoiceRole: "invoice-data",
+                invoiceId: invoice.id,
+            },
+        });
+
+        invoiceElem.appendChild(createElement({ tag: "p", html: invoice.id }));
+
+        for (const property in invoice.data) {
+            invoiceElem.appendChild(createElement({ tag: "p", html: invoice.data[property] }));
+        }
+
+        this.content.appendChild(invoiceElem);
 
         invoiceControls.addEventListener("click", (event) => {
             const targetAttr = event.target.getAttribute("data-invoice-role");
@@ -371,29 +386,6 @@ class View {
                     break;
             }
         });
-    }
-
-    generateInvoiceDataView(invoice) {
-        const existingInvoiceElem = this.content.querySelector(
-            "[data-invoice-role='invoice-data']"
-        );
-
-        existingInvoiceElem !== null && this.content.removeChild(existingInvoiceElem);
-
-        const invoiceElem = createElement({
-            attrs: {
-                invoiceRole: "invoice-data",
-                invoiceId: invoice.id,
-            },
-        });
-
-        invoiceElem.appendChild(createElement({ tag: "p", html: invoice.id }));
-
-        for (const property in invoice.data) {
-            invoiceElem.appendChild(createElement({ tag: "p", html: invoice.data[property] }));
-        }
-
-        this.content.appendChild(invoiceElem);
     }
 
     createDeletePrompt(invoiceId) {
