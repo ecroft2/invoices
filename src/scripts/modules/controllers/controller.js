@@ -24,9 +24,7 @@ class Controller {
     handleInvoices = (data) => {
         data.updateView !== false && this.view.updateInvoices(data);
     };
-    handleEditInvoice = (invoiceId) => {
-        this.view.viewInvoice(invoiceId);
-    };
+    handleEditInvoice = (invoiceId) => this.view.viewInvoice(invoiceId);
 }
 
 export default Controller;
