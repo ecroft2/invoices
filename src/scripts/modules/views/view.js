@@ -190,7 +190,9 @@ class View {
         });
     }
 
-    updateInvoices(invoices) {
+    updateInvoices(data) {
+        const invoices = data.invoices;
+
         this.content.innerHTML = "";
 
         this.headerControls.classList.contains("hidden") &&
@@ -336,19 +338,7 @@ class View {
 
         this.content.appendChild(invoiceControls);
 
-        const invoiceElem = createElement({
-            attrs: {
-                invoiceRole: "invoice-data",
-            },
-        });
-
-        invoiceElem.appendChild(createElement({ tag: "p", html: invoice.id }));
-
-        for (const property in invoice.data) {
-            invoiceElem.appendChild(createElement({ tag: "p", html: invoice.data[property] }));
-        }
-
-        this.content.appendChild(invoiceElem);
+        this.generateInvoiceDataView(invoice);
 
         invoiceControls.addEventListener("click", (event) => {
             const targetAttr = event.target.getAttribute("data-invoice-role");
@@ -356,7 +346,6 @@ class View {
             switch (targetAttr) {
                 case "edit-invoice":
                     this.viewForm(invoiceId);
-                    this.content.removeChild(invoiceElem);
                     break;
                 case "delete-invoice":
                     this.rootOverlay.classList.toggle("hidden");
@@ -382,6 +371,29 @@ class View {
                     break;
             }
         });
+    }
+
+    generateInvoiceDataView(invoice) {
+        const existingInvoiceElem = this.content.querySelector(
+            "[data-invoice-role='invoice-data']"
+        );
+
+        existingInvoiceElem !== null && this.content.removeChild(existingInvoiceElem);
+
+        const invoiceElem = createElement({
+            attrs: {
+                invoiceRole: "invoice-data",
+                invoiceId: invoice.id,
+            },
+        });
+
+        invoiceElem.appendChild(createElement({ tag: "p", html: invoice.id }));
+
+        for (const property in invoice.data) {
+            invoiceElem.appendChild(createElement({ tag: "p", html: invoice.data[property] }));
+        }
+
+        this.content.appendChild(invoiceElem);
     }
 
     createDeletePrompt(invoiceId) {

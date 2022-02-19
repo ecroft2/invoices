@@ -2,11 +2,14 @@ class Controller {
     constructor(model, view) {
         this.model = model;
         this.view = view;
+
         this.view.deleteInvoice = this.handleDeleteInvoice;
         this.view.getInvoice = this.model.getInvoice;
         this.view.submitInvoice = this.handleFormSubmit;
-        this.model.onInvoiceChange(this.handleInvoiceListChange);
-        this.handleInvoiceListChange(this.model.invoices);
+        this.model.handleInvoiceChange = this.handleInvoices;
+        this.model.handleInvoiceEdit = this.handleEditInvoice;
+
+        this.handleInvoices({ invoices: this.model.invoices });
     }
 
     handleFormSubmit = (invoiceData, invoiceId) => {
@@ -18,7 +21,12 @@ class Controller {
     };
 
     handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
-    handleInvoiceListChange = (invoices) => this.view.updateInvoices(invoices);
+    handleInvoices = (data) => {
+        data.updateView !== false && this.view.updateInvoices(data);
+    };
+    handleEditInvoice = (invoiceData) => {
+        this.view.generateInvoiceDataView(invoiceData);
+    };
 }
 
 export default Controller;

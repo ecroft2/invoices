@@ -25,12 +25,12 @@ class Model {
             },
         });
 
-        this.invoiceChangeHandler(this.invoices);
+        this.handleInvoiceChange({ invoices: this.invoices });
     }
 
     deleteInvoice(id) {
         this.invoices = this.invoices.filter((invoice) => invoice.id !== id);
-        this.invoiceChangeHandler(this.invoices);
+        this.handleInvoiceChange({ invoices: this.invoices });
     }
 
     editInvoice(invoiceId, invoiceData) {
@@ -43,7 +43,14 @@ class Model {
                   }
                 : invoice
         );
-        this.invoiceChangeHandler(this.invoices);
+
+        this.handleInvoiceChange({
+            invoices: this.invoices,
+            updateView: false,
+        });
+
+        const updatedInvoiceData = this.getInvoice(invoiceId);
+        this.handleInvoiceEdit(updatedInvoiceData);
     }
 
     generateId() {
