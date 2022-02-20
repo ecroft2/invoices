@@ -31,12 +31,12 @@ class View {
     }
 
     generateFormItems() {
-        // Bill From
+        // Bill From Inputs
         const fromInputsFieldset = createElement({ tag: "fieldset" });
         const fromInputsLegend = createElement({
             tag: "legend",
             html: "Bill From",
-            className: "font-bold text-purple-600 text-xs mb-6",
+            className: "font-bold text-purple-600 text-xs mb-6 text-white",
         });
         const fromAddress = createInputElement("from_address", "Address", "text");
         const fromCity = createInputElement("from_city", "City", "text");
@@ -51,13 +51,14 @@ class View {
         fromInputsFieldset.appendChild(fromInputsLegend);
         fromInputsFieldset.appendChild(fromAddress);
         fromInputsFieldset.appendChild(fromColumns);
+        this.form.appendChild(fromInputsFieldset);
 
-        // Bill To
+        // Bill To Inputs
         const toInputsFieldset = createElement({ tag: "fieldset" });
         const toInputsLegend = createElement({
             tag: "legend",
             html: "Bill To",
-            className: "font-bold text-purple-600 text-xs mb-6",
+            className: "font-bold text-purple-600 text-xs mb-6 text-white",
         });
         const toName = createInputElement("to_name", "Name", "text");
         const toEmail = createInputElement("to_email", "Email", "text");
@@ -65,9 +66,6 @@ class View {
         const toCity = createInputElement("to_city", "City", "text");
         const toPostcode = createInputElement("to_postcode", "Postcode", "text");
         const toCountry = createInputElement("to_country", "Country", "text");
-        const date = createInputElement("date", "Invoice Date", "");
-        const paymentTerms = createInputElement("payment_terms", "Payment Terms", "");
-        const paymentDesc = createInputElement("payment_desc", "Payment Description", "text");
 
         toInputsFieldset.appendChild(toInputsLegend);
         toInputsFieldset.appendChild(toName);
@@ -79,19 +77,150 @@ class View {
         toColumns.appendChild(toCity);
         toColumns.appendChild(toPostcode);
         toColumns.appendChild(toCountry);
-
         toInputsFieldset.appendChild(toColumns);
-
-        const toTwoColumns = createElement({ tag: "div", className: "flex gap-x-4" });
-
-        toTwoColumns.appendChild(date);
-        toTwoColumns.appendChild(paymentTerms);
-
-        toInputsFieldset.appendChild(toTwoColumns);
-        toInputsFieldset.appendChild(paymentDesc);
-
-        this.form.appendChild(fromInputsFieldset);
         this.form.appendChild(toInputsFieldset);
+
+        // Other Inputs
+        const otherInputsFieldset = createElement({ tag: "fieldset" });
+        const otherInputsLegend = createElement({
+            tag: "legend",
+            html: "Details",
+            className: "font-bold text-purple-600 text-xs mb-6 text-white",
+        });
+
+        const date = createInputElement("date", "Invoice Date", "");
+        const paymentTerms = createInputElement("payment_terms", "Payment Terms", "");
+        const paymentDesc = createInputElement("payment_desc", "Payment Description", "text");
+
+        const otherColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+
+        otherColumns.appendChild(date);
+        otherColumns.appendChild(paymentTerms);
+
+        otherInputsFieldset.appendChild(otherInputsLegend);
+        otherInputsFieldset.appendChild(otherColumns);
+        otherInputsFieldset.appendChild(paymentDesc);
+        this.form.appendChild(otherInputsFieldset);
+
+        // Invoice Items Inputs
+        const invoiceItemsFieldset = createElement({ tag: "fieldset" });
+        const invoiceItemsLegend = createElement({
+            tag: "legend",
+            html: "Item List",
+            className: "font-bold text-slate-500 text-base mb-4",
+        });
+
+        invoiceItemsFieldset.appendChild(invoiceItemsLegend);
+        invoiceItemsFieldset.appendChild(this.generateFormItemsList());
+
+        this.form.appendChild(invoiceItemsFieldset);
+
+        const invoiceItemsTable = this.form.querySelector(
+            `[data-invoice-role="invoice-form-table"]`
+        );
+
+        invoiceItemsTable.addEventListener("click", (event) => {
+            event.target.getAttribute("data-invoice-role") === "remove-row" &&
+                invoiceItemsTable.removeChild(event.target.closest("tr"));
+        });
+    }
+
+    generateFormItemsList() {
+        const formItems = document.createDocumentFragment();
+
+        const table = createElement({
+            tag: "table",
+            className: "w-full mb-8",
+            attrs: {
+                invoiceRole: "invoice-form-table",
+            },
+        });
+        table.innerHTML = `
+            <thead>
+                <tr class="text-slate-500 text-left">
+                    <th class="font-normal text-xs pr-2">Item Name</th>
+                    <th class="font-normal text-xs w-[3rem] pr-2">Qty.</th>
+                    <th class="font-normal text-xs w-[75px] pr-2">Price</th>
+                    <th class="font-normal text-xs w-[85px] pr-2">Total</th>
+                    <th class="w-[1rem]"></th>
+                </tr>
+            </thead>
+        `;
+        table.style.borderSpacing = "20px";
+
+        const addItemButton = createButtonElement({
+            html: `<i class="fas fa-plus"></i> Add New Item`,
+            additionalClasses: "bg-neutral-200 hover:bg-neutral-100 text-neutral-600 w-full mb-8",
+            type: "button",
+        });
+
+        formItems.appendChild(table);
+        table.appendChild(this.generateFormRow());
+        formItems.appendChild(addItemButton);
+
+        addItemButton.addEventListener("click", (event) => {
+            table.appendChild(this.generateFormRow());
+        });
+
+        return formItems;
+    }
+
+    generateFormRow() {
+        const row = createElement({ tag: "tr" });
+        const fieldClasses =
+            "w-full py-4 text-xs rounded border border-solid border-slate-300 font-bold";
+
+        const nameField = createElement({ tag: "td", className: "pr-2 pt-4" });
+        const nameFieldInput = createElement({
+            tag: "input",
+            className: fieldClasses + " px-4",
+        });
+        nameFieldInput.name = "name";
+        nameField.appendChild(nameFieldInput);
+
+        const quantityField = createElement({ tag: "td", className: "pr-2 pt-4 max-w-[3rem]" });
+        const quantityFieldInput = createElement({
+            tag: "input",
+            className: fieldClasses + " px-2 text-center",
+        });
+        quantityFieldInput.name = "quantity";
+        quantityField.appendChild(quantityFieldInput);
+
+        const priceField = createElement({ tag: "td", className: "pr-2 pt-4 max-w-[75px]" });
+        const priceFieldInput = createElement({
+            tag: "input",
+            className: fieldClasses + " px-2",
+        });
+        priceFieldInput.name = "price";
+        priceField.appendChild(priceFieldInput);
+
+        const totalAmount = createElement({
+            tag: "td",
+            className: "text-slate-500 font-bold text-xs pr-2 pt-4 w-[85px]",
+        });
+
+        row.addEventListener("change", (event) => {
+            totalAmount.innerHTML = "";
+
+            if (quantityFieldInput.value && priceFieldInput.value) {
+                totalAmount.innerHTML =
+                    "£" + (quantityFieldInput.value * priceFieldInput.value).toFixed(2);
+            }
+        });
+
+        const removeRowTrigger = createElement({
+            tag: "td",
+            className: "pt-4",
+            html: `<i class="fas fa-trash text-slate-500 hover:text-slate-400 cursor-pointer" data-invoice-role="remove-row"></i>`,
+        });
+
+        row.appendChild(nameField);
+        row.appendChild(quantityField);
+        row.appendChild(priceField);
+        row.appendChild(totalAmount);
+        row.appendChild(removeRowTrigger);
+
+        return row;
     }
 
     viewForm(invoiceId) {
@@ -122,7 +251,7 @@ class View {
             attrs: {
                 invoiceRole: "submit-form",
             },
-            additionalClasses: "inline ml-2",
+            additionalClasses: "inline ml-2 text-white",
         });
 
         invoiceId
@@ -133,7 +262,7 @@ class View {
             attrs: {
                 invoiceRole: "cancel-form",
             },
-            additionalClasses: "inline ml-auto bg-red-500 hover:bg-red-400",
+            additionalClasses: "inline mr-auto bg-red-500 hover:bg-red-400 text-white",
             html: "Cancel",
             type: "button",
         });
@@ -334,7 +463,7 @@ class View {
             attrs: {
                 invoiceRole: "delete-invoice",
             },
-            additionalClasses: "inline mr-2 bg-red-500 hover:bg-red-400",
+            additionalClasses: "inline mr-2 bg-red-500 hover:bg-red-400 text-white",
             html: "Delete",
             type: "button",
         });
@@ -417,7 +546,7 @@ class View {
                 invoiceRole: "del-prompt-confirm",
             },
             html: "Delete",
-            additionalClasses: "inline bg-red-500 hover:bg-red-400",
+            additionalClasses: "inline bg-red-500 hover:bg-red-400 text-white",
         });
         deleteButtonWrapElem.appendChild(deletePromptCancelElem);
         deleteButtonWrapElem.appendChild(deletePromptConfirmElem);

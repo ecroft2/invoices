@@ -28,7 +28,7 @@ const createButtonElement = (props) => {
 
     let additionalClasses =
         props.additionalClasses +
-        " group text-xs h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold text-white";
+        " group text-xs h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold";
     latestProps.tag = "button";
     latestProps.type = props.type;
 
@@ -53,7 +53,7 @@ const createInputElement = (field, labelText, type) => {
     input.className = "p-4 text-xs rounded border border-solid border-slate-300 w-full";
 
     label.for = fieldName;
-    label.innerHTML = labelText;
+    labelText && (label.innerHTML = labelText);
     label.className = "text-xs text-slate-500 mb-2";
 
     inputWrap.appendChild(label);
