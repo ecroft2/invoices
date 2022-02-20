@@ -255,7 +255,7 @@ class View {
                     invoiceId: invoice.id,
                 },
                 className:
-                    "flex items-center text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer",
+                    "flex items-center rounded text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer",
             });
 
             listItem.innerHTML = `
@@ -295,16 +295,16 @@ class View {
         this.headerControls.classList.contains("hidden") ||
             this.headerControls.classList.add("hidden");
 
-        const backToInvoicesElem = createElement({
-            attrs: {
-                invoiceRole: "back-to-invoices",
-            },
-            className: "group text-xs font-bold flex cursor-pointer",
-            html: `<i class="fas fa-angle-left text-purple-600 group-hover:text-purple-500 mr-2 text-base leading-[14px]"></i>`,
-        });
-        backToInvoicesElem.insertAdjacentHTML("beforeend", "Go back");
+        // const backToInvoicesElem = createElement({
+        //     attrs: {
+        //         invoiceRole: "back-to-invoices",
+        //     },
+        //     className: "group text-xs font-bold flex cursor-pointer",
+        //     html: `<i class="fas fa-angle-left text-purple-600 group-hover:text-purple-500 mr-2 text-base leading-[14px]"></i>`,
+        // });
+        // backToInvoicesElem.insertAdjacentHTML("beforeend", "Go back");
 
-        this.header.appendChild(backToInvoicesElem);
+        // this.header.appendChild(backToInvoicesElem);
 
         // backToInvoicesElem.addEventListener("click", event => {
         //     this.updateInvoices()
@@ -343,6 +343,7 @@ class View {
             attrs: {
                 invoiceRole: "change-invoice-status",
             },
+            additionalClasses: "max-w-[9rem] w-full",
             html: invoice.isComplete ? "Mark as Pending" : "Mark as Paid",
             type: "button",
         });
@@ -360,21 +361,6 @@ class View {
         invoiceControls.appendChild(changeStatusButton);
 
         this.content.appendChild(invoiceControls);
-
-        const invoiceElem = createElement({
-            attrs: {
-                invoiceRole: "invoice-data",
-                invoiceId: invoice.id,
-            },
-        });
-
-        invoiceElem.appendChild(createElement({ tag: "p", html: invoice.id }));
-
-        for (const property in invoice.data) {
-            invoiceElem.appendChild(createElement({ tag: "p", html: invoice.data[property] }));
-        }
-
-        this.content.appendChild(invoiceElem);
 
         invoiceControls.addEventListener("click", (event) => {
             const targetAttr = event.target.getAttribute("data-invoice-role");
@@ -407,6 +393,8 @@ class View {
                     break;
             }
         });
+
+        this.content.appendChild(this.createInvoiceTable(invoice));
     }
 
     createDeletePrompt(invoiceId) {
@@ -450,6 +438,74 @@ class View {
         deletePromptElem.appendChild(deleteButtonWrapElem);
 
         return deletePromptElem;
+    }
+
+    createInvoiceTable(invoiceData) {
+        const { id } = invoiceData;
+        const table = createElement({
+            className: "p-8 rounded bg-white",
+            attrs: { invoiceId: id },
+        });
+
+        const {
+            fromAddress,
+            fromCity,
+            fromPostcode,
+            fromCountry,
+            toName,
+            toEmail,
+            toAddress,
+            toCity,
+            toPostcode,
+            toCountry,
+            toDate,
+            toPaymentTerms,
+            toPaymentDesc,
+        } = invoiceData.data;
+
+        table.innerHTML = `
+            <div class="flex mb-4">
+                <div class="mr-auto pr-2">
+                    <p class="font-bold text-base mb-2"><span class="text-slate-500">#</span>${id}</p>
+                    <p class="text-xs text-slate-500">${toPaymentDesc}</p>
+                </div>
+                <div class="ml-auto pl-2 text-right text-slate-500 text-xs">
+                    <p>${fromAddress}</p>
+                    <p>${fromCity}</p>
+                    <p>${fromPostcode}</p>
+                    <p>${fromCountry}</p>
+                </div>
+            </div>
+
+            <div class="flex mb-8">
+                <div class="flex justify-between flex-col w-1/3 pr-4">
+                    <div>
+                        <p class="text-slate-500 text-xs mb-2">Invoice Date</p>
+                        <p class="text-base font-bold">${toDate}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 text-xs mb-2">Payment Due</p>
+                        <p class="text-base font-bold">${toPaymentTerms}</p>
+                    </div>
+                </div>
+                <div class="w-1/3 pr-4">
+                    <p class="text-slate-500 text-xs mb-2">Bill To</p>
+                    <p class="text-base font-bold mb-2">${toName}</p>
+                    <div class="text-xs text-slate-500">
+                        <p>${toAddress}</p>
+                        <p>${toCity}</p>
+                        <p>${toPostcode}</p>
+                        <p>${toCountry}</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <p class="text-slate-500 text-xs mb-2">Sent To</p>
+                    <p class="font-bold">${toEmail}</p>
+                </div>
+            </div>
+        `;
+
+        return table;
     }
 }
 
