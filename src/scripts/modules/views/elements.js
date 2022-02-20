@@ -70,7 +70,7 @@ const createStatusElement = (isComplete, props) => {
     const fragment = document.createDocumentFragment();
     const element = document.createElement(tag);
 
-    element.className = `text-slate-500 font-semibold py-3 px-6 rounded ${
+    element.className = `max-w-[7rem] w-full text-center text-slate-500 font-semibold py-3 rounded ${
         isComplete ? "bg-green-100 text-green-500" : "bg-orange-100 text-orange-500"
     }`;
     element.innerHTML = `
