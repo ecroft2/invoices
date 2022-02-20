@@ -19,9 +19,9 @@ class Model {
                 toCity: data.toCity,
                 toPostcode: data.toPostcode,
                 toCountry: data.toCountry,
-                toDate: data.toDate,
-                toPaymentTerms: data.toPaymentTerms,
-                toPaymentDesc: data.toPaymentDesc,
+                date: data.date,
+                paymentTerms: data.paymentTerms,
+                paymentDesc: data.paymentDesc,
             },
         });
 

@@ -43,14 +43,14 @@ class View {
         const fromPostcode = createInputElement("from_postcode", "Postcode", "text");
         const fromCountry = createInputElement("from_country", "Country", "text");
 
-        const fromThreeColumns = createElement({ tag: "div", className: "flex gap-x-4" });
-        fromThreeColumns.appendChild(fromCity);
-        fromThreeColumns.appendChild(fromPostcode);
-        fromThreeColumns.appendChild(fromCountry);
+        const fromColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+        fromColumns.appendChild(fromCity);
+        fromColumns.appendChild(fromPostcode);
+        fromColumns.appendChild(fromCountry);
 
         fromInputsFieldset.appendChild(fromInputsLegend);
         fromInputsFieldset.appendChild(fromAddress);
-        fromInputsFieldset.appendChild(fromThreeColumns);
+        fromInputsFieldset.appendChild(fromColumns);
 
         // Bill To
         const toInputsFieldset = createElement({ tag: "fieldset" });
@@ -65,30 +65,30 @@ class View {
         const toCity = createInputElement("to_city", "City", "text");
         const toPostcode = createInputElement("to_postcode", "Postcode", "text");
         const toCountry = createInputElement("to_country", "Country", "text");
-        const toDate = createInputElement("to_date", "Invoice Date", "");
-        const toPaymentTerms = createInputElement("to_payment_terms", "Payment Terms", "");
-        const toPaymentDesc = createInputElement("to_payment_desc", "Payment Description", "text");
+        const date = createInputElement("date", "Invoice Date", "");
+        const paymentTerms = createInputElement("payment_terms", "Payment Terms", "");
+        const paymentDesc = createInputElement("payment_desc", "Payment Description", "text");
 
         toInputsFieldset.appendChild(toInputsLegend);
         toInputsFieldset.appendChild(toName);
         toInputsFieldset.appendChild(toEmail);
         toInputsFieldset.appendChild(toAddress);
 
-        const toThreeColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+        const toColumns = createElement({ tag: "div", className: "flex gap-x-4" });
 
-        toThreeColumns.appendChild(toCity);
-        toThreeColumns.appendChild(toPostcode);
-        toThreeColumns.appendChild(toCountry);
+        toColumns.appendChild(toCity);
+        toColumns.appendChild(toPostcode);
+        toColumns.appendChild(toCountry);
 
-        toInputsFieldset.appendChild(toThreeColumns);
+        toInputsFieldset.appendChild(toColumns);
 
         const toTwoColumns = createElement({ tag: "div", className: "flex gap-x-4" });
 
-        toTwoColumns.appendChild(toDate);
-        toTwoColumns.appendChild(toPaymentTerms);
+        toTwoColumns.appendChild(date);
+        toTwoColumns.appendChild(paymentTerms);
 
         toInputsFieldset.appendChild(toTwoColumns);
-        toInputsFieldset.appendChild(toPaymentDesc);
+        toInputsFieldset.appendChild(paymentDesc);
 
         this.form.appendChild(fromInputsFieldset);
         this.form.appendChild(toInputsFieldset);
@@ -458,16 +458,16 @@ class View {
             toCity,
             toPostcode,
             toCountry,
-            toDate,
-            toPaymentTerms,
-            toPaymentDesc,
+            date,
+            paymentTerms,
+            paymentDesc,
         } = invoiceData.data;
 
         table.innerHTML = `
             <div class="flex mb-4">
                 <div class="mr-auto pr-2">
                     <p class="font-bold text-base mb-2"><span class="text-slate-500">#</span>${id}</p>
-                    <p class="text-xs text-slate-500">${toPaymentDesc}</p>
+                    <p class="text-xs text-slate-500">${paymentDesc}</p>
                 </div>
                 <div class="ml-auto pl-2 text-right text-slate-500 text-xs">
                     <p>${fromAddress}</p>
@@ -481,11 +481,11 @@ class View {
                 <div class="flex justify-between flex-col w-1/3 pr-4">
                     <div>
                         <p class="text-slate-500 text-xs mb-2">Invoice Date</p>
-                        <p class="text-base font-bold">${toDate}</p>
+                        <p class="text-base font-bold">${date}</p>
                     </div>
                     <div>
                         <p class="text-slate-500 text-xs mb-2">Payment Due</p>
-                        <p class="text-base font-bold">${toPaymentTerms}</p>
+                        <p class="text-base font-bold">${paymentTerms}</p>
                     </div>
                 </div>
                 <div class="w-1/3 pr-4">
