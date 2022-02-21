@@ -30,7 +30,7 @@ class View {
         this.sortOrder;
     }
 
-    generateFormItems() {
+    generateFormItems(invoiceData) {
         // Bill From Inputs
         const fromInputsFieldset = createElement({ tag: "fieldset" });
         const fromInputsLegend = createElement({
@@ -102,6 +102,17 @@ class View {
         otherInputsFieldset.appendChild(paymentDesc);
         this.form.appendChild(otherInputsFieldset);
 
+        // Pre-populate regular fields
+        if (invoiceData) {
+            for (const [key, value] of Object.entries(invoiceData.data)) {
+                if (key !== "items") {
+                    let inputName = key.replace(/[A-Z]/g, (l) => "_" + l.toLowerCase());
+
+                    this.form.elements[inputName].value = value;
+                }
+            }
+        }
+
         // Invoice Items Inputs
         const invoiceItemsFieldset = createElement({ tag: "fieldset" });
         const invoiceItemsLegend = createElement({
@@ -111,23 +122,24 @@ class View {
         });
 
         invoiceItemsFieldset.appendChild(invoiceItemsLegend);
-        invoiceItemsFieldset.appendChild(this.generateFormItemsList());
+
+        invoiceData
+            ? invoiceItemsFieldset.appendChild(this.generateFormItemsList(invoiceData))
+            : invoiceItemsFieldset.appendChild(this.generateFormItemsList());
 
         this.form.appendChild(invoiceItemsFieldset);
 
-        const invoiceItemsTable = this.form.querySelector(
+        const invoiceFormItemsTable = this.form.querySelector(
             `[data-invoice-role="invoice-form-table"]`
         );
 
-        invoiceItemsTable.addEventListener("click", (event) => {
+        invoiceFormItemsTable.addEventListener("click", (event) => {
             event.target.getAttribute("data-invoice-role") === "remove-row" &&
-                invoiceItemsTable.removeChild(event.target.closest("tr"));
+                invoiceFormItemsTable.removeChild(event.target.closest("tr"));
         });
     }
 
-    generateFormItemsList() {
-        const formItems = document.createDocumentFragment();
-
+    generateFormItemsList(invoiceData) {
         const table = createElement({
             tag: "table",
             className: "w-full mb-8",
@@ -135,6 +147,9 @@ class View {
                 invoiceRole: "invoice-form-table",
             },
         });
+
+        const formItems = document.createDocumentFragment();
+
         table.innerHTML = `
             <thead>
                 <tr class="text-slate-500 text-left">
@@ -154,8 +169,15 @@ class View {
             type: "button",
         });
 
+        if (invoiceData) {
+            invoiceData.data.items.forEach((item) => {
+                table.appendChild(this.generateFormRow(item));
+            });
+        } else {
+            table.appendChild(this.generateFormRow());
+        }
+
         formItems.appendChild(table);
-        table.appendChild(this.generateFormRow());
         formItems.appendChild(addItemButton);
 
         addItemButton.addEventListener("click", (event) => {
@@ -166,6 +188,7 @@ class View {
     }
 
     generateFormRow(data) {
+        console.log(data);
         const row = createElement({ tag: "tr" });
         const fieldClasses =
             "w-full py-4 text-xs rounded border border-solid border-slate-300 font-bold";
@@ -227,6 +250,9 @@ class View {
     }
 
     viewForm(invoiceId) {
+        let invoiceData;
+        invoiceId && (invoiceData = this.getInvoice(invoiceId));
+
         this.rootOverlay.classList.toggle("hidden");
 
         this.form = createElement({
@@ -245,7 +271,7 @@ class View {
 
         this.form.appendChild(formHeading);
 
-        this.generateFormItems();
+        invoiceId ? this.generateFormItems(invoiceData) : this.generateFormItems();
 
         const buttonWrap = createElement({ className: "flex items-end" });
 
@@ -277,33 +303,6 @@ class View {
         this.root.appendChild(this.form);
 
         const invoiceForm = document.querySelector("[data-invoice-role='form']");
-        let invoiceData;
-
-        if (invoiceId) {
-            invoiceData = this.getInvoice(invoiceId);
-
-            for (const [key, value] of Object.entries(invoiceData.data)) {
-                if (key !== "items") {
-                    let inputName = key.replace(/[A-Z]/g, (l) => "_" + l.toLowerCase());
-
-                    invoiceForm.elements[inputName].value = value;
-                }
-            }
-
-            const invoiceFormTable = document.querySelector(
-                `[data-invoice-role="invoice-form-table"]`
-            );
-
-            // invoiceFormTable.removeChild(invoiceFormTable.querySelectorAll("tr"));
-            invoiceFormTable.querySelectorAll("tr").forEach((row) => {
-                console.log(row);
-                // invoiceFormTable.removeChild(row);
-            });
-
-            invoiceData.data.items.forEach((item) => {
-                invoiceFormTable.appendChild(this.generateFormRow(item));
-            });
-        }
 
         cancelButton.addEventListener("click", () => {
             this.root.removeChild(invoiceForm);
