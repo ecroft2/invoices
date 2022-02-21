@@ -22,6 +22,7 @@ class Model {
                 date: data.date,
                 paymentTerms: data.paymentTerms,
                 paymentDesc: data.paymentDesc,
+                items: data.items,
             },
         });
 

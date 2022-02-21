@@ -165,7 +165,7 @@ class View {
         return formItems;
     }
 
-    generateFormRow() {
+    generateFormRow(data) {
         const row = createElement({ tag: "tr" });
         const fieldClasses =
             "w-full py-4 text-xs rounded border border-solid border-slate-300 font-bold";
@@ -176,6 +176,7 @@ class View {
             className: fieldClasses + " px-4",
         });
         nameFieldInput.name = "name";
+        data && (nameFieldInput.value = data["name"]);
         nameField.appendChild(nameFieldInput);
 
         const quantityField = createElement({ tag: "td", className: "pr-2 pt-4 max-w-[3rem]" });
@@ -184,6 +185,7 @@ class View {
             className: fieldClasses + " px-2 text-center",
         });
         quantityFieldInput.name = "quantity";
+        data && (quantityFieldInput.value = data["quantity"]);
         quantityField.appendChild(quantityFieldInput);
 
         const priceField = createElement({ tag: "td", className: "pr-2 pt-4 max-w-[75px]" });
@@ -192,6 +194,7 @@ class View {
             className: fieldClasses + " px-2",
         });
         priceFieldInput.name = "price";
+        data && (priceFieldInput.value = data["price"]);
         priceField.appendChild(priceFieldInput);
 
         const totalAmount = createElement({
@@ -273,17 +276,33 @@ class View {
 
         this.root.appendChild(this.form);
 
-        let invoiceForm = document.querySelector("[data-invoice-role='form']");
+        const invoiceForm = document.querySelector("[data-invoice-role='form']");
         let invoiceData;
 
         if (invoiceId) {
             invoiceData = this.getInvoice(invoiceId);
 
             for (const [key, value] of Object.entries(invoiceData.data)) {
-                let inputName = key.replace(/[A-Z]/g, (l) => "_" + l.toLowerCase());
+                if (key !== "items") {
+                    let inputName = key.replace(/[A-Z]/g, (l) => "_" + l.toLowerCase());
 
-                invoiceForm.elements[inputName].value = value;
+                    invoiceForm.elements[inputName].value = value;
+                }
             }
+
+            const invoiceFormTable = document.querySelector(
+                `[data-invoice-role="invoice-form-table"]`
+            );
+
+            // invoiceFormTable.removeChild(invoiceFormTable.querySelectorAll("tr"));
+            invoiceFormTable.querySelectorAll("tr").forEach((row) => {
+                console.log(row);
+                // invoiceFormTable.removeChild(row);
+            });
+
+            invoiceData.data.items.forEach((item) => {
+                invoiceFormTable.appendChild(this.generateFormRow(item));
+            });
         }
 
         cancelButton.addEventListener("click", () => {
@@ -295,6 +314,7 @@ class View {
             event.preventDefault();
 
             const invoiceFormData = {};
+            invoiceFormData["items"] = new Array();
 
             const inputs = invoiceForm.querySelectorAll("input");
 
@@ -305,6 +325,18 @@ class View {
 
                 invoiceFormData[inputName] = input.value;
             });
+
+            document
+                .querySelectorAll(`[data-invoice-role="invoice-form-table"] > tr`)
+                .forEach((row) => {
+                    let inputs = new Object();
+
+                    row.querySelectorAll("input").forEach((input) => {
+                        inputs[input.name] = input.value;
+                    });
+
+                    invoiceFormData.items.push(inputs);
+                });
 
             if (invoiceId) {
                 invoiceData.data = invoiceFormData;
