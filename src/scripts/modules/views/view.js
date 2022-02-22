@@ -500,7 +500,7 @@ class View {
                 invoiceRole: "edit-invoice",
             },
             html: "Edit",
-            additionalClasses: "inline mr-2 ml-auto bg-blue-500 hover:bg-blue-400",
+            additionalClasses: "inline mr-2 ml-auto bg-blue-500 hover:bg-blue-400 text-white",
         });
 
         const deleteButton = createButtonElement({
@@ -516,7 +516,7 @@ class View {
             attrs: {
                 invoiceRole: "change-invoice-status",
             },
-            additionalClasses: "max-w-[9rem] w-full",
+            additionalClasses: "max-w-[9rem] w-full text-white",
             html: invoice.isComplete ? "Mark as Pending" : "Mark as Paid",
             type: "button",
         });
