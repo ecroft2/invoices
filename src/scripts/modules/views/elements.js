@@ -50,7 +50,7 @@ const createInputElement = (field, labelText, type) => {
 
     input.name = fieldName;
     input.type = type;
-    input.className = "p-4 text-xs rounded border border-solid border-slate-300 w-full";
+    input.className = "p-4 text-xs rounded border border-solid border-slate-300 w-full font-bold";
 
     label.for = fieldName;
     labelText && (label.innerHTML = labelText);

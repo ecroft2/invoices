@@ -567,24 +567,24 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 100%;
 }
 
-.w-1\/3{
-  width: 33.333333%;
+.w-\[3rem\]{
+  width: 3rem;
 }
 
 .w-\[75px\]{
   width: 75px;
 }
 
+.w-\[85px\]{
+  width: 85px;
+}
+
 .w-\[1rem\]{
   width: 1rem;
 }
 
-.w-\[3rem\]{
-  width: 3rem;
-}
-
-.w-\[85px\]{
-  width: 85px;
+.w-1\/3{
+  width: 33.333333%;
 }
 
 .max-w-screen-md{
@@ -599,8 +599,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   max-width: 3rem;
 }
 
-.max-w-\[100px\]{
-  max-width: 100px;
+.max-w-\[75px\]{
+  max-width: 75px;
 }
 
 .max-w-\[9rem\]{
@@ -609,10 +609,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .max-w-lg{
   max-width: 32rem;
-}
-
-.max-w-\[75px\]{
-  max-width: 75px;
 }
 
 .-translate-y-2\/4{

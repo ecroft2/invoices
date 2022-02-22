@@ -108,7 +108,7 @@ class View {
                 if (key !== "items") {
                     let inputName = key.replace(/[A-Z]/g, (l) => "_" + l.toLowerCase());
 
-                    this.form.elements[inputName].value = value;
+                    value && (this.form.elements[inputName].value = value);
                 }
             }
         }
@@ -163,6 +163,9 @@ class View {
         `;
         table.style.borderSpacing = "20px";
 
+        const tableBody = createElement({ tag: "tbody" });
+        table.appendChild(tableBody);
+
         const addItemButton = createButtonElement({
             html: `<i class="fas fa-plus"></i> Add New Item`,
             additionalClasses: "bg-neutral-200 hover:bg-neutral-100 text-neutral-600 w-full mb-8",
@@ -171,24 +174,23 @@ class View {
 
         if (invoiceData) {
             invoiceData.data.items.forEach((item) => {
-                table.appendChild(this.generateFormRow(item));
+                tableBody.appendChild(this.generateFormRow(item));
             });
         } else {
-            table.appendChild(this.generateFormRow());
+            tableBody.appendChild(this.generateFormRow());
         }
 
         formItems.appendChild(table);
         formItems.appendChild(addItemButton);
 
         addItemButton.addEventListener("click", (event) => {
-            table.appendChild(this.generateFormRow());
+            tableBody.appendChild(this.generateFormRow());
         });
 
         return formItems;
     }
 
     generateFormRow(data) {
-        console.log(data);
         const row = createElement({ tag: "tr" });
         const fieldClasses =
             "w-full py-4 text-xs rounded border border-solid border-slate-300 font-bold";
@@ -315,9 +317,13 @@ class View {
             const invoiceFormData = {};
             invoiceFormData["items"] = new Array();
 
-            const inputs = invoiceForm.querySelectorAll("input");
+            const inputs = [...invoiceForm.querySelectorAll("input")].filter(
+                (input) => input.closest(`[data-invoice-role="invoice-form-table"]`) === null
+            );
 
-            [...inputs].forEach((input) => {
+            console.log(inputs);
+
+            inputs.forEach((input) => {
                 const inputName = input.name.replace(/_([a-z])/gi, (all, letter) =>
                     letter.toUpperCase()
                 );
@@ -326,7 +332,7 @@ class View {
             });
 
             document
-                .querySelectorAll(`[data-invoice-role="invoice-form-table"] > tr`)
+                .querySelectorAll(`[data-invoice-role="invoice-form-table"] tbody tr`)
                 .forEach((row) => {
                     let inputs = new Object();
 
