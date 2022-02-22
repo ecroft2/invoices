@@ -195,7 +195,7 @@ class View {
     generateFormRow(data) {
         const row = createElement({ tag: "tr" });
         const fieldClasses =
-            "w-full py-4 text-xs rounded border border-solid border-slate-300 font-bold";
+            "w-full py-4 text-xs rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
 
         const nameField = createElement({ tag: "td", className: "pr-2 pt-4" });
         const nameFieldInput = createElement({
@@ -246,7 +246,7 @@ class View {
         const removeRowTrigger = createElement({
             tag: "td",
             className: "pt-4",
-            html: `<i class="fas fa-trash text-slate-500 hover:text-slate-400 cursor-pointer" data-invoice-role="remove-row"></i>`,
+            html: `<i class="fas fa-trash transition-colors duration-100 text-slate-500 hover:text-slate-400 cursor-pointer" data-invoice-role="remove-row"></i>`,
         });
 
         row.appendChild(nameField);
@@ -432,15 +432,24 @@ class View {
                     invoiceId: invoice.id,
                 },
                 className:
-                    "flex items-center rounded text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer",
+                    "flex items-center rounded drop-shadow-sm text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-xs group",
             });
 
             listItem.innerHTML = `
-                <span class="font-bold text-base">#${invoice.id}</span>
+                <span class="font-bold"><span class="text-slate-500">#</span>${invoice.id}</span>
+                <span class="text-slate-500">Due ${invoice.data.date}</span>
                 <span class="text-slate-500">${invoice.data.toName}</span>
+                <span class="font-bold text-base">£${invoice.totalOwedAmount}</span>
             `;
 
             listItem.appendChild(createStatusElement(invoice.isComplete, { tag: "span" }));
+            listItem.appendChild(
+                createElement({
+                    tag: "i",
+                    className:
+                        "fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
+                })
+            );
 
             invoicesList.appendChild(listItem);
 
@@ -587,7 +596,7 @@ class View {
                 invoiceRole: "del-prompt-cancel",
             },
             html: "Cancel",
-            additionalClasses: "inline mr-2 bg-blue-500 hover:bg-blue-400",
+            additionalClasses: "inline mr-2 bg-blue-500 hover:bg-blue-400 text-white",
         });
         const deletePromptConfirmElem = createButtonElement({
             attrs: {

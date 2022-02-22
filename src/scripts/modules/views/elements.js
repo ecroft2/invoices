@@ -28,7 +28,7 @@ const createButtonElement = (props) => {
 
     let additionalClasses =
         props.additionalClasses +
-        " group text-xs h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold";
+        " group text-xs h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold transition-colors duration-100";
     latestProps.tag = "button";
     latestProps.type = props.type;
 
@@ -50,7 +50,8 @@ const createInputElement = (field, labelText, type) => {
 
     input.name = fieldName;
     input.type = type;
-    input.className = "p-4 text-xs rounded border border-solid border-slate-300 w-full font-bold";
+    input.className =
+        "p-4 text-xs rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors w-full font-bold";
 
     label.for = fieldName;
     labelText && (label.innerHTML = labelText);
@@ -70,7 +71,7 @@ const createStatusElement = (isComplete, props) => {
     const fragment = document.createDocumentFragment();
     const element = document.createElement(tag);
 
-    element.className = `max-w-[7rem] w-full text-center text-slate-500 font-semibold py-3 rounded ${
+    element.className = `max-w-[7rem] w-full text-center text-slate-500 font-semibold py-3 rounded transition-colors ${
         isComplete ? "bg-green-100 text-green-500" : "bg-orange-100 text-orange-500"
     }`;
     element.innerHTML = `
