@@ -43,14 +43,14 @@ class View {
         const fromPostcode = createInputElement("from_postcode", "Postcode", "text");
         const fromCountry = createInputElement("from_country", "Country", "text");
 
-        const fromColumns = createElement({ tag: "div", className: "flex gap-x-4" });
-        fromColumns.appendChild(fromCity);
-        fromColumns.appendChild(fromPostcode);
-        fromColumns.appendChild(fromCountry);
+        const fromInputsColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+        fromInputsColumns.appendChild(fromCity);
+        fromInputsColumns.appendChild(fromPostcode);
+        fromInputsColumns.appendChild(fromCountry);
 
         fromInputsFieldset.appendChild(fromInputsLegend);
         fromInputsFieldset.appendChild(fromAddress);
-        fromInputsFieldset.appendChild(fromColumns);
+        fromInputsFieldset.appendChild(fromInputsColumns);
         this.form.appendChild(fromInputsFieldset);
 
         // Bill To Inputs
@@ -72,12 +72,12 @@ class View {
         toInputsFieldset.appendChild(toEmail);
         toInputsFieldset.appendChild(toAddress);
 
-        const toColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+        const toInputsColumns = createElement({ tag: "div", className: "flex gap-x-4" });
 
-        toColumns.appendChild(toCity);
-        toColumns.appendChild(toPostcode);
-        toColumns.appendChild(toCountry);
-        toInputsFieldset.appendChild(toColumns);
+        toInputsColumns.appendChild(toCity);
+        toInputsColumns.appendChild(toPostcode);
+        toInputsColumns.appendChild(toCountry);
+        toInputsFieldset.appendChild(toInputsColumns);
         this.form.appendChild(toInputsFieldset);
 
         // Other Inputs
@@ -88,17 +88,17 @@ class View {
             className: "font-bold text-purple-600 text-xs mb-6 text-white",
         });
 
+        const otherInputsColumns = createElement({ tag: "div", className: "flex gap-x-4" });
+
         const date = createInputElement("date", "Invoice Date", "");
         const paymentTerms = createInputElement("payment_terms", "Payment Terms", "");
+        otherInputsColumns.appendChild(date);
+        otherInputsColumns.appendChild(paymentTerms);
+
         const paymentDesc = createInputElement("payment_desc", "Payment Description", "text");
 
-        const otherColumns = createElement({ tag: "div", className: "flex gap-x-4" });
-
-        otherColumns.appendChild(date);
-        otherColumns.appendChild(paymentTerms);
-
         otherInputsFieldset.appendChild(otherInputsLegend);
-        otherInputsFieldset.appendChild(otherColumns);
+        otherInputsFieldset.appendChild(otherInputsColumns);
         otherInputsFieldset.appendChild(paymentDesc);
         this.form.appendChild(otherInputsFieldset);
 

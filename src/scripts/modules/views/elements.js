@@ -46,7 +46,7 @@ const createInputElement = (field, labelText, type) => {
     const label = document.createElement("label");
     const fieldName = field.toLowerCase();
 
-    inputWrap.className = "flex flex-col mb-6";
+    inputWrap.className = "flex flex-col mb-6 w-full";
 
     input.name = fieldName;
     input.type = type;
