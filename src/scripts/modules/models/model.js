@@ -8,6 +8,7 @@ class Model {
         this.invoices.push({
             id: this.generateId(),
             isComplete: false,
+            totalOwedAmount: this.calculateTotalOwedAmount(data.items),
             data: {
                 fromAddress: data.fromAddress,
                 fromCity: data.fromCity,
@@ -40,6 +41,7 @@ class Model {
                 ? {
                       id: invoiceData.id,
                       isComplete: invoiceData.isComplete,
+                      totalOwedAmount: this.calculateTotalOwedAmount(invoiceData.data.items),
                       data: invoiceData.data,
                   }
                 : invoice
@@ -51,6 +53,16 @@ class Model {
         });
 
         this.handleInvoiceEdit(invoiceId);
+    }
+
+    calculateTotalOwedAmount(data) {
+        let count = new Number(0);
+
+        data.forEach((invoiceItem) => {
+            count += invoiceItem.price * invoiceItem.quantity;
+        });
+
+        return count;
     }
 
     generateId() {

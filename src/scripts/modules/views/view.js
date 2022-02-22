@@ -343,7 +343,11 @@ class View {
 
                     row.querySelectorAll("input").forEach((input) => {
                         if (input.value) {
-                            inputs[input.name] = input.value;
+                            if (input.name !== "name") {
+                                inputs[input.name] = Number(input.value);
+                            } else {
+                                inputs[input.name] = input.value;
+                            }
                         }
                     });
 
@@ -614,7 +618,7 @@ class View {
     }
 
     displayInvoiceData(invoiceData) {
-        const { id, data, totalOwed } = invoiceData;
+        const { id, data, totalOwedAmount } = invoiceData;
         const dataElement = createElement({
             className: "p-8 rounded bg-white mt-6",
             attrs: { invoiceId: id },
@@ -727,7 +731,7 @@ class View {
             createElement({
                 tag: "p",
                 className: "text-2xl ml-auto text-white font-bold",
-                html: "£" + (totalOwed || "0"),
+                html: "£" + (totalOwedAmount || "0"),
             })
         );
         dataElement.appendChild(totalDueElement);
