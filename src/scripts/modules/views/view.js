@@ -567,7 +567,7 @@ class View {
             }
         });
 
-        this.content.appendChild(this.createInvoiceTable(invoice));
+        this.content.appendChild(this.displayInvoiceData(invoice));
     }
 
     createDeletePrompt(invoiceId) {
@@ -613,10 +613,10 @@ class View {
         return deletePromptElem;
     }
 
-    createInvoiceTable(invoiceData) {
-        const { id } = invoiceData;
-        const table = createElement({
-            className: "p-8 rounded bg-white",
+    displayInvoiceData(invoiceData) {
+        const { id, data, totalOwed } = invoiceData;
+        const dataElement = createElement({
+            className: "p-8 rounded bg-white mt-6",
             attrs: { invoiceId: id },
         });
 
@@ -634,9 +634,10 @@ class View {
             date,
             paymentTerms,
             paymentDesc,
-        } = invoiceData.data;
+            items: invoiceItems,
+        } = data;
 
-        table.innerHTML = `
+        dataElement.innerHTML = `
             <div class="flex mb-4">
                 <div class="mr-auto pr-2">
                     <p class="font-bold text-base mb-2"><span class="text-slate-500">#</span>${id}</p>
@@ -678,7 +679,60 @@ class View {
             </div>
         `;
 
-        return table;
+        const dataTable = createElement({
+            tag: "table",
+            className: "rounded-t bg-slate-50 p-8 w-full border-separate",
+            html: `
+                <tr class="text-slate-500 text-xs">
+                    <th class="font-normal text-left pb-4">Item Name</th>
+                    <th class="font-normal text-center pb-4">Qty.</th>
+                    <th class="font-normal text-right pb-4">Price</th>
+                    <th class="font-normal text-right pb-4">Total</th>
+                </tr>
+            `,
+        });
+
+        const dataTableBody = createElement({ tag: "tbody" });
+
+        invoiceItems.forEach((item) => {
+            dataTableBody.insertAdjacentHTML(
+                "beforeend",
+                `
+                <tr class="text-xs">
+                    <td class="pt-4 font-bold text-left">${item.name || ""}</td>
+                    <td class="pt-4 font-bold text-slate-500 text-center">${
+                        item.quantity || ""
+                    }</td>
+                    <td class="pt-4 font-bold text-slate-500 text-right">£${item.price || ""}</td>
+                    <td class="pt-4 font-bold text-right">£${item.quantity * item.price || ""}</td>
+                </tr>
+                `
+            );
+        });
+
+        dataTable.appendChild(dataTableBody);
+        dataElement.appendChild(dataTable);
+
+        const totalDueElement = createElement({
+            className: "flex items-center rounded-b bg-slate-700 px-8 py-6",
+        });
+        totalDueElement.appendChild(
+            createElement({
+                tag: "p",
+                className: "text-xs mr-auto text-white",
+                html: "Amount Due",
+            })
+        );
+        totalDueElement.appendChild(
+            createElement({
+                tag: "p",
+                className: "text-2xl ml-auto text-white font-bold",
+                html: "£" + (totalOwed || "0"),
+            })
+        );
+        dataElement.appendChild(totalDueElement);
+
+        return dataElement;
     }
 }
 
