@@ -137,7 +137,9 @@ class View {
 
         invoiceFormItemsTable.addEventListener("click", (event) => {
             event.target.getAttribute("data-invoice-role") === "remove-row" &&
-                invoiceFormItemsTable.removeChild(event.target.closest("tr"));
+                invoiceFormItemsTable
+                    .querySelector("tbody")
+                    .removeChild(event.target.closest("tr"));
         });
     }
 
