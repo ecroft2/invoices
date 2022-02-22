@@ -123,9 +123,11 @@ class View {
 
         invoiceItemsFieldset.appendChild(invoiceItemsLegend);
 
-        invoiceData
-            ? invoiceItemsFieldset.appendChild(this.generateFormItemsList(invoiceData))
-            : invoiceItemsFieldset.appendChild(this.generateFormItemsList());
+        if (invoiceData && invoiceData.data.items.length !== 0) {
+            invoiceItemsFieldset.appendChild(this.generateFormItemsList(invoiceData.data.items));
+        } else {
+            invoiceItemsFieldset.appendChild(this.generateFormItemsList());
+        }
 
         this.form.appendChild(invoiceItemsFieldset);
 
@@ -139,7 +141,7 @@ class View {
         });
     }
 
-    generateFormItemsList(invoiceData) {
+    generateFormItemsList(invoiceItems) {
         const table = createElement({
             tag: "table",
             className: "w-full mb-8",
@@ -172,8 +174,8 @@ class View {
             type: "button",
         });
 
-        if (invoiceData) {
-            invoiceData.data.items.forEach((item) => {
+        if (invoiceItems) {
+            invoiceItems.forEach((item) => {
                 tableBody.appendChild(this.generateFormRow(item));
             });
         } else {
@@ -201,7 +203,7 @@ class View {
             className: fieldClasses + " px-4",
         });
         nameFieldInput.name = "name";
-        data && (nameFieldInput.value = data["name"]);
+        data && data["name"] && (nameFieldInput.value = data["name"]);
         nameField.appendChild(nameFieldInput);
 
         const quantityField = createElement({ tag: "td", className: "pr-2 pt-4 max-w-[3rem]" });
@@ -210,7 +212,7 @@ class View {
             className: fieldClasses + " px-2 text-center",
         });
         quantityFieldInput.name = "quantity";
-        data && (quantityFieldInput.value = data["quantity"]);
+        data && data["quantity"] && (quantityFieldInput.value = data["quantity"]);
         quantityField.appendChild(quantityFieldInput);
 
         const priceField = createElement({ tag: "td", className: "pr-2 pt-4 max-w-[75px]" });
@@ -219,13 +221,18 @@ class View {
             className: fieldClasses + " px-2",
         });
         priceFieldInput.name = "price";
-        data && (priceFieldInput.value = data["price"]);
+        data && data["price"] && (priceFieldInput.value = data["price"]);
         priceField.appendChild(priceFieldInput);
 
         const totalAmount = createElement({
             tag: "td",
             className: "text-slate-500 font-bold text-xs pr-2 pt-4 w-[85px]",
         });
+
+        if (data && data["quantity"] && data["price"]) {
+            totalAmount.innerHTML =
+                "£" + (quantityFieldInput.value * priceFieldInput.value).toFixed(2);
+        }
 
         row.addEventListener("change", (event) => {
             totalAmount.innerHTML = "";
@@ -317,13 +324,11 @@ class View {
             const invoiceFormData = {};
             invoiceFormData["items"] = new Array();
 
-            const inputs = [...invoiceForm.querySelectorAll("input")].filter(
+            const invoiceInfoInputs = [...invoiceForm.querySelectorAll("input")].filter(
                 (input) => input.closest(`[data-invoice-role="invoice-form-table"]`) === null
             );
 
-            console.log(inputs);
-
-            inputs.forEach((input) => {
+            invoiceInfoInputs.forEach((input) => {
                 const inputName = input.name.replace(/_([a-z])/gi, (all, letter) =>
                     letter.toUpperCase()
                 );
@@ -337,10 +342,12 @@ class View {
                     let inputs = new Object();
 
                     row.querySelectorAll("input").forEach((input) => {
-                        inputs[input.name] = input.value;
+                        if (input.value) {
+                            inputs[input.name] = input.value;
+                        }
                     });
 
-                    invoiceFormData.items.push(inputs);
+                    Object.keys(inputs).length !== 0 && invoiceFormData.items.push(inputs);
                 });
 
             if (invoiceId) {
