@@ -619,6 +619,22 @@ Ensure the default browser behavior of the `hidden` attribute.
   max-width: 32rem;
 }
 
+.max-w-\[20\%\]{
+  max-width: 20%;
+}
+
+.grow-\[1\]{
+  flex-grow: 1;
+}
+
+.grow-\[2\]{
+  flex-grow: 2;
+}
+
+.basis-0{
+  flex-basis: 0px;
+}
+
 .border-separate{
   border-collapse: separate;
 }

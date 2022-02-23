@@ -27,7 +27,6 @@ class View {
         this.invoices;
 
         this.filterSelect = document.querySelector("[data-invoice-role='filter']");
-        this.sortOrder = "all";
 
         this.filterSelect.addEventListener("change", (event) => {
             this.sortOrder = event.target.value;
@@ -442,18 +441,23 @@ class View {
             });
 
             listItem.innerHTML = `
-                <span class="font-bold"><span class="text-slate-500">#</span>${invoice.id}</span>
-                <span class="text-slate-500">Due ${invoice.data.date}</span>
-                <span class="text-slate-500">${invoice.data.toName}</span>
-                <span class="font-bold text-base">£${invoice.totalOwedAmount}</span>
+                <span class="grow-[1] text-center font-bold pr-2"><span class="text-slate-500">#</span>${invoice.id}</span>
+                <span class="grow-[2] basis-0 text-slate-500 pr-2">Due ${invoice.data.date}</span>
+                <span class="grow-[2] basis-0 text-slate-500 pr-2">${invoice.data.toName}</span>
+                <span class="grow-[1] basis-0 text-center pr-2 font-bold text-base">£${invoice.totalOwedAmount}</span>
             `;
 
-            listItem.appendChild(createStatusElement(invoice.isComplete, { tag: "span" }));
+            listItem.appendChild(
+                createStatusElement(invoice.isComplete, {
+                    tag: "span",
+                    additionalClasses: "grow-[1]",
+                })
+            );
             listItem.appendChild(
                 createElement({
                     tag: "i",
                     className:
-                        "fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
+                        "grow-[1] text-center fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
                 })
             );
 
