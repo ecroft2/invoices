@@ -1,7 +1,7 @@
 class Model {
     constructor() {
-        this.invoices = [];
-        this.counter = 0;
+        this.invoices = JSON.parse(localStorage.getItem("invoices")) || [];
+        this.counter = JSON.parse(localStorage.getItem("counter") || 0);
     }
 
     addInvoice(data) {
@@ -26,12 +26,13 @@ class Model {
                 items: data.items,
             },
         });
-
+        localStorage.setItem("invoices", JSON.stringify(this.invoices));
         this.handleInvoiceChange({ invoices: this.invoices });
     }
 
     deleteInvoice(id) {
         this.invoices = this.invoices.filter((invoice) => invoice.id !== id);
+        localStorage.setItem("invoices", JSON.stringify(this.invoices));
         this.handleInvoiceChange({ invoices: this.invoices });
     }
 
@@ -46,6 +47,8 @@ class Model {
                   }
                 : invoice
         );
+
+        localStorage.setItem("invoices", JSON.stringify(this.invoices));
 
         this.handleInvoiceChange({
             invoices: this.invoices,
@@ -67,11 +70,8 @@ class Model {
 
     generateId() {
         this.counter++;
+        localStorage.setItem("counter", this.counter);
         return this.counter;
-    }
-
-    onInvoiceChange(callback) {
-        this.invoiceChangeHandler = callback;
     }
 
     getInvoice = (id) => this.invoices.find((invoice) => invoice.id === id);
