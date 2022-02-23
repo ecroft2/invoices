@@ -437,7 +437,7 @@ class View {
                     invoiceId: invoice.id,
                 },
                 className:
-                    "flex items-center rounded drop-shadow-sm text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-xs group",
+                    "flex items-center rounded drop-shadow-sm hover:drop-shadow-md transition-all text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-xs group",
             });
 
             listItem.innerHTML = `
