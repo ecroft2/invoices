@@ -272,7 +272,8 @@ class View {
 
         this.form = createElement({
             tag: "form",
-            className: "form-overlay",
+            className:
+                "p-6 md:py-16 md:px-10 absolute left-0 w-full md:w-6/12 top-0 bottom-0 h-full overflow-y-scroll bg-white max-w-[700px] rounded-r-2xl z-[2]",
             attrs: {
                 invoiceRole: "form",
             },
@@ -387,8 +388,8 @@ class View {
         if (this.invoices.length > 0) {
             this.totalInvoices.innerHTML = `${
                 this.invoices.length === 1
-                    ? `There is 1 invoice.`
-                    : `There are ${this.invoices.length} total invoices.`
+                    ? `<span class="hidden md:inline">There is </span>1 invoice.`
+                    : `<span class="hidden md:inline">There are </span>${this.invoices.length} <span class="hidden md:inline">total </span>invoices.`
             }`;
 
             this.filterSelect.classList.contains("hidden") &&
@@ -396,7 +397,7 @@ class View {
 
             this.createInvoiceList(this.invoices, this.sortOrder);
         } else {
-            this.totalInvoices.innerHTML = "There are no invoices.";
+            this.totalInvoices.innerHTML = `<span class="hidden md:inline">There are n</span><span class="md:hidden">N</span>o invoices.`;
             this.content.innerHTML = "No invoices!";
             this.filterSelect.classList.add("hidden");
         }
@@ -515,22 +516,24 @@ class View {
 
         const statusElement = createStatusElement(invoice.isComplete, {
             tag: "div",
-            additionalClasses: "text-xs",
+            additionalClasses: "text-xs ml-auto md:ml-0",
         });
+
+        const invoiceControlsButtons = createElement({ className: "flex ml-auto" });
 
         const editButton = createButtonElement({
             attrs: {
                 invoiceRole: "edit-invoice",
             },
             html: "Edit",
-            additionalClasses: "inline mr-2 ml-auto bg-blue-500 hover:bg-blue-400 text-white",
+            additionalClasses: "mr-2 bg-blue-500 hover:bg-blue-400 text-white",
         });
 
         const deleteButton = createButtonElement({
             attrs: {
                 invoiceRole: "delete-invoice",
             },
-            additionalClasses: "inline mr-2 bg-red-500 hover:bg-red-400 text-white",
+            additionalClasses: "mr-2 bg-red-500 hover:bg-red-400 text-white",
             html: "Delete",
             type: "button",
         });
@@ -544,6 +547,10 @@ class View {
             type: "button",
         });
 
+        invoiceControlsButtons.appendChild(editButton);
+        invoiceControlsButtons.appendChild(deleteButton);
+        invoiceControlsButtons.appendChild(changeStatusButton);
+
         invoiceControls.appendChild(
             createElement({
                 tag: "p",
@@ -552,9 +559,7 @@ class View {
             })
         );
         invoiceControls.appendChild(statusElement);
-        invoiceControls.appendChild(editButton);
-        invoiceControls.appendChild(deleteButton);
-        invoiceControls.appendChild(changeStatusButton);
+        invoiceControls.appendChild(invoiceControlsButtons);
 
         this.content.appendChild(invoiceControls);
 
@@ -639,7 +644,7 @@ class View {
     displayInvoiceData(invoiceData) {
         const { id, data, totalOwedAmount } = invoiceData;
         const dataElement = createElement({
-            className: "p-8 rounded bg-white mt-6",
+            className: "p-6 md:p-8 rounded bg-white mt-6",
             attrs: { invoiceId: id },
         });
 
@@ -663,7 +668,7 @@ class View {
         dataElement.innerHTML = `
             <div class="flex mb-4">
                 <div class="mr-auto pr-2">
-                    <p class="font-bold text-base mb-2"><span class="text-slate-500">#</span>${id}</p>
+                    <p class="font-bold text-xs md:text-base mb-2"><span class="text-slate-500">#</span>${id}</p>
                     <p class="text-xs text-slate-500">${paymentDesc}</p>
                 </div>
                 <div class="ml-auto pl-2 text-right text-slate-500 text-xs">
@@ -749,7 +754,7 @@ class View {
         totalDueElement.appendChild(
             createElement({
                 tag: "p",
-                className: "text-2xl ml-auto text-white font-bold",
+                className: "text-xl md:text-2xl ml-auto text-white font-bold",
                 html: "£" + (totalOwedAmount || "0"),
             })
         );

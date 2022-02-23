@@ -4,22 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.form-overlay {
-    position: absolute;
-    background: #fff;
-    left: 0;
-    width: 50%;
-    max-width: 700px;
-    top: 0;
-    bottom: 0;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    height: 100%;
-    padding: 4rem 2.5rem;
-    z-index: 2;
-    overflow-y: scroll;
-}
-
 .overlay::after {
     content: "";
     position: absolute;
