@@ -21,9 +21,10 @@
                     </div>
 
                     <div data-invoice-role="header-controls" class="flex items-center">
-                        <label class="select flex items-center relative pointer after:content-['\f107'] after:absolute after:h-4 after:pointer after:pointer-events-none after:text-purple-600 hover:after:text-purple-500 after:right-1 after:bottom-1 after:font-['FontAwesome']">
-                            <select data-invoice-role="filter" class="text-right text-black font-bold appearance-none text-xs bg-transparent pr-4">
-                                <option class="p-0" selected disabled>Filter by status</option>
+                        <!-- after:content-['\f107'] after:absolute after:h-4 after:pointer after:pointer-events-none after:text-purple-600 hover:after:text-purple-500 after:right-1 after:bottom-1 after:font-['FontAwesome'] -->
+                        <label class="select flex items-center relative cursor-pointer underline">
+                            <select data-invoice-role="filter" class="text-right text-black font-bold appearance-none text-xs bg-transparent cursor-pointer">
+                                <option value="placeholder" class="p-0" selected="selected" disabled>Filter by status</option>
                                 <option value="all" class="p-0">All</option>
                                 <option value="paid" class="p-0">Paid</option>
                                 <option value="pending" class="p-0">Pending</option>

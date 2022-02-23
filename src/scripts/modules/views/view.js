@@ -24,10 +24,15 @@ class View {
             className: "overlay hidden",
         });
         this.root.appendChild(this.rootOverlay);
+        this.invoices;
 
-        // Filter Invoices: Select and options
         this.filterSelect = document.querySelector("[data-invoice-role='filter']");
-        this.sortOrder;
+        this.sortOrder = "all";
+
+        this.filterSelect.addEventListener("change", (event) => {
+            this.sortOrder = event.target.value;
+            this.createInvoiceList(this.invoices, this.sortOrder);
+        });
     }
 
     generateFormItems(invoiceData) {
@@ -369,8 +374,8 @@ class View {
         });
     }
 
-    updateInvoices(data) {
-        const invoices = data.invoices;
+    updateInvoicesList(data) {
+        this.invoices = data.invoices;
 
         this.content.innerHTML = "";
 
@@ -380,22 +385,21 @@ class View {
         this.totalInvoices.classList.contains("hidden") &&
             this.totalInvoices.classList.remove("hidden");
 
-        if (invoices.length > 0) {
+        if (this.invoices.length > 0) {
             this.totalInvoices.innerHTML = `${
-                invoices.length === 1
+                this.invoices.length === 1
                     ? `There is 1 invoice.`
-                    : `There are ${invoices.length} total invoices.`
+                    : `There are ${this.invoices.length} total invoices.`
             }`;
 
-            this.createInvoiceList(invoices, this.sortOrder);
+            this.filterSelect.classList.contains("hidden") &&
+                this.filterSelect.classList.remove("hidden");
 
-            this.filterSelect.addEventListener("change", (event) => {
-                this.sortOrder = event.target.value;
-                this.createInvoiceList(invoices, this.sortOrder);
-            });
+            this.createInvoiceList(this.invoices, this.sortOrder);
         } else {
             this.totalInvoices.innerHTML = "There are no invoices.";
             this.content.innerHTML = "No invoices!";
+            this.filterSelect.classList.add("hidden");
         }
     }
 
@@ -495,7 +499,7 @@ class View {
         // this.header.appendChild(backToInvoicesElem);
 
         // backToInvoicesElem.addEventListener("click", event => {
-        //     this.updateInvoices()
+        //     this.updateInvoicesList()
         // });
 
         const invoiceControls = createElement({

@@ -22,7 +22,7 @@ class Controller {
 
     handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
     handleInvoices = (data) => {
-        data.updateView !== false && this.view.updateInvoices(data);
+        data.updateView !== false && this.view.updateInvoicesList(data);
     };
     handleEditInvoice = (invoiceId) => this.view.viewInvoice(invoiceId);
 }
