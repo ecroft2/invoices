@@ -521,7 +521,7 @@ class View {
 
         const invoiceControlsButtons = createElement({
             className:
-                "flex ml-auto absolute bottom-0 w-full left-0 bg-white justify-center md:bg-none p-4 md:p-0 md:w-auto md:relative",
+                "flex ml-auto absolute bottom-0 w-full left-0 bg-white justify-center md:justify-end md:bg-none p-4 md:p-0 md:relative",
         });
 
         const editButton = createButtonElement({
@@ -545,7 +545,7 @@ class View {
             attrs: {
                 invoiceRole: "change-invoice-status",
             },
-            additionalClasses: "max-w-[9rem] w-full text-white",
+            additionalClasses: "max-w-[9rem] w-full text-white items-center flex",
             html: invoice.isComplete ? "Mark as Pending" : "Mark as Paid",
             type: "button",
         });
