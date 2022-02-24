@@ -508,7 +508,7 @@ class View {
         // });
 
         const invoiceControls = createElement({
-            className: "rounded bg-white p-6 flex items-center drop-shadow-sm",
+            className: "rounded bg-white p-6 flex items-center md:drop-shadow-sm",
             attrs: {
                 invoiceRole: "invoice-controls",
             },
@@ -519,7 +519,10 @@ class View {
             additionalClasses: "text-xs ml-auto md:ml-0",
         });
 
-        const invoiceControlsButtons = createElement({ className: "flex ml-auto" });
+        const invoiceControlsButtons = createElement({
+            className:
+                "flex ml-auto absolute bottom-0 w-full left-0 bg-white justify-center md:bg-none p-4 md:p-0 md:w-auto md:relative",
+        });
 
         const editButton = createButtonElement({
             attrs: {
