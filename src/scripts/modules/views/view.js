@@ -507,8 +507,8 @@ class View {
         //     this.updateInvoicesList()
         // });
 
-        const invoiceControls = createElement({
-            className: "rounded bg-white p-6 flex items-center md:drop-shadow-sm",
+        const invoiceHeader = createElement({
+            className: "rounded bg-white p-6 flex items-center shadow",
             attrs: {
                 invoiceRole: "invoice-controls",
             },
@@ -519,9 +519,9 @@ class View {
             additionalClasses: "text-xs ml-auto md:ml-0",
         });
 
-        const invoiceControlsButtons = createElement({
+        const invoiceControls = createElement({
             className:
-                "flex ml-auto absolute bottom-0 w-full left-0 bg-white justify-center md:justify-end md:bg-none p-4 md:p-0 md:relative",
+                "flex ml-auto absolute bottom-0 w-full left-0 shadow md:shadow-none bg-white justify-center md:justify-end md:bg-none p-4 md:p-0 md:relative",
         });
 
         const editButton = createButtonElement({
@@ -545,26 +545,26 @@ class View {
             attrs: {
                 invoiceRole: "change-invoice-status",
             },
-            additionalClasses: "max-w-[9rem] w-full text-white items-center flex",
+            additionalClasses: "max-w-[9rem] w-full text-white items-center justify-center flex",
             html: invoice.isComplete ? "Mark as Pending" : "Mark as Paid",
             type: "button",
         });
 
-        invoiceControlsButtons.appendChild(editButton);
-        invoiceControlsButtons.appendChild(deleteButton);
-        invoiceControlsButtons.appendChild(changeStatusButton);
+        invoiceControls.appendChild(editButton);
+        invoiceControls.appendChild(deleteButton);
+        invoiceControls.appendChild(changeStatusButton);
 
-        invoiceControls.appendChild(
+        invoiceHeader.appendChild(
             createElement({
                 tag: "p",
                 html: "Status",
                 className: "text-xs text-slate-500 mr-4",
             })
         );
-        invoiceControls.appendChild(statusElement);
-        invoiceControls.appendChild(invoiceControlsButtons);
+        invoiceHeader.appendChild(statusElement);
+        invoiceHeader.appendChild(invoiceControls);
 
-        this.content.appendChild(invoiceControls);
+        this.content.appendChild(invoiceHeader);
 
         invoiceControls.addEventListener("click", (event) => {
             const targetAttr = event.target.getAttribute("data-invoice-role");
@@ -647,7 +647,7 @@ class View {
     displayInvoiceData(invoiceData) {
         const { id, data, totalOwedAmount } = invoiceData;
         const dataElement = createElement({
-            className: "p-6 md:p-8 rounded bg-white mt-6",
+            className: "p-6 md:p-8 rounded bg-white mt-6 shadow",
             attrs: { invoiceId: id },
         });
 
