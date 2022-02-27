@@ -8,6 +8,7 @@ import {
 class View {
     constructor() {
         this.root = document.querySelector(".root");
+        this.body = document.querySelector(".body");
         this.header = document.querySelector(".header");
         this.content = document.querySelector(".content");
 
@@ -579,6 +580,7 @@ class View {
                     this.rootOverlay.classList.toggle("hidden");
                     const deletePromptElem = this.createDeletePrompt(invoiceId);
                     this.root.appendChild(deletePromptElem);
+                    this.body.classList.toggle("overflow-y-hidden");
 
                     deletePromptElem.addEventListener("click", (event) => {
                         const targetAttr = event.target.getAttribute("data-invoice-role");
@@ -590,6 +592,7 @@ class View {
 
                             this.root.removeChild(deletePromptElem);
                             this.rootOverlay.classList.toggle("hidden");
+                            this.body.classList.toggle("overflow-y-hidden");
                         }
                     });
                     break;
@@ -606,7 +609,7 @@ class View {
     createDeletePrompt(invoiceId) {
         const deletePromptElem = createElement({
             className:
-                "absolute bg-white top-2/4 z-[1] rounded p-8 max-w-lg -translate-y-2/4 translate-x-2/4",
+                "absolute bg-white z-[1] rounded p-8 max-w-[16rem] md:max-w-lg mx-auto md:m-0 w-100 top-1/2 -translate-y-2/4 left-1/2 -translate-x-2/4 w-full",
         });
         const deleteButtonWrapElem = createElement({
             className: "flex justify-end",
