@@ -240,12 +240,14 @@ class View {
                 "£" + (quantityFieldInput.value * priceFieldInput.value).toFixed(2);
         }
 
-        row.addEventListener("change", (event) => {
+        row.addEventListener("change", () => {
             totalAmount.innerHTML = "";
 
             if (quantityFieldInput.value && priceFieldInput.value) {
-                totalAmount.innerHTML =
-                    "£" + (quantityFieldInput.value * priceFieldInput.value).toFixed(2);
+                totalAmount.innerHTML = Intl.NumberFormat("en-UK", {
+                    style: "currency",
+                    currency: "GBP",
+                }).format(quantityFieldInput.value * priceFieldInput.value);
             }
         });
 
@@ -445,7 +447,7 @@ class View {
                 <span class="grow-[1] text-center font-bold pr-2"><span class="text-slate-500">#</span>${invoice.id}</span>
                 <span class="grow-[2] basis-0 text-slate-500 pr-2">Due ${invoice.data.date}</span>
                 <span class="grow-[2] basis-0 text-slate-500 pr-2">${invoice.data.toName}</span>
-                <span class="grow-[1] basis-0 text-center pr-2 font-bold text-base">£${invoice.totalOwedAmount}</span>
+                <span class="grow-[1] basis-0 text-center pr-2 font-bold text-base">${invoice.totalOwedAmount}</span>
             `;
 
             listItem.appendChild(
@@ -521,7 +523,7 @@ class View {
 
         const invoiceControls = createElement({
             className:
-                "flex ml-auto absolute bottom-0 w-full left-0 shadow md:shadow-none bg-white justify-center md:justify-end md:bg-none p-4 md:p-0 md:relative",
+                "flex ml-auto fixed bottom-0 w-full left-0 shadow md:shadow-none bg-white justify-center md:justify-end md:bg-none p-4 md:p-0 md:relative",
         });
 
         const editButton = createButtonElement({
@@ -647,7 +649,7 @@ class View {
     displayInvoiceData(invoiceData) {
         const { id, data, totalOwedAmount } = invoiceData;
         const dataElement = createElement({
-            className: "p-6 md:p-8 rounded bg-white mt-6 shadow",
+            className: "p-6 md:p-8 rounded bg-white mt-6 shadow mb-[6.5rem]",
             attrs: { invoiceId: id },
         });
 
@@ -669,12 +671,12 @@ class View {
         } = data;
 
         dataElement.innerHTML = `
-            <div class="flex mb-4">
-                <div class="mr-auto pr-2">
-                    <p class="font-bold text-xs md:text-base mb-2"><span class="text-slate-500">#</span>${id}</p>
+            <div class="flex flex-col md:flex-row mb-4">
+                <div class="mr-auto pr-2 mb-4 md:mb-0">
+                    <p class="font-bold text-xs md:text-base md:mb-2"><span class="text-slate-500">#</span>${id}</p>
                     <p class="text-xs text-slate-500">${paymentDesc}</p>
                 </div>
-                <div class="ml-auto pl-2 text-right text-slate-500 text-xs">
+                <div class="md:ml-auto md:pl-2 md:text-right text-slate-500 text-xs">
                     <p>${fromAddress}</p>
                     <p>${fromCity}</p>
                     <p>${fromPostcode}</p>
@@ -682,8 +684,8 @@ class View {
                 </div>
             </div>
 
-            <div class="flex mb-8">
-                <div class="flex justify-between flex-col w-1/3 pr-4">
+            <div class="flex mb-8 flex-wrap">
+                <div class="flex justify-between flex-col w-6/12 md:w-1/3 pr-2 md:pr-4">
                     <div>
                         <p class="text-slate-500 text-xs mb-2">Invoice Date</p>
                         <p class="text-base font-bold">${date}</p>
@@ -693,7 +695,7 @@ class View {
                         <p class="text-base font-bold">${paymentTerms}</p>
                     </div>
                 </div>
-                <div class="w-1/3 pr-4">
+                <div class="w-6/12 md:w-1/3 pl-2 md:pl-0 pr-0 md:pr-4">
                     <p class="text-slate-500 text-xs mb-2">Bill To</p>
                     <p class="text-base font-bold mb-2">${toName}</p>
                     <div class="text-xs text-slate-500">
@@ -703,7 +705,7 @@ class View {
                         <p>${toCountry}</p>
                     </div>
                 </div>
-                <div class="col">
+                <div class="w-full md:w-auto col mt-4 md:mt-0">
                     <p class="text-slate-500 text-xs mb-2">Sent To</p>
                     <p class="font-bold">${toEmail}</p>
                 </div>
@@ -712,14 +714,16 @@ class View {
 
         const dataTable = createElement({
             tag: "table",
-            className: "rounded-t bg-slate-50 p-8 w-full border-separate",
+            className: "rounded-t bg-slate-50 p-4 md:p-8 w-full border-separate",
             html: `
-                <tr class="text-slate-500 text-xs">
-                    <th class="font-normal text-left pb-4">Item Name</th>
-                    <th class="font-normal text-center pb-4">Qty.</th>
-                    <th class="font-normal text-right pb-4">Price</th>
-                    <th class="font-normal text-right pb-4">Total</th>
-                </tr>
+                <thead class="hidden md:table-header-group">
+                    <tr class="text-slate-500 text-xs">
+                        <th class="font-normal text-left pb-4">Item Name</th>
+                        <th class="font-normal text-center pb-4">Qty.</th>
+                        <th class="font-normal text-right pb-4">Price</th>
+                        <th class="font-normal text-right pb-4">Total</th>
+                    </tr>
+                </thead>
             `,
         });
 
@@ -729,13 +733,21 @@ class View {
             dataTableBody.insertAdjacentHTML(
                 "beforeend",
                 `
-                <tr class="text-xs">
-                    <td class="pt-4 font-bold text-left">${item.name || ""}</td>
-                    <td class="pt-4 font-bold text-slate-500 text-center">${
-                        item.quantity || ""
+                <tr class="text-xs mb-4 last-of-type:mb-0 md:mb-0 flex md:table-row flex-wrap">
+                    <td class="p-0 md:pt-4 mb-2 md:mb-0 font-bold text-left w-full md:w-auto">${
+                        item.name || ""
                     }</td>
-                    <td class="pt-4 font-bold text-slate-500 text-right">£${item.price || ""}</td>
-                    <td class="pt-4 font-bold text-right">£${item.quantity * item.price || ""}</td>
+                    <td class="p-0 md:pt-4 font-bold text-slate-500 text-center">${
+                        item.quantity || ""
+                    }<span class="md:hidden mx-1">x</span></td>
+                    <td class="p-0 md:pt-4 font-bold text-slate-500 text-right">£${
+                        item.price || ""
+                    }</td>
+                    <td class="p-0 md:pt-4 font-bold ml-auto md:ml-0 text-right">${
+                        Intl.NumberFormat("en-UK", { style: "currency", currency: "GBP" }).format(
+                            item.quantity * item.price
+                        ) || ""
+                    }</td>
                 </tr>
                 `
             );
@@ -745,7 +757,7 @@ class View {
         dataElement.appendChild(dataTable);
 
         const totalDueElement = createElement({
-            className: "flex items-center rounded-b bg-slate-700 px-8 py-6",
+            className: "flex items-center rounded-b bg-slate-700 px-4 py-4 md:px-8 md:py-6",
         });
         totalDueElement.appendChild(
             createElement({
@@ -758,7 +770,7 @@ class View {
             createElement({
                 tag: "p",
                 className: "text-xl md:text-2xl ml-auto text-white font-bold",
-                html: "£" + (totalOwedAmount || "0"),
+                html: totalOwedAmount || "0",
             })
         );
         dataElement.appendChild(totalDueElement);
