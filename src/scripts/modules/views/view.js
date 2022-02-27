@@ -440,27 +440,27 @@ class View {
                     invoiceId: invoice.id,
                 },
                 className:
-                    "flex items-center rounded drop-shadow-sm hover:drop-shadow-md transition-all text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-xs group",
+                    "flex items-center flex-wrap md:flex-nowrap rounded drop-shadow-sm hover:drop-shadow-md transition-all text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-xs group",
             });
 
             listItem.innerHTML = `
-                <span class="grow-[1] text-center font-bold pr-2"><span class="text-slate-500">#</span>${invoice.id}</span>
-                <span class="grow-[2] basis-0 text-slate-500 pr-2">Due ${invoice.data.date}</span>
-                <span class="grow-[2] basis-0 text-slate-500 pr-2">${invoice.data.toName}</span>
-                <span class="grow-[1] basis-0 text-center pr-2 font-bold text-base">${invoice.totalOwedAmount}</span>
+                <span class="grow-0 md:grow order-1 md:order-none w-6/12 md:w-auto md:text-center font-bold pr-2"><span class="text-slate-500">#</span>${invoice.id}</span>
+                <span class="grow-0 md:grow-[2] order-3 md:order-none w-full md:w-auto basis-full md:basis-0 text-slate-500 mt-4 mb-2 md:m-0 md:pr-2">Due ${invoice.data.date}</span>
+                <span class="grow-0 md:grow-[2] order-2 md:order-none basis-half md:basis-0 text-slate-500 pl-2 md:pl-0 md:pr-2 w-6/12 md:w-auto text-right md:text-left">${invoice.data.toName}</span>
+                <span class="grow order-4 md:order-none md:grow basis-0 md:text-right pr-2 md:pr-6 font-bold text-base">${invoice.totalOwedAmount}</span>
             `;
 
             listItem.appendChild(
                 createStatusElement(invoice.isComplete, {
                     tag: "span",
-                    additionalClasses: "grow-[1]",
+                    additionalClasses: "grow order-5 md:order-none",
                 })
             );
             listItem.appendChild(
                 createElement({
                     tag: "i",
                     className:
-                        "grow-[1] text-center fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
+                        "grow-[1] text-center hidden md:block fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
                 })
             );
 
