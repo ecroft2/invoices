@@ -237,18 +237,18 @@ class View {
         });
 
         if (data && data["quantity"] && data["price"]) {
-            totalAmount.innerHTML =
-                "£" + (quantityFieldInput.value * priceFieldInput.value).toFixed(2);
+            totalAmount.innerHTML = this.createPrettyCurrencyAmount(
+                quantityFieldInput.value * priceFieldInput.value
+            );
         }
 
         row.addEventListener("change", () => {
             totalAmount.innerHTML = "";
 
             if (quantityFieldInput.value && priceFieldInput.value) {
-                totalAmount.innerHTML = Intl.NumberFormat("en-UK", {
-                    style: "currency",
-                    currency: "GBP",
-                }).format(quantityFieldInput.value * priceFieldInput.value);
+                totalAmount.innerHTML = this.createPrettyCurrencyAmount(
+                    quantityFieldInput.value * priceFieldInput.value
+                );
             }
         });
 
@@ -265,6 +265,15 @@ class View {
         row.appendChild(removeRowTrigger);
 
         return row;
+    }
+
+    createPrettyCurrencyAmount(value) {
+        return Intl.NumberFormat("en-UK", {
+            style: "currency",
+            currency: "GBP",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(value);
     }
 
     viewForm(invoiceId) {
@@ -746,11 +755,9 @@ class View {
                     <td class="p-0 md:pt-4 font-bold text-slate-500 text-right">£${
                         item.price || ""
                     }</td>
-                    <td class="p-0 md:pt-4 font-bold ml-auto md:ml-0 text-right">${
-                        Intl.NumberFormat("en-UK", { style: "currency", currency: "GBP" }).format(
-                            item.quantity * item.price
-                        ) || ""
-                    }</td>
+                    <td class="p-0 md:pt-4 font-bold ml-auto md:ml-0 text-right">${this.createPrettyCurrencyAmount(
+                        item.quantity * item.price
+                    )}</td>
                 </tr>
                 `
             );

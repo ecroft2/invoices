@@ -65,9 +65,12 @@ class Model {
             count += invoiceItem.price * invoiceItem.quantity;
         });
 
-        count = Intl.NumberFormat("en-UK", { style: "currency", currency: "GBP" }).format(count);
-
-        console.log(count);
+        count = Intl.NumberFormat("en-UK", {
+            style: "currency",
+            currency: "GBP",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(count);
 
         return count;
     }
