@@ -141,10 +141,13 @@ class View {
         );
 
         invoiceFormItemsTable.addEventListener("click", (event) => {
-            event.target.getAttribute("data-invoice-role") === "remove-row" &&
-                invoiceFormItemsTable
-                    .querySelector("tbody")
-                    .removeChild(event.target.closest("tr"));
+            if (event.target.getAttribute("data-invoice-role") === "remove-row") {
+                if (invoiceFormItemsTable.querySelectorAll("tbody tr").length !== 1) {
+                    invoiceFormItemsTable
+                        .querySelector("tbody")
+                        .removeChild(event.target.closest("tr"));
+                }
+            }
         });
     }
 
@@ -255,7 +258,7 @@ class View {
         const removeRowTrigger = createElement({
             tag: "td",
             className: "pt-4",
-            html: `<i class="fas fa-trash transition-colors duration-100 text-slate-500 hover:text-slate-400 cursor-pointer" data-invoice-role="remove-row"></i>`,
+            html: `<button type="button" class="transition-colors duration-100 text-slate-500 focus:text-slate-400 hover:text-slate-400" data-invoice-role="remove-row"><i class="fas fa-trash  pointer-events-none"></i></button>`,
         });
 
         row.appendChild(nameField);
