@@ -1099,6 +1099,30 @@ Ensure the default browser behavior of the `hidden` attribute.
   z-index: 1;
 }
 
+.placeholder\:hidden::-moz-placeholder{
+  display: none;
+}
+
+.placeholder\:hidden:-ms-input-placeholder{
+  display: none;
+}
+
+.placeholder\:hidden::placeholder{
+  display: none;
+}
+
+.placeholder\:font-normal::-moz-placeholder{
+  font-weight: 400;
+}
+
+.placeholder\:font-normal:-ms-input-placeholder{
+  font-weight: 400;
+}
+
+.placeholder\:font-normal::placeholder{
+  font-weight: 400;
+}
+
 .last-of-type\:mb-0:last-of-type{
   margin-bottom: 0px;
 }
@@ -1208,6 +1232,10 @@ Ensure the default browser behavior of the `hidden` attribute.
     margin-top: 0px;
   }
 
+  .md\:mr-0{
+    margin-right: 0px;
+  }
+
   .md\:block{
     display: block;
   }
@@ -1238,6 +1266,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
   .md\:w-1\/3{
     width: 33.333333%;
+  }
+
+  .md\:w-full{
+    width: 100%;
   }
 
   .md\:max-w-lg{
@@ -1359,5 +1391,17 @@ Ensure the default browser behavior of the `hidden` attribute.
     --tw-shadow: 0 0 #0000;
     --tw-shadow-colored: 0 0 #0000;
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+
+  .md\:placeholder\:hidden::-moz-placeholder{
+    display: none;
+  }
+
+  .md\:placeholder\:hidden:-ms-input-placeholder{
+    display: none;
+  }
+
+  .md\:placeholder\:hidden::placeholder{
+    display: none;
   }
 }

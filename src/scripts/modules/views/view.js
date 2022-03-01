@@ -163,7 +163,7 @@ class View {
         const formItems = document.createDocumentFragment();
 
         table.innerHTML = `
-            <thead>
+            <thead class="hidden md:table-header-group">
                 <tr class="text-slate-500 text-left">
                     <th class="font-normal text-xs pr-2">Item Name</th>
                     <th class="font-normal text-xs w-[3rem] pr-2">Qty.</th>
@@ -203,34 +203,49 @@ class View {
     }
 
     generateFormRow(data) {
-        const row = createElement({ tag: "tr" });
+        const row = createElement({
+            tag: "tr",
+            className: "flex flex-wrap md:table-row mb-8 last-of-type:mb-0",
+        });
         const fieldClasses =
-            "w-full py-4 text-xs rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
+            "w-full py-4 text-xs rounded border placeholder:transparent placeholder:font-normal border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
 
-        const nameField = createElement({ tag: "td", className: "pr-2 pt-4" });
+        const nameField = createElement({
+            tag: "td",
+            className: "p-0 md:pr-2 md:pt-4 mb-4 md:m-0 w-full md:w-auto",
+        });
         const nameFieldInput = createElement({
             tag: "input",
             className: fieldClasses + " px-4",
         });
         nameFieldInput.name = "name";
+        nameFieldInput.placeholder = "Name";
         data && data["name"] && (nameFieldInput.value = data["name"]);
         nameField.appendChild(nameFieldInput);
 
-        const quantityField = createElement({ tag: "td", className: "pr-2 pt-4 max-w-[3rem]" });
+        const quantityField = createElement({
+            tag: "td",
+            className: "p-0 mr-4 md:m-0 md:pr-2 md:pt-4 max-w-[3rem]",
+        });
         const quantityFieldInput = createElement({
             tag: "input",
             className: fieldClasses + " px-2 text-center",
         });
         quantityFieldInput.name = "quantity";
+        quantityFieldInput.placeholder = "Qty.";
         data && data["quantity"] && (quantityFieldInput.value = data["quantity"]);
         quantityField.appendChild(quantityFieldInput);
 
-        const priceField = createElement({ tag: "td", className: "pr-2 pt-4 max-w-[75px]" });
+        const priceField = createElement({
+            tag: "td",
+            className: "md:pr-2 p-0 md:pt-4 mr-4 md:mr-0 max-w-[75px]",
+        });
         const priceFieldInput = createElement({
             tag: "input",
             className: fieldClasses + " px-2",
         });
         priceFieldInput.name = "price";
+        priceFieldInput.placeholder = "Price";
         data && data["price"] && (priceFieldInput.value = data["price"]);
         priceField.appendChild(priceFieldInput);
 
@@ -257,8 +272,8 @@ class View {
 
         const removeRowTrigger = createElement({
             tag: "td",
-            className: "pt-4",
-            html: `<button type="button" class="transition-colors duration-100 text-slate-500 focus:text-slate-400 hover:text-slate-400" data-invoice-role="remove-row"><i class="fas fa-trash  pointer-events-none"></i></button>`,
+            className: "pt-4 ml-auto md:ml-0",
+            html: `<button type="button" class="transition-colors duration-100 text-slate-500 focus:text-slate-400 hover:text-slate-400" data-invoice-role="remove-row"><i class="fas fa-trash pointer-events-none"></i></button>`,
         });
 
         row.appendChild(nameField);
