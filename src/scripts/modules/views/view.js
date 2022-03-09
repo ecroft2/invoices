@@ -473,7 +473,7 @@ class View {
                     invoiceId: invoice.id,
                 },
                 className:
-                    "flex items-center flex-wrap md:flex-nowrap rounded drop-shadow-sm hover:drop-shadow-md transition-all text-sm justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-sm group",
+                    "flex items-center flex-wrap md:flex-nowrap rounded shadow-sm hover:shadow-md transition-all text-sm justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-sm group",
             });
 
             listItem.innerHTML = `
