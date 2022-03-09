@@ -668,6 +668,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 50%;
 }
 
+.w-\[34px\]{
+  width: 34px;
+}
+
 .max-w-screen-md{
   max-width: 768px;
 }
