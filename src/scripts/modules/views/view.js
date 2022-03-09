@@ -775,8 +775,8 @@ class View {
                     <td class="p-0 md:pt-4 font-bold text-slate-500 text-center">${
                         item.quantity || ""
                     }<span class="md:hidden mx-1">x</span></td>
-                    <td class="p-0 md:pt-4 font-bold text-slate-500 text-right">£${
-                        item.price || ""
+                    <td class="p-0 md:pt-4 font-bold text-slate-500 text-right">${
+                        this.createPrettyCurrencyAmount(item.price) || ""
                     }</td>
                     <td class="p-0 md:pt-4 font-bold ml-auto md:ml-0 text-right">${this.createPrettyCurrencyAmount(
                         item.quantity * item.price
