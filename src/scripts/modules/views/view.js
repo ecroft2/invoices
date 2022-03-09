@@ -158,7 +158,7 @@ class View {
             tag: "table",
             className: "w-full mb-8",
             attrs: {
-                invoiceRole: "invoice-form-table",
+                dataInvoiceRole: "invoice-form-table",
             },
         });
 
@@ -233,6 +233,9 @@ class View {
         const quantityFieldInput = createElement({
             tag: "input",
             className: fieldClasses + " px-2 text-center",
+            attrs: {
+                inputmode: "numeric",
+            },
         });
         quantityFieldInput.name = "quantity";
         quantityFieldInput.placeholder = "Qty.";
@@ -246,6 +249,9 @@ class View {
         const priceFieldInput = createElement({
             tag: "input",
             className: fieldClasses + " px-2",
+            attrs: {
+                inputmode: "numeric",
+            },
         });
         priceFieldInput.name = "price";
         priceFieldInput.placeholder = "Price";
@@ -308,7 +314,7 @@ class View {
             className:
                 "p-6 md:py-16 md:px-10 absolute left-0 w-full md:w-6/12 top-0 bottom-0 h-full overflow-y-scroll bg-white max-w-[700px] rounded-r-2xl z-[2]",
             attrs: {
-                invoiceRole: "form",
+                dataInvoiceRole: "form",
             },
         });
 
@@ -327,7 +333,7 @@ class View {
         const submitButton = createButtonElement({
             type: "submit",
             attrs: {
-                invoiceRole: "submit-form",
+                dataInvoiceRole: "submit-form",
             },
             additionalClasses: "inline ml-2 text-white",
         });
@@ -338,7 +344,7 @@ class View {
 
         const cancelButton = createButtonElement({
             attrs: {
-                invoiceRole: "cancel-form",
+                dataInvoiceRole: "cancel-form",
             },
             additionalClasses: "inline mr-auto bg-red-500 hover:bg-red-400 text-white",
             html: "Cancel",
@@ -447,7 +453,7 @@ class View {
         const invoicesList = createElement({
             tag: "ul",
             attrs: {
-                invoiceRole: "invoices-list",
+                dataInvoiceRole: "invoices-list",
             },
         });
 
@@ -469,8 +475,8 @@ class View {
             const listItem = createElement({
                 tag: "li",
                 attrs: {
-                    invoiceRole: "view-invoice",
-                    invoiceId: invoice.id,
+                    dataInvoiceRole: "view-invoice",
+                    dataInvoiceId: invoice.id,
                 },
                 className:
                     "flex items-center flex-wrap md:flex-nowrap rounded shadow-sm hover:shadow-md transition-all text-sm justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-sm group",
@@ -538,7 +544,7 @@ class View {
         const invoiceHeader = createElement({
             className: "rounded bg-white p-6 flex items-center shadow",
             attrs: {
-                invoiceRole: "invoice-controls",
+                dataInvoiceRole: "invoice-controls",
             },
         });
 
@@ -554,7 +560,7 @@ class View {
 
         const editButton = createButtonElement({
             attrs: {
-                invoiceRole: "edit-invoice",
+                dataInvoiceRole: "edit-invoice",
             },
             html: "Edit",
             additionalClasses: "mr-2 bg-blue-500 hover:bg-blue-400 text-white",
@@ -562,7 +568,7 @@ class View {
 
         const deleteButton = createButtonElement({
             attrs: {
-                invoiceRole: "delete-invoice",
+                dataInvoiceRole: "delete-invoice",
             },
             additionalClasses: "mr-2 bg-red-500 hover:bg-red-400 text-white",
             html: "Delete",
@@ -571,7 +577,7 @@ class View {
 
         const changeStatusButton = createButtonElement({
             attrs: {
-                invoiceRole: "change-invoice-status",
+                dataInvoiceRole: "change-invoice-status",
             },
             additionalClasses: "max-w-[11rem] w-full text-white items-center justify-center flex",
             html: invoice.isComplete ? "Mark as Pending" : "Mark as Paid",
@@ -642,14 +648,14 @@ class View {
         });
         const deletePromptCancelElem = createButtonElement({
             attrs: {
-                invoiceRole: "del-prompt-cancel",
+                dataInvoiceRole: "del-prompt-cancel",
             },
             html: "Cancel",
             additionalClasses: "inline mr-2 bg-blue-500 hover:bg-blue-400 text-white",
         });
         const deletePromptConfirmElem = createButtonElement({
             attrs: {
-                invoiceRole: "del-prompt-confirm",
+                dataInvoiceRole: "del-prompt-confirm",
             },
             html: "Delete",
             additionalClasses: "inline bg-red-500 hover:bg-red-400 text-white",
@@ -679,7 +685,7 @@ class View {
         const { id, data, totalOwedAmount } = invoiceData;
         const dataElement = createElement({
             className: "p-6 md:p-8 rounded bg-white mt-6 shadow mb-[6.5rem]",
-            attrs: { invoiceId: id },
+            attrs: { dataInvoiceId: id },
         });
 
         const {

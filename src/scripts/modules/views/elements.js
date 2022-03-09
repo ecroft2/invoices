@@ -16,7 +16,7 @@ const createElement = (props) => {
             if (key != key.toLowerCase()) {
                 key = key.replace(/[A-Z]/g, (l) => "-" + l.toLowerCase());
             }
-            element.setAttribute(`data-${key}`, value);
+            element.setAttribute(key, value);
         }
     }
 
