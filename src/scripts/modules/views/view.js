@@ -142,11 +142,9 @@ class View {
 
         invoiceFormItemsTable.addEventListener("click", (event) => {
             if (event.target.getAttribute("data-invoice-role") === "remove-row") {
-                if (invoiceFormItemsTable.querySelectorAll("tbody tr").length !== 1) {
-                    invoiceFormItemsTable
-                        .querySelector("tbody")
-                        .removeChild(event.target.closest("tr"));
-                }
+                invoiceFormItemsTable
+                    .querySelector("tbody")
+                    .removeChild(event.target.closest("tr"));
             }
         });
     }
@@ -208,7 +206,7 @@ class View {
             className: "flex flex-wrap md:table-row mb-8 last-of-type:mb-0",
         });
         const fieldClasses =
-            "w-full py-4 text-xs rounded border placeholder:transparent placeholder:font-normal border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
+            "w-full py-4 text-xs rounded border md:placeholder:text-transparent placeholder:font-normal border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
 
         const nameField = createElement({
             tag: "td",
@@ -219,7 +217,7 @@ class View {
             className: fieldClasses + " px-4",
         });
         nameFieldInput.name = "name";
-        nameFieldInput.placeholder = "Name";
+        nameFieldInput.placeholder = "Item Name";
         data && data["name"] && (nameFieldInput.value = data["name"]);
         nameField.appendChild(nameFieldInput);
 
