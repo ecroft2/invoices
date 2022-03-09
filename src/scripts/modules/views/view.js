@@ -250,7 +250,7 @@ class View {
             tag: "input",
             className: fieldClasses + " px-2",
             attrs: {
-                inputmode: "numeric",
+                inputmode: "decimal",
             },
         });
         priceFieldInput.name = "price";
