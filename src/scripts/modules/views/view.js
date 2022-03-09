@@ -45,7 +45,7 @@ class View {
         const fromInputsLegend = createElement({
             tag: "legend",
             html: "Bill From",
-            className: "font-bold text-purple-600 text-xs mb-6 text-white",
+            className: "font-bold text-purple-600 text-sm mb-6 text-white",
         });
         const fromAddress = createInputElement("from_address", "Address", "text");
         const fromCity = createInputElement("from_city", "City", "text");
@@ -67,7 +67,7 @@ class View {
         const toInputsLegend = createElement({
             tag: "legend",
             html: "Bill To",
-            className: "font-bold text-purple-600 text-xs mb-6 text-white",
+            className: "font-bold text-purple-600 text-sm mb-6 text-white",
         });
         const toName = createInputElement("to_name", "Name", "text");
         const toEmail = createInputElement("to_email", "Email", "text");
@@ -94,7 +94,7 @@ class View {
         const otherInputsLegend = createElement({
             tag: "legend",
             html: "Details",
-            className: "font-bold text-purple-600 text-xs mb-6 text-white",
+            className: "font-bold text-purple-600 text-sm mb-6 text-white",
         });
 
         const otherInputsColumns = createElement({ tag: "div", className: "flex gap-x-4" });
@@ -127,7 +127,7 @@ class View {
         const invoiceItemsLegend = createElement({
             tag: "legend",
             html: "Item List",
-            className: "font-bold text-slate-500 text-base mb-4",
+            className: "font-bold text-slate-500 text-sm mb-4",
         });
 
         invoiceItemsFieldset.appendChild(invoiceItemsLegend);
@@ -167,10 +167,10 @@ class View {
         table.innerHTML = `
             <thead class="hidden md:table-header-group">
                 <tr class="text-slate-500 text-left">
-                    <th class="font-normal text-xs pr-2">Item Name</th>
-                    <th class="font-normal text-xs w-[3rem] pr-2">Qty.</th>
-                    <th class="font-normal text-xs w-[75px] pr-2">Price</th>
-                    <th class="font-normal text-xs w-[85px] pr-2">Total</th>
+                    <th class="font-normal text-sm pr-2">Item Name</th>
+                    <th class="font-normal text-sm w-[3rem] pr-2">Qty.</th>
+                    <th class="font-normal text-sm w-[75px] pr-2">Price</th>
+                    <th class="font-normal text-sm w-[85px] pr-2">Total</th>
                     <th class="w-[1rem]"></th>
                 </tr>
             </thead>
@@ -181,8 +181,9 @@ class View {
         table.appendChild(tableBody);
 
         const addItemButton = createButtonElement({
-            html: `<i class="fas fa-plus"></i> Add New Item`,
-            additionalClasses: "bg-neutral-200 hover:bg-neutral-100 text-neutral-600 w-full mb-8",
+            html: `<i class="fas fa-plus mr-2 text-base"></i><p class="mt-1">Add New Item</p>`,
+            additionalClasses:
+                "bg-neutral-200 hover:bg-neutral-100 text-neutral-600 justify-center w-full mb-8",
             type: "button",
         });
 
@@ -210,7 +211,7 @@ class View {
             className: "flex flex-wrap md:table-row mb-8 last-of-type:mb-0",
         });
         const fieldClasses =
-            "w-full py-4 text-xs rounded border md:placeholder:text-transparent placeholder:font-normal border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
+            "w-full py-4 text-sm rounded border md:placeholder:text-transparent placeholder:font-normal border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
 
         const nameField = createElement({
             tag: "td",
@@ -253,7 +254,7 @@ class View {
 
         const totalAmount = createElement({
             tag: "td",
-            className: "text-slate-500 font-bold text-xs pr-2 pt-4 w-[85px]",
+            className: "text-slate-500 font-bold text-sm pr-2 pt-4 w-[85px]",
         });
 
         if (data && data["quantity"] && data["price"]) {
@@ -472,14 +473,14 @@ class View {
                     invoiceId: invoice.id,
                 },
                 className:
-                    "flex items-center flex-wrap md:flex-nowrap rounded drop-shadow-sm hover:drop-shadow-md transition-all text-xs justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-xs group",
+                    "flex items-center flex-wrap md:flex-nowrap rounded drop-shadow-sm hover:drop-shadow-md transition-all text-sm justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-sm group",
             });
 
             listItem.innerHTML = `
                 <span class="grow-0 md:grow order-1 md:order-none w-6/12 md:w-auto md:text-center font-bold pr-2"><span class="text-slate-500">#</span>${invoice.id}</span>
                 <span class="grow-0 md:grow-[2] order-3 md:order-none w-full md:w-auto basis-full md:basis-0 text-slate-500 mt-4 mb-2 md:m-0 md:pr-2">Due ${invoice.data.date}</span>
                 <span class="grow-0 md:grow-[2] order-2 md:order-none basis-half md:basis-0 text-slate-500 pl-2 md:pl-0 md:pr-2 w-6/12 md:w-auto text-right md:text-left">${invoice.data.toName}</span>
-                <span class="grow order-4 md:order-none md:grow basis-0 md:text-right pr-2 md:pr-6 font-bold text-base">${invoice.totalOwedAmount}</span>
+                <span class="grow order-4 md:order-none md:grow basis-0 md:text-right pr-2 md:pr-6 font-bold text-sm">${invoice.totalOwedAmount}</span>
             `;
 
             listItem.appendChild(
@@ -521,7 +522,7 @@ class View {
         const invoice = this.getInvoice(invoiceId);
         this.content.innerHTML = ``;
 
-        this.totalInvoices.innerHTML = "";
+        this.totalInvoices.classList.add("hidden");
 
         this.headerControls.classList.contains("hidden") ||
             this.headerControls.classList.add("hidden");
@@ -543,7 +544,7 @@ class View {
 
         const statusElement = createStatusElement(invoice.isComplete, {
             tag: "div",
-            additionalClasses: "text-xs ml-auto md:ml-0",
+            additionalClasses: "text-sm ml-auto md:ml-0",
         });
 
         const invoiceControls = createElement({
@@ -572,7 +573,7 @@ class View {
             attrs: {
                 invoiceRole: "change-invoice-status",
             },
-            additionalClasses: "max-w-[9rem] w-full text-white items-center justify-center flex",
+            additionalClasses: "max-w-[11rem] w-full text-white items-center justify-center flex",
             html: invoice.isComplete ? "Mark as Pending" : "Mark as Paid",
             type: "button",
         });
@@ -585,7 +586,7 @@ class View {
             createElement({
                 tag: "p",
                 html: "Status",
-                className: "text-xs text-slate-500 mr-4",
+                className: "text-sm text-slate-500 mr-4",
             })
         );
         invoiceHeader.appendChild(statusElement);
@@ -666,7 +667,7 @@ class View {
         deletePromptElem.appendChild(
             createElement({
                 html: `Are you sure you want to delete invoice #${invoiceId}? This action cannot be undone.`,
-                className: "text-xs text-slate-500 pb-4",
+                className: "text-sm text-slate-500 pb-4",
             })
         );
         deletePromptElem.appendChild(deleteButtonWrapElem);
@@ -701,10 +702,10 @@ class View {
         dataElement.innerHTML = `
             <div class="flex flex-col md:flex-row mb-4">
                 <div class="mr-auto pr-2 mb-4 md:mb-0">
-                    <p class="font-bold text-xs md:text-base md:mb-2"><span class="text-slate-500">#</span>${id}</p>
-                    <p class="text-xs text-slate-500">${paymentDesc}</p>
+                    <p class="font-bold text-sm md:text-sm md:mb-2"><span class="text-slate-500">#</span>${id}</p>
+                    <p class="text-sm text-slate-500">${paymentDesc}</p>
                 </div>
-                <div class="md:ml-auto md:pl-2 md:text-right text-slate-500 text-xs">
+                <div class="md:ml-auto md:pl-2 md:text-right text-slate-500 text-sm">
                     <p>${fromAddress}</p>
                     <p>${fromCity}</p>
                     <p>${fromPostcode}</p>
@@ -715,18 +716,18 @@ class View {
             <div class="flex mb-8 flex-wrap">
                 <div class="flex justify-between flex-col w-6/12 md:w-1/3 pr-2 md:pr-4">
                     <div>
-                        <p class="text-slate-500 text-xs mb-2">Invoice Date</p>
-                        <p class="text-base font-bold">${date}</p>
+                        <p class="text-slate-500 text-sm mb-2">Invoice Date</p>
+                        <p class="text-sm font-bold">${date}</p>
                     </div>
                     <div>
-                        <p class="text-slate-500 text-xs mb-2">Payment Due</p>
-                        <p class="text-base font-bold">${paymentTerms}</p>
+                        <p class="text-slate-500 text-sm mb-2">Payment Due</p>
+                        <p class="text-sm font-bold">${paymentTerms}</p>
                     </div>
                 </div>
                 <div class="w-6/12 md:w-1/3 pl-2 md:pl-0 pr-0 md:pr-4">
-                    <p class="text-slate-500 text-xs mb-2">Bill To</p>
-                    <p class="text-base font-bold mb-2">${toName}</p>
-                    <div class="text-xs text-slate-500">
+                    <p class="text-slate-500 text-sm mb-2">Bill To</p>
+                    <p class="text-sm font-bold mb-2">${toName}</p>
+                    <div class="text-sm text-slate-500">
                         <p>${toAddress}</p>
                         <p>${toCity}</p>
                         <p>${toPostcode}</p>
@@ -734,7 +735,7 @@ class View {
                     </div>
                 </div>
                 <div class="w-full md:w-auto col mt-4 md:mt-0">
-                    <p class="text-slate-500 text-xs mb-2">Sent To</p>
+                    <p class="text-slate-500 text-sm mb-2">Sent To</p>
                     <p class="font-bold">${toEmail}</p>
                 </div>
             </div>
@@ -745,7 +746,7 @@ class View {
             className: "rounded-t bg-slate-50 p-4 md:p-8 w-full border-separate",
             html: `
                 <thead class="hidden md:table-header-group">
-                    <tr class="text-slate-500 text-xs">
+                    <tr class="text-slate-500 text-sm">
                         <th class="font-normal text-left pb-4">Item Name</th>
                         <th class="font-normal text-center pb-4">Qty.</th>
                         <th class="font-normal text-right pb-4">Price</th>
@@ -761,7 +762,7 @@ class View {
             dataTableBody.insertAdjacentHTML(
                 "beforeend",
                 `
-                <tr class="text-xs mb-4 last-of-type:mb-0 md:mb-0 flex md:table-row flex-wrap">
+                <tr class="text-sm mb-4 last-of-type:mb-0 md:mb-0 flex md:table-row flex-wrap">
                     <td class="p-0 md:pt-4 mb-2 md:mb-0 font-bold text-left w-full md:w-auto">${
                         item.name || ""
                     }</td>
@@ -788,7 +789,7 @@ class View {
         totalDueElement.appendChild(
             createElement({
                 tag: "p",
-                className: "text-xs mr-auto text-white",
+                className: "text-sm mr-auto text-white",
                 html: "Amount Due",
             })
         );

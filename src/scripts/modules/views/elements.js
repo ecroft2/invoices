@@ -28,7 +28,7 @@ const createButtonElement = (props) => {
 
     let additionalClasses =
         props.additionalClasses +
-        " group text-xs h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold transition-colors duration-100";
+        " flex items-center group text-sm h-12 p-4 rounded-3xl bg-purple-600 hover:bg-purple-500 font-bold transition-colors duration-100";
     latestProps.tag = "button";
     latestProps.type = props.type;
 
@@ -51,11 +51,11 @@ const createInputElement = (field, labelText, type) => {
     input.name = fieldName;
     input.type = type;
     input.className =
-        "p-4 text-xs rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors w-full font-bold";
+        "p-4 text-sm rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors w-full font-bold";
 
     label.for = fieldName;
     labelText && (label.innerHTML = labelText);
-    label.className = "text-xs text-slate-500 mb-2";
+    label.className = "text-sm text-slate-500 mb-2";
 
     inputWrap.appendChild(label);
     inputWrap.appendChild(input);
