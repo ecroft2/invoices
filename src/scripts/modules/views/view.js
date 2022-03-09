@@ -33,6 +33,10 @@ class View {
             this.sortOrder = event.target.value;
             this.createInvoiceList(this.invoices, this.sortOrder);
         });
+
+        this.backToInvoicesControl = document.querySelector(
+            "[data-invoice-role='back-to-invoices']"
+        );
     }
 
     generateFormItems(invoiceData) {
@@ -403,7 +407,9 @@ class View {
     }
 
     updateInvoicesList(data) {
-        this.invoices = data.invoices;
+        if (data) {
+            this.invoices = data.invoices;
+        }
 
         this.content.innerHTML = "";
 
@@ -520,20 +526,13 @@ class View {
         this.headerControls.classList.contains("hidden") ||
             this.headerControls.classList.add("hidden");
 
-        // const backToInvoicesElem = createElement({
-        //     attrs: {
-        //         invoiceRole: "back-to-invoices",
-        //     },
-        //     className: "group text-xs font-bold flex cursor-pointer",
-        //     html: `<i class="fas fa-angle-left text-purple-600 group-hover:text-purple-500 mr-2 text-base leading-[14px]"></i>`,
-        // });
-        // backToInvoicesElem.insertAdjacentHTML("beforeend", "Go back");
+        this.backToInvoicesControl.classList.contains("hidden") &&
+            this.backToInvoicesControl.classList.remove("hidden");
 
-        // this.header.appendChild(backToInvoicesElem);
-
-        // backToInvoicesElem.addEventListener("click", event => {
-        //     this.updateInvoicesList()
-        // });
+        this.backToInvoicesControl.addEventListener("click", (event) => {
+            this.updateInvoicesList();
+            this.backToInvoicesControl.classList.add("hidden");
+        });
 
         const invoiceHeader = createElement({
             className: "rounded bg-white p-6 flex items-center shadow",
@@ -617,6 +616,7 @@ class View {
 
                             this.root.removeChild(deletePromptElem);
                             this.rootOverlay.classList.toggle("hidden");
+                            this.backToInvoicesControl.classList.add("hidden");
                             this.body.classList.toggle("overflow-y-hidden");
                         }
                     });

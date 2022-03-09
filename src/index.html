@@ -16,8 +16,8 @@
             <div class="max-w-screen-md mx-auto mt-8 md:mt-16">
                 <div class="header flex items-center mb-8">
                     <div class="mr-auto">
-                        <h1 class="text-xl md:text-3xl font-bold pb-1 md:pb-2">Invoices</h1>
-                        <p data-invoice-role="count-invoices" class="text-slate-500 text-xs"></p>
+                        <h1 class="text-xl md:text-3xl font-bold">Invoices</h1>
+                        <p data-invoice-role="count-invoices" class="text-slate-500 text-xs pt-1 md:pt-2"></p>
                     </div>
 
                     <div data-invoice-role="header-controls" class="flex items-center">
@@ -35,6 +35,8 @@
                             New<span class="hidden md:inline">&nbsp;Invoice</span>
                         </button>
                     </div>
+
+                    <div data-invoice-role="back-to-invoices" class="hidden group cursor-pointer flex items-center text-xs font-bold"><i class="fas fa-angle-left text-purple-600 group-hover:text-purple-500 mr-2 text-base"></i><p class="mt-0.5">Go Back</p></div>
                 </div>
 
                 <div class="content"></div>
