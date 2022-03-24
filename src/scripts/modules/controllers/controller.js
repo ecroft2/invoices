@@ -12,6 +12,8 @@ class Controller {
         this.handleInvoices({ invoices: this.model.invoices });
     }
 
+    handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
+
     handleFormSubmit = (invoiceData, invoiceId) => {
         if (invoiceId) {
             this.model.editInvoice(invoiceId, invoiceData);
@@ -20,10 +22,10 @@ class Controller {
         }
     };
 
-    handleDeleteInvoice = (invoiceId) => this.model.deleteInvoice(invoiceId);
     handleInvoices = (data) => {
         data.updateView !== false && this.view.updateInvoicesList(data);
     };
+
     handleEditInvoice = (invoiceId) => this.view.viewInvoice(invoiceId);
 }
 

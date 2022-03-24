@@ -30,6 +30,23 @@ class Model {
         this.handleInvoiceChange({ invoices: this.invoices });
     }
 
+    calculateTotalOwedAmount(data) {
+        let count = new Number(0);
+
+        data.forEach((invoiceItem) => {
+            count += invoiceItem.price * invoiceItem.quantity;
+        });
+
+        count = Intl.NumberFormat("en-UK", {
+            style: "currency",
+            currency: "GBP",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(count);
+
+        return count;
+    }
+
     deleteInvoice(id) {
         this.invoices = this.invoices.filter((invoice) => invoice.id !== id);
         localStorage.setItem("invoices", JSON.stringify(this.invoices));
@@ -56,23 +73,6 @@ class Model {
         });
 
         this.handleInvoiceEdit(invoiceId);
-    }
-
-    calculateTotalOwedAmount(data) {
-        let count = new Number(0);
-
-        data.forEach((invoiceItem) => {
-            count += invoiceItem.price * invoiceItem.quantity;
-        });
-
-        count = Intl.NumberFormat("en-UK", {
-            style: "currency",
-            currency: "GBP",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }).format(count);
-
-        return count;
     }
 
     generateId() {
