@@ -7,7 +7,7 @@ module.exports = {
     entry: "./src/scripts/index.js",
     output: {
         filename: "main.js",
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, "static"),
         clean: true,
     },
     module: {
@@ -15,6 +15,10 @@ module.exports = {
             {
                 test: /\.css$/i,
                 use: ["style-loader", "css-loader", "postcss-loader"],
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif|ico)$/i,
+                type: "asset/resource",
             },
         ],
     },
