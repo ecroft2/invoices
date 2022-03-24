@@ -1,5 +1,5 @@
 module.exports = {
-    content: ["./src/**/*.js", "index.html"],
+    content: ["./src/scripts/**/*.js", "index.html"],
     theme: {
         fontFamily: {
             sans: ["Spartan", "Arial", "Helvetica", "sans-serif"],
@@ -8,4 +8,5 @@ module.exports = {
         important: ".fas",
     },
     plugins: [],
+    content: ["./*.html", "./src/scripts/**/*.js"],
 };

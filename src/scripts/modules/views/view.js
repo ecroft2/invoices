@@ -566,7 +566,7 @@ class View {
             this.totalInvoices.innerHTML = `${
                 this.invoices.length === 1
                     ? "<span class='hidden md:inline'>There is </span>1 invoice."
-                    : "<span class='hidden md:inline'>There are </span>${this.invoices.length} <span class='hidden md:inline'>total </span>invoices."
+                    : `<span class='hidden md:inline'>There are </span>${this.invoices.length} <span class='hidden md:inline'>total </span>invoices.`
             }`;
 
             this.filterSelect.classList.contains("hidden") &&
