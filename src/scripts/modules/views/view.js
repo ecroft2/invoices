@@ -5,6 +5,8 @@ import {
     createStatusElement,
 } from "./elements.js";
 
+import { createPrettyCurrencyAmount } from "../helpers/helpers.js";
+
 class View {
     constructor() {
         this.root = document.querySelector(".root");
@@ -37,6 +39,259 @@ class View {
         this.backToInvoicesControl = document.querySelector(
             "[data-invoice-role='back-to-invoices']"
         );
+    }
+
+    createDeletePrompt(invoiceId) {
+        const deletePromptElem = createElement({
+            className:
+                "absolute bg-white z-[1] rounded p-8 max-w-[16rem] md:max-w-lg mx-auto md:m-0 w-100 top-1/2 -translate-y-2/4 left-1/2 -translate-x-2/4 w-full",
+        });
+        const deleteButtonWrapElem = createElement({
+            className: "flex justify-end",
+        });
+        const deletePromptCancelElem = createButtonElement({
+            attrs: {
+                dataInvoiceRole: "del-prompt-cancel",
+            },
+            html: "Cancel",
+            additionalClasses: "inline mr-2 bg-blue-500 hover:bg-blue-400 text-white",
+        });
+        const deletePromptConfirmElem = createButtonElement({
+            attrs: {
+                dataInvoiceRole: "del-prompt-confirm",
+            },
+            html: "Delete",
+            additionalClasses: "inline bg-red-500 hover:bg-red-400 text-white",
+        });
+        deleteButtonWrapElem.appendChild(deletePromptCancelElem);
+        deleteButtonWrapElem.appendChild(deletePromptConfirmElem);
+
+        deletePromptElem.appendChild(
+            createElement({
+                html: "Confirm Deletion",
+                className: "text-2xl font-bold pb-3",
+                tag: "p",
+            })
+        );
+        deletePromptElem.appendChild(
+            createElement({
+                html: `Are you sure you want to delete invoice #${invoiceId}? This action cannot be undone.`,
+                className: "text-sm text-slate-500 pb-4",
+            })
+        );
+        deletePromptElem.appendChild(deleteButtonWrapElem);
+
+        return deletePromptElem;
+    }
+
+    createInvoiceList(invoices, invoiceSortOrder) {
+        let filteredInvoices;
+
+        this.content.querySelector("[data-invoice-role='invoices-list']") &&
+            (this.content.innerHTML = "");
+
+        const invoicesList = createElement({
+            tag: "ul",
+            attrs: {
+                dataInvoiceRole: "invoices-list",
+            },
+        });
+
+        switch (invoiceSortOrder) {
+            case "paid":
+                filteredInvoices = invoices.filter((invoice) => invoice.isComplete);
+                break;
+            case "pending":
+                filteredInvoices = invoices.filter((invoice) => !invoice.isComplete);
+                break;
+            default:
+                filteredInvoices = invoices;
+                break;
+        }
+
+        this.content.appendChild(invoicesList);
+
+        filteredInvoices.forEach((invoice) => {
+            const listItem = createElement({
+                tag: "li",
+                attrs: {
+                    dataInvoiceRole: "view-invoice",
+                    dataInvoiceId: invoice.id,
+                },
+                className:
+                    "flex items-center flex-wrap md:flex-nowrap rounded shadow-sm hover:shadow-md transition-all text-sm justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-sm group",
+            });
+
+            listItem.innerHTML = `
+                <span class="grow-0 md:grow order-1 md:order-none w-6/12 md:w-auto md:text-center font-bold pr-2"><span class="text-slate-500">#</span>${invoice.id}</span>
+                <span class="grow-0 md:grow-[2] order-3 md:order-none w-full md:w-auto basis-full md:basis-0 text-slate-500 mt-4 mb-2 md:m-0 md:pr-2">Due ${invoice.data.date}</span>
+                <span class="grow-0 md:grow-[2] order-2 md:order-none basis-half md:basis-0 text-slate-500 pl-2 md:pl-0 md:pr-2 w-6/12 md:w-auto text-right md:text-left">${invoice.data.toName}</span>
+                <span class="grow order-4 md:order-none md:grow basis-0 md:text-right pr-2 md:pr-6 font-bold text-sm">${invoice.totalOwedAmount}</span>
+            `;
+
+            listItem.appendChild(
+                createStatusElement(invoice.isComplete, {
+                    tag: "span",
+                    additionalClasses: "grow order-5 md:order-none",
+                })
+            );
+            listItem.appendChild(
+                createElement({
+                    tag: "i",
+                    className:
+                        "grow-[1] text-center hidden md:block fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
+                })
+            );
+
+            invoicesList.appendChild(listItem);
+
+            invoicesList.addEventListener("click", (event) => {
+                if (
+                    event.target
+                        .closest("[data-invoice-role='view-invoice']")
+                        .getAttribute("data-invoice-role") === "view-invoice"
+                ) {
+                    let invoiceId = parseInt(
+                        event.target
+                            .closest("[data-invoice-role='view-invoice']")
+                            .getAttribute("data-invoice-id")
+                    );
+
+                    this.content.querySelector("[data-invoice-role='invoice-data']") === null &&
+                        this.viewInvoice(invoiceId);
+                }
+            });
+        });
+    }
+
+    displayInvoiceData(invoiceData) {
+        const { id, data, totalOwedAmount } = invoiceData;
+        const dataElement = createElement({
+            className: "p-6 md:p-8 rounded bg-white mt-6 shadow mb-[6.5rem]",
+            attrs: { dataInvoiceId: id },
+        });
+
+        const {
+            fromAddress,
+            fromCity,
+            fromPostcode,
+            fromCountry,
+            toName,
+            toEmail,
+            toAddress,
+            toCity,
+            toPostcode,
+            toCountry,
+            date,
+            paymentTerms,
+            paymentDesc,
+            items: invoiceItems,
+        } = data;
+
+        dataElement.innerHTML = `
+            <div class="flex flex-col md:flex-row mb-4">
+                <div class="mr-auto pr-2 mb-4 md:mb-0">
+                    <p class="font-bold text-sm md:text-sm md:mb-2"><span class="text-slate-500">#</span>${id}</p>
+                    <p class="text-sm text-slate-500">${paymentDesc}</p>
+                </div>
+                <div class="md:ml-auto md:pl-2 md:text-right text-slate-500 text-sm">
+                    <p>${fromAddress}</p>
+                    <p>${fromCity}</p>
+                    <p>${fromPostcode}</p>
+                    <p>${fromCountry}</p>
+                </div>
+            </div>
+
+            <div class="flex mb-8 flex-wrap">
+                <div class="flex justify-between flex-col w-6/12 md:w-1/3 pr-2 md:pr-4">
+                    <div>
+                        <p class="text-slate-500 text-sm mb-2">Invoice Date</p>
+                        <p class="text-sm font-bold">${date}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 text-sm mb-2">Payment Due</p>
+                        <p class="text-sm font-bold">${paymentTerms}</p>
+                    </div>
+                </div>
+                <div class="w-6/12 md:w-1/3 pl-2 md:pl-0 pr-0 md:pr-4">
+                    <p class="text-slate-500 text-sm mb-2">Bill To</p>
+                    <p class="text-sm font-bold mb-2">${toName}</p>
+                    <div class="text-sm text-slate-500">
+                        <p>${toAddress}</p>
+                        <p>${toCity}</p>
+                        <p>${toPostcode}</p>
+                        <p>${toCountry}</p>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto col mt-4 md:mt-0">
+                    <p class="text-slate-500 text-sm mb-2">Sent To</p>
+                    <p class="font-bold">${toEmail}</p>
+                </div>
+            </div>
+        `;
+
+        const dataTable = createElement({
+            tag: "table",
+            className: "rounded-t bg-slate-50 p-4 md:p-8 w-full border-separate",
+            html: `
+                <thead class="hidden md:table-header-group">
+                    <tr class="text-slate-500 text-sm">
+                        <th class="font-normal text-left pb-4">Item Name</th>
+                        <th class="font-normal text-center pb-4">Qty.</th>
+                        <th class="font-normal text-right pb-4">Price</th>
+                        <th class="font-normal text-right pb-4">Total</th>
+                    </tr>
+                </thead>
+            `,
+        });
+
+        const dataTableBody = createElement({ tag: "tbody" });
+
+        invoiceItems.forEach((item) => {
+            dataTableBody.insertAdjacentHTML(
+                "beforeend",
+                `
+                <tr class="text-sm mb-4 last-of-type:mb-0 md:mb-0 flex md:table-row flex-wrap">
+                    <td class="p-0 md:pt-4 mb-2 md:mb-0 font-bold text-left w-full md:w-auto">${
+                        item.name || ""
+                    }</td>
+                    <td class="p-0 md:pt-4 font-bold text-slate-500 text-center">${
+                        item.quantity || ""
+                    }<span class="md:hidden mx-1">x</span></td>
+                    <td class="p-0 md:pt-4 font-bold text-slate-500 text-right">${
+                        createPrettyCurrencyAmount(item.price) || ""
+                    }</td>
+                    <td class="p-0 md:pt-4 font-bold ml-auto md:ml-0 text-right">${createPrettyCurrencyAmount(
+                        item.quantity * item.price
+                    )}</td>
+                </tr>
+                `
+            );
+        });
+
+        dataTable.appendChild(dataTableBody);
+        dataElement.appendChild(dataTable);
+
+        const totalDueElement = createElement({
+            className: "flex items-center rounded-b bg-slate-700 px-4 py-4 md:px-8 md:py-6",
+        });
+        totalDueElement.appendChild(
+            createElement({
+                tag: "p",
+                className: "text-sm mr-auto text-white",
+                html: "Amount Due",
+            })
+        );
+        totalDueElement.appendChild(
+            createElement({
+                tag: "p",
+                className: "text-xl md:text-2xl ml-auto text-white font-bold",
+                html: totalOwedAmount || "0",
+            })
+        );
+        dataElement.appendChild(totalDueElement);
+
+        return dataElement;
     }
 
     generateFormItems(invoiceData) {
@@ -141,7 +396,7 @@ class View {
         this.form.appendChild(invoiceItemsFieldset);
 
         const invoiceFormItemsTable = this.form.querySelector(
-            `[data-invoice-role="invoice-form-table"]`
+            "[data-invoice-role='invoice-form-table']"
         );
 
         invoiceFormItemsTable.addEventListener("click", (event) => {
@@ -181,7 +436,7 @@ class View {
         table.appendChild(tableBody);
 
         const addItemButton = createButtonElement({
-            html: `<i class="fas fa-plus mr-2 text-base"></i><p class="mt-1">Add New Item</p>`,
+            html: "<i class='fas fa-plus mr-2 text-base'></i><p class='mt-1'>Add New Item</p>",
             additionalClasses:
                 "bg-neutral-200 hover:bg-neutral-100 text-neutral-600 justify-center w-full mb-8",
             type: "button",
@@ -264,7 +519,7 @@ class View {
         });
 
         if (data && data["quantity"] && data["price"]) {
-            totalAmount.innerHTML = this.createPrettyCurrencyAmount(
+            totalAmount.innerHTML = createPrettyCurrencyAmount(
                 quantityFieldInput.value * priceFieldInput.value
             );
         }
@@ -273,7 +528,7 @@ class View {
             totalAmount.innerHTML = "";
 
             if (quantityFieldInput.value && priceFieldInput.value) {
-                totalAmount.innerHTML = this.createPrettyCurrencyAmount(
+                totalAmount.innerHTML = createPrettyCurrencyAmount(
                     quantityFieldInput.value * priceFieldInput.value
                 );
             }
@@ -282,7 +537,7 @@ class View {
         const removeRowTrigger = createElement({
             tag: "td",
             className: "pt-4 ml-auto md:ml-0",
-            html: `<button type="button" class="transition-colors duration-100 text-slate-500 focus:text-slate-400 hover:text-slate-400" data-invoice-role="remove-row"><i class="fas fa-trash pointer-events-none"></i></button>`,
+            html: "<button type='button' class='transition-colors duration-100 text-slate-500 focus:text-slate-400 hover:text-slate-400' data-invoice-role='remove-row'><i class='fas fa-trash pointer-events-none'></i></button>",
         });
 
         row.appendChild(nameField);
@@ -294,13 +549,36 @@ class View {
         return row;
     }
 
-    createPrettyCurrencyAmount(value) {
-        return Intl.NumberFormat("en-UK", {
-            style: "currency",
-            currency: "GBP",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }).format(value);
+    updateInvoicesList(data) {
+        if (data) {
+            this.invoices = data.invoices;
+        }
+
+        this.content.innerHTML = "";
+
+        this.headerControls.classList.contains("hidden") &&
+            this.headerControls.classList.remove("hidden");
+
+        this.totalInvoices.classList.contains("hidden") &&
+            this.totalInvoices.classList.remove("hidden");
+
+        if (this.invoices.length > 0) {
+            this.totalInvoices.innerHTML = `${
+                this.invoices.length === 1
+                    ? "<span class='hidden md:inline'>There is </span>1 invoice."
+                    : "<span class='hidden md:inline'>There are </span>${this.invoices.length} <span class='hidden md:inline'>total </span>invoices."
+            }`;
+
+            this.filterSelect.classList.contains("hidden") &&
+                this.filterSelect.classList.remove("hidden");
+
+            this.createInvoiceList(this.invoices, this.sortOrder);
+        } else {
+            this.totalInvoices.innerHTML =
+                "<span class='hidden md:inline'>There are n</span><span class='md:hidden'>N</span>o invoices.";
+            this.content.innerHTML = "No invoices!";
+            this.filterSelect.classList.add("hidden");
+        }
     }
 
     viewForm(invoiceId) {
@@ -371,7 +649,7 @@ class View {
             invoiceFormData["items"] = new Array();
 
             const invoiceInfoInputs = [...invoiceForm.querySelectorAll("input")].filter(
-                (input) => input.closest(`[data-invoice-role="invoice-form-table"]`) === null
+                (input) => input.closest("[data-invoice-role='invoice-form-table']") === null
             );
 
             invoiceInfoInputs.forEach((input) => {
@@ -383,7 +661,7 @@ class View {
             });
 
             document
-                .querySelectorAll(`[data-invoice-role="invoice-form-table"] tbody tr`)
+                .querySelectorAll("[data-invoice-role='invoice-form-table'] tbody tr")
                 .forEach((row) => {
                     let inputs = new Object();
 
@@ -413,120 +691,9 @@ class View {
         });
     }
 
-    updateInvoicesList(data) {
-        if (data) {
-            this.invoices = data.invoices;
-        }
-
-        this.content.innerHTML = "";
-
-        this.headerControls.classList.contains("hidden") &&
-            this.headerControls.classList.remove("hidden");
-
-        this.totalInvoices.classList.contains("hidden") &&
-            this.totalInvoices.classList.remove("hidden");
-
-        if (this.invoices.length > 0) {
-            this.totalInvoices.innerHTML = `${
-                this.invoices.length === 1
-                    ? `<span class="hidden md:inline">There is </span>1 invoice.`
-                    : `<span class="hidden md:inline">There are </span>${this.invoices.length} <span class="hidden md:inline">total </span>invoices.`
-            }`;
-
-            this.filterSelect.classList.contains("hidden") &&
-                this.filterSelect.classList.remove("hidden");
-
-            this.createInvoiceList(this.invoices, this.sortOrder);
-        } else {
-            this.totalInvoices.innerHTML = `<span class="hidden md:inline">There are n</span><span class="md:hidden">N</span>o invoices.`;
-            this.content.innerHTML = "No invoices!";
-            this.filterSelect.classList.add("hidden");
-        }
-    }
-
-    createInvoiceList(invoices, invoiceSortOrder) {
-        let filteredInvoices;
-
-        this.content.querySelector("[data-invoice-role='invoices-list']") &&
-            (this.content.innerHTML = "");
-
-        const invoicesList = createElement({
-            tag: "ul",
-            attrs: {
-                dataInvoiceRole: "invoices-list",
-            },
-        });
-
-        switch (invoiceSortOrder) {
-            case "paid":
-                filteredInvoices = invoices.filter((invoice) => invoice.isComplete);
-                break;
-            case "pending":
-                filteredInvoices = invoices.filter((invoice) => !invoice.isComplete);
-                break;
-            default:
-                filteredInvoices = invoices;
-                break;
-        }
-
-        this.content.appendChild(invoicesList);
-
-        filteredInvoices.forEach((invoice) => {
-            const listItem = createElement({
-                tag: "li",
-                attrs: {
-                    dataInvoiceRole: "view-invoice",
-                    dataInvoiceId: invoice.id,
-                },
-                className:
-                    "flex items-center flex-wrap md:flex-nowrap rounded shadow-sm hover:shadow-md transition-all text-sm justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-sm group",
-            });
-
-            listItem.innerHTML = `
-                <span class="grow-0 md:grow order-1 md:order-none w-6/12 md:w-auto md:text-center font-bold pr-2"><span class="text-slate-500">#</span>${invoice.id}</span>
-                <span class="grow-0 md:grow-[2] order-3 md:order-none w-full md:w-auto basis-full md:basis-0 text-slate-500 mt-4 mb-2 md:m-0 md:pr-2">Due ${invoice.data.date}</span>
-                <span class="grow-0 md:grow-[2] order-2 md:order-none basis-half md:basis-0 text-slate-500 pl-2 md:pl-0 md:pr-2 w-6/12 md:w-auto text-right md:text-left">${invoice.data.toName}</span>
-                <span class="grow order-4 md:order-none md:grow basis-0 md:text-right pr-2 md:pr-6 font-bold text-sm">${invoice.totalOwedAmount}</span>
-            `;
-
-            listItem.appendChild(
-                createStatusElement(invoice.isComplete, {
-                    tag: "span",
-                    additionalClasses: "grow order-5 md:order-none",
-                })
-            );
-            listItem.appendChild(
-                createElement({
-                    tag: "i",
-                    className:
-                        "grow-[1] text-center hidden md:block fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
-                })
-            );
-
-            invoicesList.appendChild(listItem);
-
-            invoicesList.addEventListener("click", (event) => {
-                if (
-                    event.target
-                        .closest("[data-invoice-role='view-invoice']")
-                        .getAttribute("data-invoice-role") === "view-invoice"
-                ) {
-                    let invoiceId = parseInt(
-                        event.target
-                            .closest("[data-invoice-role='view-invoice']")
-                            .getAttribute("data-invoice-id")
-                    );
-
-                    this.content.querySelector("[data-invoice-role='invoice-data']") === null &&
-                        this.viewInvoice(invoiceId);
-                }
-            });
-        });
-    }
-
     viewInvoice(invoiceId) {
         const invoice = this.getInvoice(invoiceId);
-        this.content.innerHTML = ``;
+        this.content.innerHTML = "";
 
         this.totalInvoices.classList.add("hidden");
 
@@ -636,179 +803,6 @@ class View {
         });
 
         this.content.appendChild(this.displayInvoiceData(invoice));
-    }
-
-    createDeletePrompt(invoiceId) {
-        const deletePromptElem = createElement({
-            className:
-                "absolute bg-white z-[1] rounded p-8 max-w-[16rem] md:max-w-lg mx-auto md:m-0 w-100 top-1/2 -translate-y-2/4 left-1/2 -translate-x-2/4 w-full",
-        });
-        const deleteButtonWrapElem = createElement({
-            className: "flex justify-end",
-        });
-        const deletePromptCancelElem = createButtonElement({
-            attrs: {
-                dataInvoiceRole: "del-prompt-cancel",
-            },
-            html: "Cancel",
-            additionalClasses: "inline mr-2 bg-blue-500 hover:bg-blue-400 text-white",
-        });
-        const deletePromptConfirmElem = createButtonElement({
-            attrs: {
-                dataInvoiceRole: "del-prompt-confirm",
-            },
-            html: "Delete",
-            additionalClasses: "inline bg-red-500 hover:bg-red-400 text-white",
-        });
-        deleteButtonWrapElem.appendChild(deletePromptCancelElem);
-        deleteButtonWrapElem.appendChild(deletePromptConfirmElem);
-
-        deletePromptElem.appendChild(
-            createElement({
-                html: "Confirm Deletion",
-                className: "text-2xl font-bold pb-3",
-                tag: "p",
-            })
-        );
-        deletePromptElem.appendChild(
-            createElement({
-                html: `Are you sure you want to delete invoice #${invoiceId}? This action cannot be undone.`,
-                className: "text-sm text-slate-500 pb-4",
-            })
-        );
-        deletePromptElem.appendChild(deleteButtonWrapElem);
-
-        return deletePromptElem;
-    }
-
-    displayInvoiceData(invoiceData) {
-        const { id, data, totalOwedAmount } = invoiceData;
-        const dataElement = createElement({
-            className: "p-6 md:p-8 rounded bg-white mt-6 shadow mb-[6.5rem]",
-            attrs: { dataInvoiceId: id },
-        });
-
-        const {
-            fromAddress,
-            fromCity,
-            fromPostcode,
-            fromCountry,
-            toName,
-            toEmail,
-            toAddress,
-            toCity,
-            toPostcode,
-            toCountry,
-            date,
-            paymentTerms,
-            paymentDesc,
-            items: invoiceItems,
-        } = data;
-
-        dataElement.innerHTML = `
-            <div class="flex flex-col md:flex-row mb-4">
-                <div class="mr-auto pr-2 mb-4 md:mb-0">
-                    <p class="font-bold text-sm md:text-sm md:mb-2"><span class="text-slate-500">#</span>${id}</p>
-                    <p class="text-sm text-slate-500">${paymentDesc}</p>
-                </div>
-                <div class="md:ml-auto md:pl-2 md:text-right text-slate-500 text-sm">
-                    <p>${fromAddress}</p>
-                    <p>${fromCity}</p>
-                    <p>${fromPostcode}</p>
-                    <p>${fromCountry}</p>
-                </div>
-            </div>
-
-            <div class="flex mb-8 flex-wrap">
-                <div class="flex justify-between flex-col w-6/12 md:w-1/3 pr-2 md:pr-4">
-                    <div>
-                        <p class="text-slate-500 text-sm mb-2">Invoice Date</p>
-                        <p class="text-sm font-bold">${date}</p>
-                    </div>
-                    <div>
-                        <p class="text-slate-500 text-sm mb-2">Payment Due</p>
-                        <p class="text-sm font-bold">${paymentTerms}</p>
-                    </div>
-                </div>
-                <div class="w-6/12 md:w-1/3 pl-2 md:pl-0 pr-0 md:pr-4">
-                    <p class="text-slate-500 text-sm mb-2">Bill To</p>
-                    <p class="text-sm font-bold mb-2">${toName}</p>
-                    <div class="text-sm text-slate-500">
-                        <p>${toAddress}</p>
-                        <p>${toCity}</p>
-                        <p>${toPostcode}</p>
-                        <p>${toCountry}</p>
-                    </div>
-                </div>
-                <div class="w-full md:w-auto col mt-4 md:mt-0">
-                    <p class="text-slate-500 text-sm mb-2">Sent To</p>
-                    <p class="font-bold">${toEmail}</p>
-                </div>
-            </div>
-        `;
-
-        const dataTable = createElement({
-            tag: "table",
-            className: "rounded-t bg-slate-50 p-4 md:p-8 w-full border-separate",
-            html: `
-                <thead class="hidden md:table-header-group">
-                    <tr class="text-slate-500 text-sm">
-                        <th class="font-normal text-left pb-4">Item Name</th>
-                        <th class="font-normal text-center pb-4">Qty.</th>
-                        <th class="font-normal text-right pb-4">Price</th>
-                        <th class="font-normal text-right pb-4">Total</th>
-                    </tr>
-                </thead>
-            `,
-        });
-
-        const dataTableBody = createElement({ tag: "tbody" });
-
-        invoiceItems.forEach((item) => {
-            dataTableBody.insertAdjacentHTML(
-                "beforeend",
-                `
-                <tr class="text-sm mb-4 last-of-type:mb-0 md:mb-0 flex md:table-row flex-wrap">
-                    <td class="p-0 md:pt-4 mb-2 md:mb-0 font-bold text-left w-full md:w-auto">${
-                        item.name || ""
-                    }</td>
-                    <td class="p-0 md:pt-4 font-bold text-slate-500 text-center">${
-                        item.quantity || ""
-                    }<span class="md:hidden mx-1">x</span></td>
-                    <td class="p-0 md:pt-4 font-bold text-slate-500 text-right">${
-                        this.createPrettyCurrencyAmount(item.price) || ""
-                    }</td>
-                    <td class="p-0 md:pt-4 font-bold ml-auto md:ml-0 text-right">${this.createPrettyCurrencyAmount(
-                        item.quantity * item.price
-                    )}</td>
-                </tr>
-                `
-            );
-        });
-
-        dataTable.appendChild(dataTableBody);
-        dataElement.appendChild(dataTable);
-
-        const totalDueElement = createElement({
-            className: "flex items-center rounded-b bg-slate-700 px-4 py-4 md:px-8 md:py-6",
-        });
-        totalDueElement.appendChild(
-            createElement({
-                tag: "p",
-                className: "text-sm mr-auto text-white",
-                html: "Amount Due",
-            })
-        );
-        totalDueElement.appendChild(
-            createElement({
-                tag: "p",
-                className: "text-xl md:text-2xl ml-auto text-white font-bold",
-                html: totalOwedAmount || "0",
-            })
-        );
-        dataElement.appendChild(totalDueElement);
-
-        return dataElement;
     }
 }
 
