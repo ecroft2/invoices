@@ -593,6 +593,7 @@ class View {
                 "p-6 md:py-16 md:px-10 absolute left-0 w-full md:w-6/12 top-0 bottom-0 h-full overflow-y-scroll bg-white max-w-[700px] rounded-r-2xl z-[2]",
             attrs: {
                 dataInvoiceRole: "form",
+                tabindex: "-1",
             },
         });
 
