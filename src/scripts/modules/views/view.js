@@ -638,9 +638,22 @@ class View {
 
         const invoiceForm = document.querySelector("[data-invoice-role='form']");
 
-        cancelButton.addEventListener("click", () => {
-            this.root.removeChild(invoiceForm);
+        const removeFormFromDOM = () => {
+            this.root.removeChild(document.querySelector("[data-invoice-role='form']"));
             this.rootOverlay.classList.toggle("hidden");
+        };
+
+        cancelButton.addEventListener("click", () => {
+            removeFormFromDOM();
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                if (this.root.querySelector("[data-invoice-role='form']") !== null) {
+                    removeFormFromDOM();
+                    document.removeEventListener("keydown", removeFormFromDOM);
+                }
+            }
         });
 
         invoiceForm.addEventListener("submit", (event) => {
