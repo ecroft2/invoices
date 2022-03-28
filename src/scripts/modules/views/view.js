@@ -24,7 +24,8 @@ class View {
 
         this.rootOverlay = createElement({
             tag: "div",
-            className: "overlay hidden",
+            className:
+                "after:absolute after:w-full  after:h-full  after:top-0  after:left-0  after:opacity-100 after:z-[1] after:transition-all after:content-[''] after:bg-black after:opacity-20 hidden",
         });
         this.root.appendChild(this.rootOverlay);
         this.invoices;
