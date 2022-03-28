@@ -9,6 +9,7 @@ module.exports = {
         filename: "main.js",
         path: path.resolve(__dirname, "dist"),
         clean: true,
+        assetModuleFilename: "images/[name][ext][query]",
     },
     module: {
         rules: [
@@ -24,6 +25,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
+            filename: "index.html",
             template: "index.html",
         }),
     ],
