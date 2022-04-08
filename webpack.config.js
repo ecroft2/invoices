@@ -30,7 +30,10 @@ module.exports = {
             template: "index.html",
         }),
         new CopyPlugin({
-            patterns: [{ from: "CNAME", to: "" }],
+            patterns: [
+                { from: "CNAME", to: "" },
+                { from: "site.webmanifest", to: "" },
+            ],
         }),
     ],
     optimization: {
