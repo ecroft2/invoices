@@ -28,6 +28,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: "index.html",
             template: "index.html",
+            hash: true,
         }),
         new CopyPlugin({
             patterns: [
