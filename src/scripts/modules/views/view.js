@@ -456,6 +456,11 @@ class View {
 
         addItemButton.addEventListener("click", (event) => {
             tableBody.appendChild(this.generateFormRow());
+
+            this.form.scrollBy({
+                top: tableBody.scrollHeight,
+                behavior: "smooth",
+            });
         });
 
         return formItems;
