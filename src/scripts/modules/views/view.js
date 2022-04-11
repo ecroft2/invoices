@@ -401,10 +401,15 @@ class View {
         );
 
         invoiceFormItemsTable.addEventListener("click", (event) => {
-            if (event.target.getAttribute("data-invoice-role") === "remove-row") {
+            if (
+                event.target.getAttribute("data-invoice-role") === "remove-row" &&
+                invoiceFormItemsTable.querySelectorAll("tr").length > 2
+            ) {
                 invoiceFormItemsTable
                     .querySelector("tbody")
                     .removeChild(event.target.closest("tr"));
+            } else {
+                // Style for else
             }
         });
     }
