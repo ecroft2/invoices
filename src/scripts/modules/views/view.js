@@ -25,7 +25,7 @@ class View {
         this.rootOverlay = createElement({
             tag: "div",
             className:
-                "after:absolute after:w-full  after:h-full  after:top-0  after:left-0  after:opacity-100 after:z-[1] after:transition-all after:content-[''] after:bg-black after:opacity-20 hidden",
+                "after:absolute after:w-full after:h-full after:top-0 after:left-0 after:opacity-100 after:z-[1] after:transition-all after:content-[''] after:bg-black after:opacity-20 hidden",
         });
         this.root.appendChild(this.rootOverlay);
         this.invoices;
@@ -120,14 +120,14 @@ class View {
                     dataInvoiceId: invoice.id,
                 },
                 className:
-                    "flex items-center flex-wrap md:flex-nowrap rounded shadow-sm hover:shadow-md transition-all text-sm justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-sm group",
+                    "flex items-center flex-wrap md:flex-nowrap rounded shadow-sm hover:shadow-md transition-all text-sm justify-evenly mb-4 bg-white p-4 w-full cursor-pointer text-sm group md:gap-x-4",
             });
 
             listItem.innerHTML = `
-                <span class="grow-0 md:grow order-1 md:order-none w-6/12 md:w-auto md:text-center font-bold pr-2"><span class="text-slate-500">#</span>${invoice.id}</span>
-                <span class="grow-0 md:grow-[2] order-3 md:order-none w-full md:w-auto basis-full md:basis-0 text-slate-500 mt-4 mb-2 md:m-0 md:pr-2">Due ${invoice.data.date}</span>
-                <span class="grow-0 md:grow-[2] order-2 md:order-none basis-half md:basis-0 text-slate-500 pl-2 md:pl-0 md:pr-2 w-6/12 md:w-auto text-right md:text-left">${invoice.data.toName}</span>
-                <span class="grow order-4 md:order-none md:grow basis-0 md:text-right pr-2 md:pr-6 font-bold text-sm">${invoice.totalOwedAmount}</span>
+                <span class="grow-0 md:grow-0 order-1 md:order-none w-6/12 md:w-[75px] md:text-center font-bold"><span class="text-slate-500">#</span>${invoice.id}</span>
+                <span class="grow-0 md:grow-[2] order-3 md:order-none w-full md:w-auto basis-full md:basis-0 text-slate-500 mt-4 mb-2 md:m-0">Due ${invoice.data.date}</span>
+                <span class="grow-0 md:grow-[2] order-2 md:order-none basis-half md:basis-0 text-slate-500 pl-2 md:pl-0 w-6/12 md:w-auto text-right md:text-left">${invoice.data.toName}</span>
+                <span class="grow order-4 md:order-none md:grow basis-0 md:text-right pr-2 md:pr-0 font-bold text-sm">${invoice.totalOwedAmount}</span>
             `;
 
             listItem.appendChild(
@@ -140,7 +140,7 @@ class View {
                 createElement({
                     tag: "i",
                     className:
-                        "grow-[1] text-center hidden md:block fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
+                        "grow-[1] md:grow-0 md:w-[75px] text-center hidden md:block fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
                 })
             );
 
