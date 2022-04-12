@@ -1,3 +1,5 @@
+import { Input } from "postcss";
+
 class Model {
     constructor() {
         this.invoices = JSON.parse(localStorage.getItem("invoices")) || [];
@@ -82,6 +84,26 @@ class Model {
     }
 
     getInvoice = (id) => this.invoices.find((invoice) => invoice.id === id);
+
+    validateData = (input, type) => {
+        const types = {
+            postcode: /^([A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}|GIR ?0A{2})$/,
+            email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+            number: /[0-9]/,
+            currency: /^-?\d+(,\d{3})*(\.\d{1,2})?$/,
+            date: "",
+        };
+
+        if (input === "") {
+            return "invalid_empty";
+        } else {
+            if (type === "string") {
+                return "valid";
+            } else {
+                return input.match(types[type]) ? "valid" : "invalid_regex";
+            }
+        }
+    };
 }
 
 export default Model;

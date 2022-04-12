@@ -305,7 +305,7 @@ class View {
         });
         const fromAddress = createInputElement("from_address", "Address", "text");
         const fromCity = createInputElement("from_city", "City", "text");
-        const fromPostcode = createInputElement("from_postcode", "Postcode", "text");
+        const fromPostcode = createInputElement("from_postcode", "Postcode", "text", "postcode");
         const fromCountry = createInputElement("from_country", "Country", "text");
 
         const fromInputsColumns = createElement({ tag: "div", className: "flex gap-x-4" });
@@ -326,10 +326,10 @@ class View {
             className: "font-bold text-purple-600 text-sm mb-6 text-white",
         });
         const toName = createInputElement("to_name", "Name", "text");
-        const toEmail = createInputElement("to_email", "Email", "text");
+        const toEmail = createInputElement("to_email", "Email", "text", "email");
         const toAddress = createInputElement("to_address", "Street Address", "text");
         const toCity = createInputElement("to_city", "City", "text");
-        const toPostcode = createInputElement("to_postcode", "Postcode", "text");
+        const toPostcode = createInputElement("to_postcode", "Postcode", "text", "postcode");
         const toCountry = createInputElement("to_country", "Country", "text");
 
         toInputsFieldset.appendChild(toInputsLegend);
@@ -355,7 +355,7 @@ class View {
 
         const otherInputsColumns = createElement({ tag: "div", className: "flex gap-x-4" });
 
-        const date = createInputElement("date", "Invoice Date", "");
+        const date = createInputElement("date", "Invoice Date", "", "date");
         const paymentTerms = createInputElement("payment_terms", "Payment Terms", "");
         otherInputsColumns.appendChild(date);
         otherInputsColumns.appendChild(paymentTerms);
@@ -592,6 +592,16 @@ class View {
         }
     }
 
+    validateForm(inputs) {
+        inputs.forEach((input) => {
+            if (this.validateInput(input.value, input.getAttribute("data-validation")) === true) {
+                input.style.borderColor = "green";
+            } else {
+                input.style.borderColor = "red";
+            }
+        });
+    }
+
     viewForm(invoiceId) {
         let invoiceData;
         invoiceId && (invoiceData = this.getInvoice(invoiceId));
@@ -669,6 +679,8 @@ class View {
 
         invoiceForm.addEventListener("submit", (event) => {
             event.preventDefault();
+
+            this.validateForm([...invoiceForm.querySelectorAll("input")]);
 
             const invoiceFormData = {};
             invoiceFormData["items"] = new Array();

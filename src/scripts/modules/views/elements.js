@@ -39,7 +39,7 @@ const createButtonElement = (props) => {
     return createElement({ ...latestProps });
 };
 
-const createInputElement = (field, labelText, type) => {
+const createInputElement = (field, labelText, type, validationType) => {
     const fragment = document.createDocumentFragment();
     const inputWrap = document.createElement("div");
     const input = document.createElement("input");
@@ -52,6 +52,7 @@ const createInputElement = (field, labelText, type) => {
     input.type = type;
     input.className =
         "p-4 text-sm rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors w-full font-bold";
+    input.setAttribute("data-validation", validationType ? validationType : "string");
 
     label.for = fieldName;
     labelText && (label.innerHTML = labelText);
