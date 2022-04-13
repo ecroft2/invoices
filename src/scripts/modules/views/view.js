@@ -593,13 +593,25 @@ class View {
     }
 
     validateForm(inputs) {
+        let formIsValid = true;
+
         inputs.forEach((input) => {
-            if (this.validateInput(input.value, input.getAttribute("data-validation")) === true) {
-                input.style.borderColor = "green";
+            if (
+                this.validateInput(input.value, input.getAttribute("data-validation")) === "valid"
+            ) {
+                input.classList.contains("border-red-500") &&
+                    input.classList.remove("border-red-500");
+                input.classList.add("border-green-500");
             } else {
-                input.style.borderColor = "red";
+                formIsValid && (formIsValid = false);
+
+                input.classList.contains("border-green-500") &&
+                    input.classList.remove("border-green-500");
+                input.classList.add("border-red-500");
             }
         });
+
+        return formIsValid;
     }
 
     viewForm(invoiceId) {
@@ -680,51 +692,51 @@ class View {
         invoiceForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
-            this.validateForm([...invoiceForm.querySelectorAll("input")]);
+            if (this.validateForm([...invoiceForm.querySelectorAll("input")]) !== false) {
+                const invoiceFormData = {};
+                invoiceFormData["items"] = new Array();
 
-            const invoiceFormData = {};
-            invoiceFormData["items"] = new Array();
-
-            const invoiceInfoInputs = [...invoiceForm.querySelectorAll("input")].filter(
-                (input) => input.closest("[data-invoice-role='invoice-form-table']") === null
-            );
-
-            invoiceInfoInputs.forEach((input) => {
-                const inputName = input.name.replace(/_([a-z])/gi, (all, letter) =>
-                    letter.toUpperCase()
+                const invoiceInfoInputs = [...invoiceForm.querySelectorAll("input")].filter(
+                    (input) => input.closest("[data-invoice-role='invoice-form-table']") === null
                 );
 
-                invoiceFormData[inputName] = input.value;
-            });
+                invoiceInfoInputs.forEach((input) => {
+                    const inputName = input.name.replace(/_([a-z])/gi, (all, letter) =>
+                        letter.toUpperCase()
+                    );
 
-            document
-                .querySelectorAll("[data-invoice-role='invoice-form-table'] tbody tr")
-                .forEach((row) => {
-                    let inputs = new Object();
-
-                    row.querySelectorAll("input").forEach((input) => {
-                        if (input.value) {
-                            if (input.name !== "name") {
-                                inputs[input.name] = Number(input.value);
-                            } else {
-                                inputs[input.name] = input.value;
-                            }
-                        }
-                    });
-
-                    Object.keys(inputs).length !== 0 && invoiceFormData.items.push(inputs);
+                    invoiceFormData[inputName] = input.value;
                 });
 
-            if (invoiceId) {
-                invoiceData.data = invoiceFormData;
-            } else {
-                invoiceData = invoiceFormData;
+                document
+                    .querySelectorAll("[data-invoice-role='invoice-form-table'] tbody tr")
+                    .forEach((row) => {
+                        let inputs = new Object();
+
+                        row.querySelectorAll("input").forEach((input) => {
+                            if (input.value) {
+                                if (input.name !== "name") {
+                                    inputs[input.name] = Number(input.value);
+                                } else {
+                                    inputs[input.name] = input.value;
+                                }
+                            }
+                        });
+
+                        Object.keys(inputs).length !== 0 && invoiceFormData.items.push(inputs);
+                    });
+
+                if (invoiceId) {
+                    invoiceData.data = invoiceFormData;
+                } else {
+                    invoiceData = invoiceFormData;
+                }
+
+                this.submitInvoice(invoiceData, invoiceId);
+
+                this.root.removeChild(invoiceForm);
+                this.rootOverlay.classList.toggle("hidden");
             }
-
-            this.submitInvoice(invoiceData, invoiceId);
-
-            this.root.removeChild(invoiceForm);
-            this.rootOverlay.classList.toggle("hidden");
         });
     }
 
