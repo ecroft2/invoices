@@ -6,7 +6,7 @@ class Controller {
         this.view.deleteInvoice = this.handleDeleteInvoice;
         this.view.getInvoice = this.model.getInvoice;
         this.view.submitInvoice = this.handleFormSubmit;
-        this.view.validateInput = this.model.validateData;
+        this.view.getInputValidationStatus = this.model.validateInput;
         this.model.handleInvoiceChange = this.handleInvoices;
         this.model.handleInvoiceEdit = this.handleEditInvoice;
 

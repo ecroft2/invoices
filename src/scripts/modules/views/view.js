@@ -592,26 +592,24 @@ class View {
         }
     }
 
-    validateForm(inputs) {
-        let formIsValid = true;
+    validateInput(input) {
+        let inputIsValid = true;
 
-        inputs.forEach((input) => {
-            if (
-                this.validateInput(input.value, input.getAttribute("data-validation")) === "valid"
-            ) {
-                input.classList.contains("border-red-500") &&
-                    input.classList.remove("border-red-500");
-                input.classList.add("border-green-500");
-            } else {
-                formIsValid && (formIsValid = false);
+        if (
+            this.getInputValidationStatus(input.value, input.getAttribute("data-validation")) ===
+            "valid"
+        ) {
+            input.classList.contains("border-red-500") && input.classList.remove("border-red-500");
+            input.classList.add("border-green-500");
+        } else {
+            input.classList.contains("border-green-500") &&
+                input.classList.remove("border-green-500");
+            input.classList.add("border-red-500");
 
-                input.classList.contains("border-green-500") &&
-                    input.classList.remove("border-green-500");
-                input.classList.add("border-red-500");
-            }
-        });
+            inputIsValid = false;
+        }
 
-        return formIsValid;
+        return inputIsValid;
     }
 
     viewForm(invoiceId) {
@@ -689,10 +687,26 @@ class View {
             }
         });
 
+        invoiceForm.addEventListener("change", (event) => {
+            console.log("ding");
+            this.validateInput(event.target);
+        });
+
         invoiceForm.addEventListener("submit", (event) => {
             event.preventDefault();
+            let formIsValid;
 
-            if (this.validateForm([...invoiceForm.querySelectorAll("input")]) !== false) {
+            [
+                ...invoiceForm.querySelectorAll("input").forEach((input) => {
+                    if (this.validateInput(input) !== true) {
+                        formIsValid = false;
+                    } else {
+                        formIsValid = true;
+                    }
+                }),
+            ];
+
+            if (formIsValid) {
                 const invoiceFormData = {};
                 invoiceFormData["items"] = new Array();
 

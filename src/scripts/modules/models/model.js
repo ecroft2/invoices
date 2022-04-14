@@ -85,7 +85,7 @@ class Model {
 
     getInvoice = (id) => this.invoices.find((invoice) => invoice.id === id);
 
-    validateData = (input, type) => {
+    validateInput = (input, type) => {
         const types = {
             postcode: /^([A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}|GIR ?0A{2})$/,
             email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
