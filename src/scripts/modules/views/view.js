@@ -412,6 +412,12 @@ class View {
                 // Style for else
             }
         });
+
+        [...this.form.querySelectorAll("input")].forEach((input) => {
+            input.addEventListener("focusout", (event) => {
+                this.validateInput(input);
+            });
+        });
     }
 
     generateFormItemsList(invoiceItems) {
