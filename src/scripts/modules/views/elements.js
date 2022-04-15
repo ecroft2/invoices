@@ -43,6 +43,7 @@ const createInputElement = (field, labelText, type, validationType) => {
     const fragment = document.createDocumentFragment();
     const inputWrap = document.createElement("div");
     const input = document.createElement("input");
+    const labelWrap = document.createElement("div");
     const label = document.createElement("label");
     const fieldName = field.toLowerCase();
 
@@ -54,11 +55,14 @@ const createInputElement = (field, labelText, type, validationType) => {
         "p-4 text-sm rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors w-full font-bold";
     input.setAttribute("data-validation", validationType ? validationType : "string");
 
+    labelWrap.className = "mb-2";
+
     label.for = fieldName;
     labelText && (label.innerHTML = labelText);
-    label.className = "text-sm text-slate-500 mb-2";
+    label.className = "text-sm text-slate-500";
+    labelWrap.appendChild(label);
 
-    inputWrap.appendChild(label);
+    inputWrap.appendChild(labelWrap);
     inputWrap.appendChild(input);
 
     fragment.appendChild(inputWrap);

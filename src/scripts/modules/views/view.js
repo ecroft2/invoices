@@ -608,9 +608,22 @@ class View {
             input.classList.contains("border-red-500") && input.classList.remove("border-red-500");
             input.classList.add("border-green-500");
         } else {
-            input.classList.contains("border-green-500") &&
-                input.classList.remove("border-green-500");
-            input.classList.add("border-red-500");
+            if (input.hasAttribute("invalid") === false) {
+                input.setAttribute("invalid", "true");
+
+                input.classList.contains("border-green-500") &&
+                    input.classList.remove("border-green-500");
+                input.classList.add("border-red-500");
+
+                console.log(input.parentElement.tagName);
+
+                if (input.parentElement.tagName !== "TD") {
+                    input.previousElementSibling.insertAdjacentHTML(
+                        "beforeend",
+                        `<i class="fas fa-exclamation-circle text-red-500 ml-1 cursor-pointer"></i>`
+                    );
+                }
+            }
 
             inputIsValid = false;
         }
@@ -694,7 +707,6 @@ class View {
         });
 
         invoiceForm.addEventListener("change", (event) => {
-            console.log("ding");
             this.validateInput(event.target);
         });
 
