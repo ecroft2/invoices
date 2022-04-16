@@ -419,7 +419,7 @@ class View {
             });
 
             input.addEventListener("keyup", (event) => {
-                this.validateInput(input);
+                event.key !== "Tab" && this.validateInput(input);
             });
         });
     }
@@ -603,8 +603,6 @@ class View {
     }
 
     validateInput(input) {
-        console.log(input.value);
-
         let inputIsValid = true;
 
         if (
