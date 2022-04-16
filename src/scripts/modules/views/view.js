@@ -604,11 +604,12 @@ class View {
 
     validateInput(input) {
         let inputIsValid = true;
+        const validationStatus = this.getInputValidationStatus(
+            input.value,
+            input.getAttribute("data-validation")
+        );
 
-        if (
-            this.getInputValidationStatus(input.value, input.getAttribute("data-validation")) ===
-            "valid"
-        ) {
+        if (validationStatus === "valid") {
             input.hasAttribute("invalid") && input.removeAttribute("invalid");
 
             if (input.hasAttribute("valid") === false) {
@@ -658,6 +659,10 @@ class View {
                         "beforeend",
                         `<i data-invoice-role="invalid-symbol" class="fa-solid fa-exclamation-circle text-red-500 ml-1 cursor-pointer"></i>`
                     );
+
+                    input.previousElementSibling.appendChild(
+                        this.createErrorMessagePopup(validationStatus)
+                    );
                 }
             }
 
@@ -665,6 +670,18 @@ class View {
         }
 
         return inputIsValid;
+    }
+
+    createErrorMessagePopup(message) {
+        const messageElem = createElement({
+            className:
+                "absolute shadow-md max-w-[200px] bg-white text-sm border border-solid border-neutral-900 rounded mt-1 p-4",
+            tag: "div",
+        });
+
+        messageElem.innerHTML = `<p>${message}</p>`;
+
+        return messageElem;
     }
 
     viewForm(invoiceId) {

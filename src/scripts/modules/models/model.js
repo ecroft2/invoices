@@ -87,21 +87,32 @@ class Model {
 
     validateInput = (input, type) => {
         const types = {
-            postcode:
-                /^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$/,
-            email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-            number: /[0-9]/,
-            currency: /^-?\d+(,\d{3})*(\.\d{1,2})?$/,
+            postcode: {
+                regex: /^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$/,
+                message: "Postcode is not in correct format",
+            },
+            email: {
+                regex: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+                message: "Enter email address in correct format, like name@example.com",
+            },
+            number: {
+                regex: /[0-9]/,
+                message: "Field must be a whole number",
+            },
+            currency: {
+                regex: /^-?\d+(,\d{3})*(\.\d{1,2})?$/,
+                message: "Field must be a currency value, like 50, or 50.99",
+            },
             date: "",
         };
 
         if (input === "") {
-            return "invalid_empty";
+            return "Field cannot be empty";
         } else {
             if (type === "string") {
                 return "valid";
             } else {
-                return input.match(types[type]) ? "valid" : "invalid_regex";
+                return input.match(types[type].regex) ? "valid" : types[type].message;
             }
         }
     };
