@@ -417,6 +417,10 @@ class View {
             input.addEventListener("focusout", (event) => {
                 this.validateInput(input);
             });
+
+            input.addEventListener("keyup", (event) => {
+                this.validateInput(input);
+            });
         });
     }
 
@@ -599,6 +603,8 @@ class View {
     }
 
     validateInput(input) {
+        console.log(input.value);
+
         let inputIsValid = true;
 
         if (
@@ -615,17 +621,14 @@ class View {
                 input.classList.add("border-green-500");
 
                 if (input.parentElement.tagName !== "TD") {
-                    if (
-                        input.previousElementSibling.querySelector(
-                            "[data-invoice-role='invalid-symbol']"
-                        )
-                    ) {
+                    input.previousElementSibling.querySelector(
+                        "[data-invoice-role='invalid-symbol']"
+                    ) &&
                         input.previousElementSibling.removeChild(
                             input.previousElementSibling.querySelector(
                                 "[data-invoice-role='invalid-symbol']"
                             )
                         );
-                    }
 
                     input.previousElementSibling.insertAdjacentHTML(
                         "beforeend",
@@ -644,17 +647,14 @@ class View {
                 input.classList.add("border-red-500");
 
                 if (input.parentElement.tagName !== "TD") {
-                    if (
-                        input.previousElementSibling.querySelector(
-                            "[data-invoice-role='valid-symbol']"
-                        )
-                    ) {
+                    input.previousElementSibling.querySelector(
+                        "[data-invoice-role='valid-symbol']"
+                    ) &&
                         input.previousElementSibling.removeChild(
                             input.previousElementSibling.querySelector(
                                 "[data-invoice-role='valid-symbol']"
                             )
                         );
-                    }
 
                     input.previousElementSibling.insertAdjacentHTML(
                         "beforeend",
@@ -735,11 +735,11 @@ class View {
             removeFormFromDOM();
         });
 
-        document.addEventListener("keydown", (event) => {
+        document.addEventListener("keyup", (event) => {
             if (event.key === "Escape") {
                 if (this.root.querySelector("[data-invoice-role='form']") !== null) {
                     removeFormFromDOM();
-                    document.removeEventListener("keydown", removeFormFromDOM);
+                    document.removeEventListener("keyup", removeFormFromDOM);
                 }
             }
         });
