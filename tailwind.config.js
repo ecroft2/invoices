@@ -5,7 +5,7 @@ module.exports = {
             sans: ["Spartan", "Arial", "Helvetica", "sans-serif"],
         },
         extend: {},
-        important: ".fas",
+        important: ".fa-solid",
     },
     plugins: [],
     content: ["./*.html", "./src/scripts/**/*.js"],

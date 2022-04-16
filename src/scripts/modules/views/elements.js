@@ -80,7 +80,7 @@ const createStatusElement = (isComplete, props) => {
         isComplete ? "bg-green-100 text-green-500" : "bg-orange-100 text-orange-500"
     }`;
     element.innerHTML = `
-        <i class="fas fa-circle fa-xs mr-1"></i>
+        <i class="fa-solid fa-circle fa-xs mr-1"></i>
         ${isComplete ? "Paid" : "Pending"}
     `;
 

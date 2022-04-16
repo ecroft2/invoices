@@ -140,7 +140,7 @@ class View {
                 createElement({
                     tag: "i",
                     className:
-                        "grow-[1] md:grow-0 md:w-[75px] text-center hidden md:block fas fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
+                        "grow-[1] md:grow-0 md:w-[75px] text-center hidden md:block fa-solid fa-angle-right text-lg text-purple-600 group-hover:text-purple-500",
                 })
             );
 
@@ -448,7 +448,7 @@ class View {
         table.appendChild(tableBody);
 
         const addItemButton = createButtonElement({
-            html: "<i class='fas fa-plus mr-2 text-base'></i><p class='mt-1'>Add New Item</p>",
+            html: "<i class='fa-solid fa-plus mr-2 text-base'></i><p class='mt-1'>Add New Item</p>",
             additionalClasses:
                 "bg-neutral-200 hover:bg-neutral-100 text-neutral-600 justify-center w-full mb-8",
             type: "button",
@@ -554,7 +554,7 @@ class View {
         const removeRowTrigger = createElement({
             tag: "td",
             className: "pt-4 ml-auto md:ml-0",
-            html: "<button type='button' class='transition-colors duration-100 text-slate-500 focus:text-slate-400 hover:text-slate-400' data-invoice-role='remove-row'><i class='fas fa-trash pointer-events-none'></i></button>",
+            html: "<button type='button' class='transition-colors duration-100 text-slate-500 focus:text-slate-400 hover:text-slate-400' data-invoice-role='remove-row'><i class='fa-solid fa-trash pointer-events-none'></i></button>",
         });
 
         row.appendChild(nameField);
@@ -605,9 +605,37 @@ class View {
             this.getInputValidationStatus(input.value, input.getAttribute("data-validation")) ===
             "valid"
         ) {
-            input.classList.contains("border-red-500") && input.classList.remove("border-red-500");
-            input.classList.add("border-green-500");
+            input.hasAttribute("invalid") && input.removeAttribute("invalid");
+
+            if (input.hasAttribute("valid") === false) {
+                input.setAttribute("valid", "true");
+
+                input.classList.contains("border-red-500") &&
+                    input.classList.remove("border-red-500");
+                input.classList.add("border-green-500");
+
+                if (input.parentElement.tagName !== "TD") {
+                    if (
+                        input.previousElementSibling.querySelector(
+                            "[data-invoice-role='invalid-symbol']"
+                        )
+                    ) {
+                        input.previousElementSibling.removeChild(
+                            input.previousElementSibling.querySelector(
+                                "[data-invoice-role='invalid-symbol']"
+                            )
+                        );
+                    }
+
+                    input.previousElementSibling.insertAdjacentHTML(
+                        "beforeend",
+                        `<i data-invoice-role="valid-symbol" class="fa-solid fa-circle-check text-green-500 ml-1"></i>`
+                    );
+                }
+            }
         } else {
+            input.hasAttribute("valid") && input.removeAttribute("valid");
+
             if (input.hasAttribute("invalid") === false) {
                 input.setAttribute("invalid", "true");
 
@@ -615,12 +643,22 @@ class View {
                     input.classList.remove("border-green-500");
                 input.classList.add("border-red-500");
 
-                console.log(input.parentElement.tagName);
-
                 if (input.parentElement.tagName !== "TD") {
+                    if (
+                        input.previousElementSibling.querySelector(
+                            "[data-invoice-role='valid-symbol']"
+                        )
+                    ) {
+                        input.previousElementSibling.removeChild(
+                            input.previousElementSibling.querySelector(
+                                "[data-invoice-role='valid-symbol']"
+                            )
+                        );
+                    }
+
                     input.previousElementSibling.insertAdjacentHTML(
                         "beforeend",
-                        `<i class="fas fa-exclamation-circle text-red-500 ml-1 cursor-pointer"></i>`
+                        `<i data-invoice-role="invalid-symbol" class="fa-solid fa-exclamation-circle text-red-500 ml-1 cursor-pointer"></i>`
                     );
                 }
             }
