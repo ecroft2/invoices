@@ -609,12 +609,14 @@ class View {
             input.getAttribute("data-validation")
         );
 
-        input.previousElementSibling.querySelector("[data-invoice-role='validation-symbol']") &&
-            input.previousElementSibling.removeChild(
-                input.previousElementSibling.querySelector(
-                    "[data-invoice-role='validation-symbol']"
-                )
-            );
+        if (input.parentElement.tagName !== "TD") {
+            input.previousElementSibling.querySelector("[data-invoice-role='validation-symbol']") &&
+                input.previousElementSibling.removeChild(
+                    input.previousElementSibling.querySelector(
+                        "[data-invoice-role='validation-symbol']"
+                    )
+                );
+        }
 
         if (validationStatus === "valid") {
             if (input.classList.contains("border-red-500")) {
