@@ -657,11 +657,15 @@ class View {
 
                     input.previousElementSibling.insertAdjacentHTML(
                         "beforeend",
-                        `<i data-invoice-role="invalid-symbol" class="fa-solid fa-exclamation-circle text-red-500 ml-1 cursor-pointer"></i>`
+                        `<i data-invoice-role="invalid-symbol" class="fa-solid fa-exclamation-circle text-red-500 ml-1"></i>`
                     );
 
                     input.previousElementSibling.appendChild(
-                        this.createErrorMessagePopup(validationStatus)
+                        createElement({
+                            className: "text-sm text-red-500 mt-1 tracking-wide",
+                            tag: "p",
+                            html: validationStatus,
+                        })
                     );
                 }
             }
@@ -670,18 +674,6 @@ class View {
         }
 
         return inputIsValid;
-    }
-
-    createErrorMessagePopup(message) {
-        const messageElem = createElement({
-            className:
-                "absolute shadow-md max-w-[200px] bg-white text-sm border border-solid border-neutral-900 rounded mt-1 p-4",
-            tag: "div",
-        });
-
-        messageElem.innerHTML = `<p>${message}</p>`;
-
-        return messageElem;
     }
 
     viewForm(invoiceId) {

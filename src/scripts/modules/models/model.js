@@ -93,21 +93,21 @@ class Model {
             },
             email: {
                 regex: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-                message: "Enter email address in correct format, like name@example.com",
+                message: "Please enter email address in correct format, like name@example.com",
             },
             number: {
                 regex: /[0-9]/,
-                message: "Field must be a whole number",
+                message: "Please enter a whole number",
             },
             currency: {
                 regex: /^-?\d+(,\d{3})*(\.\d{1,2})?$/,
-                message: "Field must be a currency value, like 50, or 50.99",
+                message: "Please enter a blah blah TODO",
             },
             date: "",
         };
 
         if (input === "") {
-            return "Field cannot be empty";
+            return "Please fill in this field";
         } else {
             if (type === "string") {
                 return "valid";
