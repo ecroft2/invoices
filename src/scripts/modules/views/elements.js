@@ -52,7 +52,7 @@ const createInputElement = (field, labelText, type, validationType) => {
     input.name = fieldName;
     input.type = type;
     input.className =
-        "p-4 text-sm rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors w-full font-bold";
+        "p-4 text-sm rounded border border-solid border-slate-300 hover:border-slate-400 transition-colors w-full font-bold mt-auto";
     input.setAttribute("data-validation", validationType ? validationType : "string");
 
     labelWrap.className = "mb-2";
