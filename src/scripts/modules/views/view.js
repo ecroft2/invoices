@@ -609,65 +609,63 @@ class View {
             input.getAttribute("data-validation")
         );
 
+        input.previousElementSibling.querySelector("[data-invoice-role='validation-symbol']") &&
+            input.previousElementSibling.removeChild(
+                input.previousElementSibling.querySelector(
+                    "[data-invoice-role='validation-symbol']"
+                )
+            );
+
         if (validationStatus === "valid") {
-            input.hasAttribute("invalid") && input.removeAttribute("invalid");
-
-            if (input.hasAttribute("valid") === false) {
-                input.setAttribute("valid", "true");
-
-                input.classList.contains("border-red-500") &&
-                    input.classList.remove("border-red-500");
+            if (input.classList.contains("border-red-500")) {
+                input.classList.replace("border-red-500", "border-green-500");
+            } else {
                 input.classList.add("border-green-500");
+            }
 
-                if (input.parentElement.tagName !== "TD") {
-                    input.previousElementSibling.querySelector(
-                        "[data-invoice-role='invalid-symbol']"
-                    ) &&
-                        input.previousElementSibling.removeChild(
-                            input.previousElementSibling.querySelector(
-                                "[data-invoice-role='invalid-symbol']"
-                            )
-                        );
-
-                    input.previousElementSibling.insertAdjacentHTML(
-                        "beforeend",
-                        `<i data-invoice-role="valid-symbol" class="fa-solid fa-circle-check text-green-500 ml-1"></i>`
+            if (input.parentElement.tagName !== "TD") {
+                input.previousElementSibling.querySelector("[data-invoice-role='error-message']") &&
+                    input.previousElementSibling.removeChild(
+                        input.previousElementSibling.querySelector(
+                            "[data-invoice-role='error-message']"
+                        )
                     );
-                }
+
+                input.previousElementSibling.insertAdjacentHTML(
+                    "beforeend",
+                    `<i data-invoice-role="validation-symbol" class="fa-solid fa-circle-check text-green-500 ml-1"></i>`
+                );
             }
         } else {
-            input.hasAttribute("valid") && input.removeAttribute("valid");
-
-            if (input.hasAttribute("invalid") === false) {
-                input.setAttribute("invalid", "true");
-
-                input.classList.contains("border-green-500") &&
-                    input.classList.remove("border-green-500");
+            if (input.classList.contains("border-green-500")) {
+                input.classList.replace("border-green-500", "border-red-500");
+            } else {
                 input.classList.add("border-red-500");
+            }
 
-                if (input.parentElement.tagName !== "TD") {
-                    input.previousElementSibling.querySelector(
-                        "[data-invoice-role='valid-symbol']"
-                    ) &&
-                        input.previousElementSibling.removeChild(
-                            input.previousElementSibling.querySelector(
-                                "[data-invoice-role='valid-symbol']"
-                            )
-                        );
-
-                    input.previousElementSibling.insertAdjacentHTML(
-                        "beforeend",
-                        `<i data-invoice-role="invalid-symbol" class="fa-solid fa-exclamation-circle text-red-500 ml-1"></i>`
+            if (input.parentElement.tagName !== "TD") {
+                input.previousElementSibling.querySelector("[data-invoice-role='error-message']") &&
+                    input.previousElementSibling.removeChild(
+                        input.previousElementSibling.querySelector(
+                            "[data-invoice-role='error-message']"
+                        )
                     );
 
-                    input.previousElementSibling.appendChild(
-                        createElement({
-                            className: "text-sm text-red-500 mt-1 tracking-wide",
-                            tag: "p",
-                            html: validationStatus,
-                        })
-                    );
-                }
+                input.previousElementSibling.insertAdjacentHTML(
+                    "beforeend",
+                    `<i data-invoice-role="validation-symbol" class="fa-solid fa-exclamation-circle text-red-500 ml-1"></i>`
+                );
+
+                input.previousElementSibling.appendChild(
+                    createElement({
+                        className: "text-sm text-red-500 mt-1 tracking-wide",
+                        tag: "p",
+                        html: validationStatus,
+                        attrs: {
+                            dataInvoiceRole: "error-message",
+                        },
+                    })
+                );
             }
 
             inputIsValid = false;
