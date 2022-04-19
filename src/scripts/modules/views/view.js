@@ -301,7 +301,7 @@ class View {
         const fromInputsLegend = createElement({
             tag: "legend",
             html: "Bill From",
-            className: "font-bold text-purple-600 text-sm mb-6 text-white",
+            className: "font-bold text-purple-600 text-base mb-6 text-white",
         });
         const fromAddress = createInputElement("from_address", "Street Address", "text");
         const fromCity = createInputElement("from_city", "City", "text");
@@ -323,7 +323,7 @@ class View {
         const toInputsLegend = createElement({
             tag: "legend",
             html: "Bill To",
-            className: "font-bold text-purple-600 text-sm mb-6 text-white",
+            className: "font-bold text-purple-600 text-base mb-6 text-white",
         });
         const toName = createInputElement("to_name", "Name", "text");
         const toEmail = createInputElement("to_email", "Email", "text", "email");
@@ -350,7 +350,7 @@ class View {
         const otherInputsLegend = createElement({
             tag: "legend",
             html: "Details",
-            className: "font-bold text-purple-600 text-sm mb-6 text-white",
+            className: "font-bold text-purple-600 text-base mb-6 text-white",
         });
 
         const otherInputsColumns = createElement({ tag: "div", className: "flex gap-x-4" });
