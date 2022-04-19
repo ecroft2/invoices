@@ -427,7 +427,7 @@ class View {
     generateFormItemsList(invoiceItems) {
         const table = createElement({
             tag: "table",
-            className: "w-full mb-8",
+            className: "w-full mb-6",
             attrs: {
                 dataInvoiceRole: "invoice-form-table",
             },
@@ -484,7 +484,8 @@ class View {
     generateFormRow(data) {
         const row = createElement({
             tag: "tr",
-            className: "flex flex-wrap md:table-row mb-8 last-of-type:mb-0",
+            className:
+                "flex flex-wrap md:table-row mb-6 last-of-type:mb-0 after:content-[''] after:bg-slate-400 after:mt-6 after:h-px after:w-full",
         });
         const fieldClasses =
             "w-full py-4 text-sm rounded border md:placeholder:text-transparent placeholder:font-normal border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
