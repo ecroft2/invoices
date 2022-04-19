@@ -409,7 +409,7 @@ class View {
                     .querySelector("tbody")
                     .removeChild(event.target.closest("tr"));
             } else {
-                // Style for else
+                // TODO: Style for else
             }
         });
 
@@ -454,7 +454,7 @@ class View {
         const addItemButton = createButtonElement({
             html: "<i class='fa-solid fa-plus mr-2 text-base'></i><p class='mt-1'>Add New Item</p>",
             additionalClasses:
-                "bg-neutral-200 hover:bg-neutral-100 text-neutral-600 justify-center w-full mb-8",
+                "bg-neutral-200 hover:bg-neutral-100 text-neutral-600 justify-center w-full",
             type: "button",
         });
 
@@ -496,6 +496,9 @@ class View {
         const nameFieldInput = createElement({
             tag: "input",
             className: fieldClasses + " px-4",
+            attrs: {
+                dataValidation: "string",
+            },
         });
         nameFieldInput.name = "name";
         nameFieldInput.placeholder = "Item Name";
@@ -511,6 +514,7 @@ class View {
             className: fieldClasses + " px-2 text-center",
             attrs: {
                 inputmode: "numeric",
+                dataValidation: "number",
             },
         });
         quantityFieldInput.name = "quantity";
@@ -527,6 +531,7 @@ class View {
             className: fieldClasses + " px-2",
             attrs: {
                 inputmode: "decimal",
+                dataValidation: "currency",
             },
         });
         priceFieldInput.name = "price";
@@ -637,6 +642,7 @@ class View {
                     "beforeend",
                     `<i data-invoice-role="validation-symbol" class="fa-solid fa-circle-check text-green-500 ml-1"></i>`
                 );
+            } else {
             }
         } else {
             if (input.classList.contains("border-green-500")) {
@@ -702,7 +708,7 @@ class View {
 
         invoiceId ? this.generateFormItems(invoiceData) : this.generateFormItems();
 
-        const buttonWrap = createElement({ className: "flex items-end" });
+        const buttonWrap = createElement({ className: "flex items-end mt-8 flex-wrap" });
 
         const submitButton = createButtonElement({
             type: "submit",
@@ -813,6 +819,12 @@ class View {
 
                 this.root.removeChild(invoiceForm);
                 this.rootOverlay.classList.toggle("hidden");
+            } else {
+                // TODO: Below
+                // buttonWrap.insertAdjacentHTML(
+                //     "afterbegin",
+                //     "<p class='w-full mb-8 text-red-500 font-semibold text-sm text-center'>You have errors in your form</p>"
+                // );
             }
         });
     }
