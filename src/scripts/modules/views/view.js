@@ -303,7 +303,7 @@ class View {
             html: "Bill From",
             className: "font-bold text-purple-600 text-sm mb-6 text-white",
         });
-        const fromAddress = createInputElement("from_address", "Address", "text");
+        const fromAddress = createInputElement("from_address", "Street Address", "text");
         const fromCity = createInputElement("from_city", "City", "text");
         const fromPostcode = createInputElement("from_postcode", "Postcode", "text", "postcode");
         const fromCountry = createInputElement("from_country", "Country", "text");
