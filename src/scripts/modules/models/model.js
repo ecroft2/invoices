@@ -85,6 +85,10 @@ class Model {
 
     getInvoice = (id) => this.invoices.find((invoice) => invoice.id === id);
 
+    manageDateInput = (input) => {
+        console.log(input);
+    };
+
     validateInput = (input, type) => {
         const types = {
             postcode: {
@@ -101,9 +105,12 @@ class Model {
             },
             currency: {
                 regex: /^-?\d+(,\d{3})*(\.\d{1,2})?$/,
-                message: "Please enter a blah blah TODO",
+                message: "TODO",
             },
-            date: "",
+            date: {
+                regex: /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/,
+                message: "Please enter date in correct format, DD/MM/YYYY",
+            },
         };
 
         if (input === "") {
