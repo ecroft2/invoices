@@ -440,16 +440,6 @@ class View {
                 // TODO: Style for else
             }
         });
-
-        [...this.form.querySelectorAll("input")].forEach((input) => {
-            input.addEventListener("focusout", (event) => {
-                this.validateInput(input);
-            });
-
-            input.addEventListener("keyup", (event) => {
-                event.key !== "Tab" && this.validateInput(input);
-            });
-        });
     }
 
     generateFormItemsList(invoiceItems) {
@@ -793,8 +783,16 @@ class View {
             }
         });
 
+        invoiceForm.addEventListener("keyup", (event) => {
+            event.key !== "Tab" && this.validateInput(event.target);
+        });
+
         invoiceForm.addEventListener("change", (event) => {
             this.validateInput(event.target);
+        });
+
+        invoiceForm.addEventListener("focusout", (event) => {
+            event.target.tagName === "INPUT" && this.validateInput(event.target);
         });
 
         invoiceForm.addEventListener("submit", (event) => {
@@ -863,6 +861,19 @@ class View {
                 // );
             }
         });
+
+        // const observer = new MutationObserver(function (mutations) {
+        //     for (let mutation of mutations) {
+        //         mutation.addedNodes[0].addEventListener("change", (event) => {
+        //             this.validateInput(event.target);
+        //         });
+        //     }
+        // });
+
+        // observer.observe(document.querySelector("[data-invoice-role='invoice-form-table']"), {
+        //     childList: true,
+        //     subtree: true,
+        // });
     }
 
     viewInvoice(invoiceId) {
