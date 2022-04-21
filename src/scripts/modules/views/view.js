@@ -419,11 +419,23 @@ class View {
         invoiceFormItemsTable.addEventListener("click", (event) => {
             if (
                 event.target.getAttribute("data-invoice-role") === "remove-row" &&
-                invoiceFormItemsTable.querySelectorAll("tr").length > 2
+                invoiceFormItemsTable.querySelectorAll("tbody tr").length > 1
             ) {
                 invoiceFormItemsTable
                     .querySelector("tbody")
                     .removeChild(event.target.closest("tr"));
+
+                invoiceFormItemsTable
+                    .querySelector("tbody tr")
+                    .classList.remove(
+                        "before:content-['']",
+                        "before:bg-slate-400",
+                        "before:mb-6",
+                        "before:h-px",
+                        "before:w-full",
+                        "md:before:hidden",
+                        "mt-6"
+                    );
             } else {
                 // TODO: Style for else
             }
@@ -479,7 +491,7 @@ class View {
                 tableBody.appendChild(this.generateFormRow(item));
             });
         } else {
-            tableBody.appendChild(this.generateFormRow());
+            tableBody.appendChild(this.generateFormRow(null, true));
         }
 
         formItems.appendChild(table);
@@ -497,11 +509,13 @@ class View {
         return formItems;
     }
 
-    generateFormRow(data) {
+    generateFormRow(data, noDivider) {
         const row = createElement({
             tag: "tr",
-            className:
-                "flex flex-wrap md:table-row mb-6 last-of-type:mb-0 after:content-[''] after:bg-slate-400 after:mt-6 after:h-px after:w-full",
+            className: `flex flex-wrap md:table-row last-of-type:mb-0 ${
+                noDivider ||
+                `mt-6 before:content-[''] before:bg-slate-400 before:mb-6 before:h-px before:w-full md:before:hidden`
+            }`,
         });
         const fieldClasses =
             "w-full py-4 text-sm rounded border md:placeholder:text-transparent placeholder:font-normal border-solid border-slate-300 hover:border-slate-400 transition-colors font-bold";
