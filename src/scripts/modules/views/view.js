@@ -600,7 +600,7 @@ class View {
 
     updateInvoicesList(data) {
         if (data) {
-            this.invoices = data.invoices;
+            this.invoices = data.invoices.reverse();
         }
 
         this.content.innerHTML = "";
