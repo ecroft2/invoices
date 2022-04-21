@@ -13,9 +13,9 @@ A tool to manage invoices, created for my Portfolio, located at https://www.etha
 
 -   Writing tests
 -   Save an invoice as a draft
--   Validating form fields / date field improvements
--   Fixed columns (across rows) in the invoices list
 -   Save invoice as PDF
+-   Sort invoices option (newest to oldest, highest to lowest)
+-   Separate views into smaller files
 
 ## Review
 
