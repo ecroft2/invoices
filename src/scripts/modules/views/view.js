@@ -701,7 +701,6 @@ class View {
                     })
                 );
             }
-
             inputIsValid = false;
         }
 
@@ -797,17 +796,13 @@ class View {
 
         invoiceForm.addEventListener("submit", (event) => {
             event.preventDefault();
-            let formIsValid;
+            let formIsValid = true;
 
-            [
-                ...invoiceForm.querySelectorAll("input").forEach((input) => {
-                    if (this.validateInput(input) !== true) {
-                        formIsValid = false;
-                    } else {
-                        formIsValid = true;
-                    }
-                }),
-            ];
+            [...invoiceForm.querySelectorAll("input")].forEach((input) => {
+                if (this.validateInput(input) !== true) {
+                    formIsValid = false;
+                }
+            });
 
             if (formIsValid) {
                 const invoiceFormData = {};
@@ -861,19 +856,6 @@ class View {
                 // );
             }
         });
-
-        // const observer = new MutationObserver(function (mutations) {
-        //     for (let mutation of mutations) {
-        //         mutation.addedNodes[0].addEventListener("change", (event) => {
-        //             this.validateInput(event.target);
-        //         });
-        //     }
-        // });
-
-        // observer.observe(document.querySelector("[data-invoice-role='invoice-form-table']"), {
-        //     childList: true,
-        //     subtree: true,
-        // });
     }
 
     viewInvoice(invoiceId) {
