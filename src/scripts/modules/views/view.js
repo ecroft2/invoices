@@ -295,6 +295,21 @@ class View {
         return dataElement;
     }
 
+    createDateField() {
+        const dayField = createElement({
+            tag: "div",
+            placeholder: "DD",
+        });
+        const monthField = createElement({
+            tag: "div",
+            placeholder: "MM",
+        });
+        const yearField = createElement({
+            tag: "div",
+            placeholder: "YYYY",
+        });
+    }
+
     generateFormItems(invoiceData) {
         // Bill From Inputs
         const fromInputsFieldset = createElement({ tag: "fieldset" });
@@ -356,6 +371,7 @@ class View {
         const otherInputsColumns = createElement({ tag: "div", className: "flex gap-x-4" });
 
         const date = createInputElement("date", "Invoice Date", "", "date");
+
         const paymentTerms = createInputElement("payment_terms", "Payment Terms", "");
         otherInputsColumns.appendChild(date);
         otherInputsColumns.appendChild(paymentTerms);
@@ -516,6 +532,7 @@ class View {
             attrs: {
                 inputmode: "numeric",
                 dataValidation: "number",
+                type: "number",
             },
         });
         quantityFieldInput.name = "quantity";
@@ -533,6 +550,7 @@ class View {
             attrs: {
                 inputmode: "decimal",
                 dataValidation: "currency",
+                type: "number",
             },
         });
         priceFieldInput.name = "price";
@@ -614,6 +632,9 @@ class View {
             input.value,
             input.getAttribute("data-validation")
         );
+
+        input.classList.contains("hover:border-slate-400") &&
+            input.classList.remove("hover:border-slate-400");
 
         if (input.parentElement.tagName !== "TD") {
             input.previousElementSibling.querySelector("[data-invoice-role='validation-symbol']") &&
